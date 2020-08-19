@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load render_table from django_tables2 %}
+
+{% block content %}
+<div class="card shadow my-5">
+    <!-- Page Heading -->
+    <div class="card-header d-flex flex-row align-items-center justify-content-between">
+        <h5 class="text-primary">List of Genes</h5>
+    </div>
+
+    <!-- Page Body -->
+    <div class="card-body">
+        {% render_table table %}
+    </div>
+</div>
+
+<link rel="stylesheet" href="//cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+{% endblock %}
+
+{% block script %}
+<script src="//cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+<script>
+    $(document).ready( function () {
+        $('.dataTable').DataTable();
+    } );
+</script>
+{% endblock %}

@@ -1,0 +1,88 @@
+<!--dl class="d-flex justify-content-center row">
+    <dt class="col-3">genome build</dt>
+    <dd class="col-9">A description list is perfect for defining terms.</dd>
+
+    <dt class="col-3">Euismod</dt>
+    <dd class="col-9">
+        <p>Vestibulum id ligula porta felis euismod semper eget lacinia odio sem nec elit.</p>
+        <p>Donec id elit non mi porta gravida at eget metus.</p>
+    </dd>
+
+    <dt class="col-3">Malesuada porta</dt>
+    <dd class="col-9">Etiam porta sem malesuada magna mollis euismod.</dd>
+
+    <dt class="col-3 text-truncate">Truncated term is truncated</dt>
+    <dd class="col-9">Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</dd>
+</dl-->
+
+<div class="d-flex justify-content-center ">
+    <div class="col-3 text-right">
+        <strong class="">genome build</strong>
+    </div>
+    <div class="col-custom p-0"></div>
+    <div class="col-6 ">{{ item.type }}</div>
+</div>
+<div class="d-flex justify-content-center pt-2 text">
+    <div class="col-3 text-right">
+        <strong class="">chromosome</strong>
+    </div>
+    <div class="col-custom p-0"></div>
+    <div class="col-6 ">{{ item.g_dna }}</div>
+</div>
+<div class="d-flex justify-content-center pt-2 text">
+    <div class="col-3 text-right">
+        <strong class="">coordinate</strong>
+    </div>
+    <div class="col-custom p-0"></div>
+    <div class="col-6 ">{{ item.g_dna }}</div>
+</div>
+<div class="d-flex justify-content-center pt-2 text">
+    <div class="col-3 text-right">
+        <strong class="">ref</strong>
+    </div>
+    <div class="col-custom p-0"></div>
+    <div class="col-6 "></div>
+</div>
+<div class="d-flex justify-content-center pt-2 text">
+    <div class="col-3 text-right">
+        <strong class="">alt</strong>
+    </div>
+    <div class="col-custom p-0"></div>
+    <div class="col-6 "></div>
+</div>
+<div class="d-flex justify-content-center pt-2 text">
+    <div class="col-3 text-right">
+        <strong class="">Refseq Transcript</strong>
+    </div>
+    <div class="col-custom p-0"></div>
+    <div class="col-6 ">NM.</div>
+</div>
+<div class="d-flex justify-content-center pt-2 text">
+    <div class="col-3 text-right">
+        <strong class="">c.</strong>
+    </div>
+    <div class="col-custom p-0"></div>
+    <div class="col-6 ">{{ item.c_dna }}</div>
+</div>
+<div class="d-flex justify-content-center pt-2 text">
+    <div class="col-3 text-right">
+        <strong class="">p.</strong>
+    </div>
+    <div class="col-custom p-0"></div>
+    <div class="col-6 ">{{ item.protein }}</div>
+</div>
+<div class="d-flex justify-content-center pt-2 text">
+    <div class="col-3 text-right">
+        <strong class="">Gene</strong>
+    </div>
+    <div class="col-custom p-0"></div>
+    <div class="col-6 ">{{ item.gene }}</div>
+</div>
+<div class="d-flex justify-content-center pt-2 text">
+    <div class="col-3 text-right">
+        <strong class="">Subgene Attribute</strong>
+    </div>
+    <div class="col-custom p-0"></div>
+    <div class="col-6 ">{{ item.exon }}</div>
+</div>
+<hr class="mt-5 mb-5"/>

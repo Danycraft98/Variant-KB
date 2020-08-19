@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card mt-4">
+    <div class="card-header">
+        <h5><strong>{{ item.name }}</strong></h5>
+    </div>
+    <div class="card-body container">
+        {% include 'partials/_detail.html' %}
+        <hr/>
+        <fieldset id="comps">
+            <div class="row form-group">
+                <div class="col-2">
+                    <button class="btn btn-primary">Add Modifier</button>
+                </div>
+                <div class="col-2">
+                    <button class="btn btn-primary">View History</button>
+                </div>
+            </div>
+            <fieldset id="classifier_f0" class="my-auto">
+                <div class="row form-group">
+                    <div class="col-1"><label for="classifier0">Classifier</label></div>
+                    <div class="col-8">
+                        <select class="form-control" id="classifier0">
+                            <option>LO</option>
+                            <option>VUS</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-1"><label for="classifier0">Modifier</label></div>
+                    <div class="col-8"><input class="form-control" id="modifier1"></div>
+                    <div class="col-2 text-right">
+                        <button class="btn btn-primary">Add Evidence</button>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-1"><label for="modifier1_e1">Evidence</label></div>
+                    <div class="col-10"><input class="form-control" id="modifier1_e1"></div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-1"><label for="modifier1_s1">Source</label></div>
+                    <div class="col-10"><input class="form-control" id="modifier1_s1"></div>
+                </div>
+            </fieldset>
+        </fieldset>
+        <hr/>
+        <div class="row form-group">
+            <h5>Diseases</h5>
+        </div>
+        <fieldset id="disease_f0" class="my-auto">
+            <div class="row form-group">
+                <div class="col-1"><label for="disease0">Disease</label></div>
+                <div class="col-8"><input class="form-control" id="disease0"></div>
+            </div>
+            <div class="row form-group">
+                <div class="col-1"><label for="classifier0">Classifier</label></div>
+                <div class="col-8">
+                    <select class="form-control" id="disease0">
+                        <option>I</option>
+                        <option>II</option>
+                        <option>III</option>
+                        <option>VI</option>
+                    </select>
+                </div>
+                <div class="col-2 text-right">
+                    <button class="btn btn-primary">Add Evidence</button>
+                </div>
+            </div>
+            <fieldset id="e1" class="my-auto">
+                <div class="row form-group">
+                    <div class="col-1"><label for="e1">Evidence</label></div>
+                    <div class="col-1"><label for="e1_pmid1">PMID</label></div>
+                    <div class="col-9"><input class="form-control" id="e1_pmid1"></div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-1 offset-md-1"><label for="e1_classifier1">Evidence Level</label></div>
+                    <div class="col-9">
+                        <select class="form-control" id="e1_classifier1">
+                            <option>A</option>
+                            <option>B</option>
+                            <option>C</option>
+                            <option>D</option>
+                            <option>E</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-1 offset-md-1"><label for="e1_desc1">Description</label></div>
+                    <div class="col-9"><input class="form-control" id="e1_desc1"></div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-1 offset-md-1"><label for="e1_type1">Type</label></div>
+                    <div class="col-9"><input class="form-control" id="e1_type1"></div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-1 offset-md-1"><label for="e1_dir1">Direction</label></div>
+                    <div class="col-9">
+                        <select class="form-control" id="e1_dir1">
+                            <option>Actionable</option>
+                            <option>Disputable</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-1 offset-md-1"><label for="e1_clin_sig1">Clinical Significance</label></div>
+                    <div class="col-9"><input class="form-control" id="e1_clin_sig1"></div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-1 offset-md-1"><label for="e1_drug1">Drug/Class</label></div>
+                    <div class="col-9"><input class="form-control" id="e1_drug1"></div>
+                </div>
+            </fieldset>
+        </fieldset>
+
+
+        <hr/>
+        <div class="row form-group">
+            <div class="col-3 offset-md-3">
+                <button class="btn btn-primary btn-block">Save</button>
+            </div>
+            <div class="col-3">
+                <button class="btn btn-outline-primary btn-block">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

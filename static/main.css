@@ -1,0 +1,8 @@
+hr {
+    border-top: 1px solid rgb(201, 205, 209);
+}
+
+.col-custom {
+    flex: 0 0 5%;
+    max-width: 5%;
+}

@@ -1,0 +1,329 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="card mt-4">
+    <div class="card-header">
+        <h5><strong>{{ item.name }}</strong></h5>
+    </div>
+    <form action="{% url 'save_variant' item.id %}" method="post">
+        {% csrf_token %}
+        <div class="card-body container">
+            {% include 'partials/_detail.html' %}
+            <fieldset id="diseases">
+                <div id="add" class="row mt-2 mb-2">
+                    <div class="col-2">
+                        <a class="collapsed" id="d0_collapse" href="" data-toggle="collapse" data-target="#d0" onclick="collapse(this)" hidden>Collapse Disease<i id="d0_icon" class="fa fa-chevron-down pr-2" aria-hidden="true"></i></a>
+                    </div>
+                    <div class="col-2 offset-md-8 text-right pr-5">
+                        <button class="btn btn-primary btn-sm" type="button" onclick="var disease=add_disease(); add_f_class(disease);">Add Disease</button>
+                    </div>
+                </div>
+                <fieldset class="collapse" id="d0" hidden>
+                    <input id="d0_id" name="d0_id" hidden>
+                    <div class="row form-group mt-2">
+                        <div class="col-6">
+                            <label for="d0_disease">Disease</label>
+                            <input class="form-control" id="d0_disease" name="d0_disease">
+                        </div>
+
+                        <div class="col-6 form-group">
+                            <label for="d0_func_sig">Functional Significance</label>
+                            <select class="form-control" id="d0_func_sig" name="d0_func_sig">
+                                <option disabled selected>Select</option>
+                                <option>Established</option>
+                                <option>Likely</option>
+                                <option>Predicted</option>
+                                <option>VUS</option>
+                                <option>Benign</option>
+                            </select>
+                        </div>
+                    </div>
+                    <fieldset id="d0_f_classes">
+                        <fieldset class="mb-3" id="d0_fc0" hidden>
+                            <div class="row mb-2">
+                                <div class="col-6 form-group">
+                                    <label>Functional Class</label><input id="d0_fc0_id" name="d0_fc0_id" hidden>
+                                    <select class="form-control" id="d0_fc0_func_class" name="d0_fc0">
+                                        <option disabled selected>Select</option>
+                                        <option>GOF</option>
+                                        <option>LOF</option>
+                                        <option>TP53 functional</option>
+                                        <option>TP53 nonfuntional</option>
+                                        <option>BRAF Class I</option>
+                                        <option>BRAF Class II</option>
+                                        <option>BRAF Class III</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-6 text-right">
+                                    <button type="button" class="btn btn-primary btn-sm" id="d0_fc0_add" name="d0_fc0_add" onclick="add_f_class(this)">Add Functional Class</button>
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-header d-flex">
+                                    <div class="mr-auto">
+                                        Evidences
+                                    </div>
+                                    <div class="ml-auto">
+                                        <button type="button" class="btn btn-primary btn-sm" id="d0_fc0_btn" onclick="add_evidence_type1(this)">Add Evidence</button>
+                                    </div>
+                                </div>
+                                <fieldset id="d0_fc0_evidences1" class="card-body">
+                                    <fieldset id="d0_fc0_etype1_1">
+                                        <div class="row form-group">
+                                            <div class="col-12">
+                                                <label>Source</label><input id="d0_fc0_etype1_id1" name="d0_fc0_etype1_id" hidden>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend" style="width: 30%">
+                                                        <select class="custom-select" id="d0_fc0_etype1_st1" name="d0_fc0_etype1_st">
+                                                            <option disabled selected>Source Type</option>
+                                                            <option value="PM">PMID</option>
+                                                            <option value="O">Others</option>
+                                                        </select>
+                                                    </div>
+                                                    <input class="form-control" id="d0_fc0_etype1_s1" name="d0_fc0_etype1_s" placeholder="Source ID">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row form-group">
+                                            <div class="col-12">
+                                                <label>Evidence Statement</label>
+                                                <textarea class="form-control" id="d0_fc0_etype1_e1" name="d0_fc0_etype1_e"></textarea>
+                                            </div>
+                                        </div>
+                                        <br/>
+                                    </fieldset>
+                                </fieldset>
+                            </div>
+                            <br/>
+                        </fieldset>
+                    </fieldset>
+
+                    <br/>
+                    <div class="row form-group">
+                        <div class="col-12">
+                            <label for="tier">AMP/ASCO Tier</label>
+                            <select class="form-control" id="tier">
+                                <option>Tier I</option>
+                                <option>Tier II</option>
+                                <option>Tier III</option>
+                                <option>Tier VI</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header d-flex">
+                            <div class="mr-auto">
+                                Evidences
+                            </div>
+                            <div class="ml-auto">
+                                <button type="button" class="btn btn-primary btn-sm" id="d0_etype2" onclick="add_evidence_type2(this)">Add Evidence</button>
+                            </div>
+                        </div>
+                        <fieldset id="d0_evidences2" class="card-body">
+                            <fieldset id="d0_etype2_1">
+                                <div class="row form-group">
+                                    <div class="col-12">
+                                        <label>Source</label><input id="d0_etype2_id1" name="d0_etype2_id" hidden>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend" style="width: 30%">
+                                                <select class="custom-select" id="d0_etype2_st1" name="d0_etype2_st">
+                                                    <option disabled selected>Source Type</option>
+                                                    <option value="PM">PMID</option>
+                                                    <option value="O">Others</option>
+                                                </select>
+                                            </div>
+                                            <input class="form-control" id="d0_etype2_s1" name="d0_etype2_s" placeholder="Source ID">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row form-group mt-2">
+                                    <div class="col-12">
+                                        <label>Evidence Statement</label>
+                                        <textarea class="form-control" id="d0_etype2_e1" name="d0_etype2_e"></textarea>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6 form-group">
+                                        <label for="d0_etype2_sig1">Evidence Significance</label>
+                                        <select class="form-control" id="d0_etype2_sig1" name="d0_etype2_sig">
+                                            <option value="Pred">Predictive</option>
+                                            <option value="Prog">Prognostic</option>
+                                            <option value="Diag">Diagnostic</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-6 form-group">
+                                        <label for="d0_etype2_level1">Evidence Level</label>
+                                        <select class="form-control" id="d0_etype2_level1" name="d0_etype2_level">
+                                            <option>A</option>
+                                            <option>B</option>
+                                            <option>C</option>
+                                            <option>D</option>
+                                            <option>E</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-6 form-group">
+                                        <label for="d0_etype2_dir1">Evidence Direction</label>
+                                        <select class="form-control" id="d0_etype2_dir1" name="d0_etype2_dir">
+                                            <option value=True>Support</option>
+                                            <option value=False>Does not support</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-6 form-group">
+                                        <label for="d0_etype2_clin_sig1">Clinical Significance</label>
+                                        <select class="form-control" id="d0_etype2_clin_sig1" name="d0_etype2_clin_sig">
+                                            <option>Pred: Resistance</option>
+                                            <option>Pred: Adverse Response</option>
+                                            <option>Pred: Reduced Sensitivity</option>
+                                            <option>Prog: Better Outcome</option>
+                                            <option>Prog: Poorer Outcome</option>
+                                            <option>Dx: Positive Diagnosis</option>
+                                            <option>Dx: Negative Diagnosis</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-6 form-group">
+                                        <label for="d0_etype2_drug1">Drug / Class</label>
+                                        <input class="form-control" id="d0_etype2_drug1" name="d0_etype2_drug">
+                                    </div>
+                                    <div class="col-6 form-group">
+                                        <label for="d0_etype2_rating1">Evidence Rating</label>
+                                        <select class="form-control" id="d0_etype2_rating1" name="d0_etype2_rating">
+                                            <option value=1>1 Star</option>
+                                            <option value=2>2 Stars</option>
+                                            <option value=3>3 Stars</option>
+                                            <option value=4>4 Stars</option>
+                                            <option value=5>5 Stars</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <hr/>
+                                <br/>
+                            </fieldset>
+                        </fieldset>
+                    </div>
+
+                    <br/><br/>
+                    <div class="row form-group">
+                        <div class="col-12">
+                            <label for="d0_gr">Gene Report</label><input id="d0_gr_id" name="d0_report_id" hidden><input id="d0_gr_name" name="d0_report_name" value="Gene Report" hidden>
+                            <textarea class="form-control" id="d0_gr" name="d0_report"></textarea>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-12">
+                            <label for="d0_vr">Variant Report</label><input id="d0_vr_id" name="d0_report_id" hidden><input id="d0_vr_name" name="d0_report_name" value="Variant Report" hidden>
+                            <textarea class="form-control" id="d0_vr" name="d0_report"></textarea>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-12">
+                            <label for="d0_gdr">Gene-Disease Report</label><input id="d0_gdr_id" name="d0_report_id" hidden><input id="d0_gdr_name" name="d0_report_name" value="Gene-Disease Report" hidden>
+                            <textarea class="form-control" id="d0_gdr" name="d0_report"></textarea>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-12">
+                            <label for="d0_vdr">Variant-Disease Report</label><input id="d0_vdr_id" name="d0_report_id" hidden><input id="d0_vdr_name" name="d0_report_name" value="Variant-Disease Report" hidden>
+                            <textarea class="form-control" id="d0_vdr" name="d0_report"></textarea>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-12">
+                            <label for="d0_vgir">Variant Germline Implications Report</label><input id="d0_vgir_id" name="d0_report_id" hidden><input id="d0_vgir_name" name="d0_report_name" value="Variant Germline Implications Report" hidden>
+                            <textarea class="form-control" id="d0_vgir" name="d0_report"></textarea>
+                        </div>
+                    </div>
+                </fieldset>
+            </fieldset>
+        </div>
+        <div class="card-footer">
+            <div class="container">
+                <div class="row form-group">
+                    <div class="col-2 offset-md-4">
+                        <button type="submit" class="btn btn-primary btn-block">Save</button>
+                    </div>
+                    <div class="col-2">
+                        <button type="button" class="btn btn-outline-primary btn-block">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script src="{% static 'so_add_evidence.js' %}"></script>
+{% endblock %}
+
+{% block script %}
+<script>
+    $(document).ready(function() {
+        var i;
+        {% if item.diseases.all.count == 0 %}
+        var disease = add_disease();
+        var func_class = add_f_class(disease);
+        {% endif %}
+
+        {% for disease in item.diseases.all %}
+        var disease = add_disease();
+        document.getElementById(disease.id + '_id').value = "{{ disease.id }}";
+        document.getElementById(disease.id + '_disease').value = "{{ disease.name }}";
+        {% if disease.functionals.all.count == 0 %}
+        var func_class = add_f_class(disease);
+        {% endif %}
+
+        {% for func in disease.functionals.all %}
+        var func_class = add_f_class(disease);
+        document.getElementById(func_class.id + '_id').value = "{{ func.id }}";
+        document.getElementById(disease.id + '_func_sig').value = "{{ func.key }}";
+        document.getElementById(func_class.id + '_func_class').value = "{{ func.value }}";
+
+        var btn = document.getElementById(func_class.id + '_btn');
+        {% for evidence in func.evidences.all %}
+        {% if forloop.counter > 1 %}
+        add_evidence_type1(btn);
+        {% endif %}
+        document.getElementById(func_class.id + '_etype1_id{{forloop.counter}}').value = "{{ evidence.id }}";
+        document.getElementById(func_class.id + '_etype1_st{{forloop.counter}}').value = "{{ evidence.source_type }}";
+        document.getElementById(func_class.id + '_etype1_s{{forloop.counter}}').value = "{{ evidence.source_id }}";
+        document.getElementById(func_class.id + '_etype1_e{{forloop.counter}}').value = "{{ evidence.statement }}";
+        {% endfor %}
+
+        {% endfor %}
+        {% for evidence in disease.evidences.all %}
+        var element = document.getElementById(disease.id + '_etype2_{{ forloop.counter }}')
+        if (element == null) {
+            add_evidence_type2();
+        }
+        document.getElementById(disease.id + '_etype2_id{{ forloop.counter }}').value =  "{{ evidence.id }}";
+        document.getElementById(disease.id + '_etype2_st{{forloop.counter}}').value = "{{ evidence.source_type }}";
+        document.getElementById(disease.id + '_etype2_s{{forloop.counter}}').value = "{{ evidence.source_id }}";
+        document.getElementById(disease.id + '_etype2_e{{forloop.counter}}').value = "{{ evidence.statement }}";
+
+        {% with sub=evidence.subevidences.first %}
+        document.getElementById(disease.id + '_etype2_sig{{forloop.counter}}').value = "{{ sub.evid_sig }}";
+        document.getElementById(disease.id + '_etype2_level{{forloop.counter}}').value = "{{ sub.level }}";
+        document.getElementById(disease.id + '_etype2_dir{{forloop.counter}}').value = "{{ sub.evid_dir }}";
+        document.getElementById(disease.id + '_etype2_clin_sig{{forloop.counter}}').value = "{{ sub.clin_sig }}";
+        document.getElementById(disease.id + '_etype2_drug{{forloop.counter}}').value = "{{ sub.drug_class }}";
+        document.getElementById(disease.id + '_etype2_rating{{forloop.counter}}').value = "{{ sub.evid_rating }}";
+        {% endwith %}
+        {% endfor %}
+
+        {% for report in disease.reports.all %}
+        getElementsByValue('{{ report.name }}','input', disease.id)[0].value = "{{ report.content }}"
+        getElementsByValue('{{ report.name }}','input', disease.id)[1].value = "{{ report.id }}"
+        {% endfor %}
+
+        {% endfor %}
+    });
+</script>
+{% endblock %}

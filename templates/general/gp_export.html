@@ -1,0 +1,121 @@
+<html>
+<head>
+    <title>Variant {{ item.name }} and Disease</title>
+    <style>
+    body {
+        background-color: #f7f7f8;
+    }
+    </style>
+</head>
+<body>
+<h1>Diseases Exported</h1>
+Variant: {{ item }}
+Gene: {{ item.gene }}
+
+{% for disease in diseases.all %}
+<div id="d{{ forloop.counter }}" class="collapse show">
+    <div class="row form-group">
+        <div class="col-2"><strong>Disease Name</strong></div>
+        <div class="col-10">{{disease.name}}</div>
+    </div>
+    <div class="row form-group">
+        <div class="col-2"><strong>Disease Report</strong></div>
+        <div class="col-10">{{disease.report}}</div>
+    </div>
+    <br/>
+    <div class="card">
+        <div class="card-header">2015 ACMG Score Result</div>
+        <div class="card-body ml-3">
+            <div class="row form-group">
+                <div class="col-3 offset-md-1">Evidence FOR Pathogenicity</div>
+                <div class="col-5"><input class="form-control" id="for_score" value="{{ disease.score.first.for_score}}" readonly></div>
+            </div>
+            <div class="row form-group">
+                <div class="col-3 offset-md-1">Evidence AGAINST Pathogenicity</div>
+                <div class="col-5"><input class="form-control" id="against_score" value="{{ disease.score.first.against_score}}" readonly></div>
+            </div>
+        </div>
+    </div>
+    <br/>
+
+    {% regroup disease.evidences.all by item as dict_items %}
+
+    <div class="card">
+        <div class="card-header">
+            Evidence FOR Pathogenicity
+        </div>
+        <div class="card-body ml-3">
+            {% for set in dict_items %}
+            {% if 'P' in set.grouper.key and 'B' not in set.grouper.key %}
+            <div class="row">
+                <div class="col-1">
+                    <strong>{{ set.grouper }}</strong>
+                </div>
+            {% for evidence in set.list %}
+            {% if forloop.counter > 1 %}
+            <div class="row">
+                <div class="col-1"></div>
+            {% endif %}
+                <div class="col-3"><strong>Source Type</strong></div>
+                <div class="col-2">{{ evidence.get_source_type_display }}</div>
+            </div>
+            <div class="row">
+                <div class="offset-md-1 col-3"><strong>Source ID</strong></div>
+                <div class="col-2">{{ evidence.source_id }}</div>
+            </div>
+            <div class="row mb-4">
+                <div class="offset-md-1 col-3"><strong>Evidence Statement</strong></div>
+                <div class="col-6">{{ evidence.statement }}</div>
+                <div class="col-2">{{ evidence.histories.last }}</div>
+            </div>
+            {% endfor %}
+            {% endif %}
+            <hr/>
+            {% endfor %}
+        </div>
+    </div>
+    <br/>
+
+    <div class="card">
+        <div class="card-header">
+            Evidence AGAINST Pathogenicity
+        </div>
+        <div class="card-body ml-3">
+            {% for set in dict_items %}
+            {% if 'B' in set.grouper.key %}
+            <div class="row">
+                <div class="col-1">
+                    <label>{{ set.grouper }}</label>
+                </div>
+                {% for evidence in set.list %}
+                {% if forloop.counter > 1 %}
+            <div class="row">
+                <div class="col-1"></div>
+                {% endif %}
+                <div class="col-1"><label>Source</label></div>
+                <div class="col-2">Type: {{ evidence.get_source_type_display }}</div>
+            </div>
+            <div class="row">
+                <div class="col-3"><strong>Source Type</strong></div>
+                <div class="col-2">{{ evidence.get_source_type_display }}</div>
+            </div>
+            <div class="row">
+                <div class="col-3"><strong>Source ID</strong></div>
+                <div class="col-2">{{ evidence.source_id }}</div>
+            </div>
+            <div class="row mb-4">
+                <div class="col-3"><strong>Evidence Statement</strong></div>
+                <div class="col-7">{{ item.statement }}</div>
+                <div class="col-2">{{ item.histories.last }}</div>
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    <br/>
+</div>
+{% endfor %}
+
+</body>
+</html>

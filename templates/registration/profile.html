@@ -1,0 +1,9 @@
+Username: {{ user.username }}
+
+User Full name: {{ user.get_full_name }}
+
+User Group: {{ user.groups.all.0 }}
+
+Email: {{ user.email }}
+
+Session Started at: {{ user.last_login }}

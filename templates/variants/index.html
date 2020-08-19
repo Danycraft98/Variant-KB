@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load render_table from django_tables2 %}
+{% load custom_tags %}
+
+{% block content %}
+<div class="card shadow my-5">
+    <!-- Page Heading -->
+    {% if 'Export' in title %}
+    <form method="post" action="{% url 'exported' item.id %}">
+    {% endif %}
+    {% csrf_token %}
+    <div class="card-header d-flex flex-row align-items-center justify-content-between">
+        <h5 class="text-primary">{{ title }}</h5>
+        {% if 'Export' in title %}
+        <div class="align-items-right">
+            <a class="btn btn-outline-primary" type="button" href="{% url 'variant_text' item.id %}">Cancel</a>
+            <button class="btn btn-primary" type="submit">Export</button>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Page Body -->
+    <div class="card-body">
+        {% if item.class_type == "Gene" %}
+        <h6>Gene Detail</h6>
+        <div class="row col">
+            Gene Name: {{ item }}
+            Gene {{ item.content }}
+        </div>
+        {% endif %}
+        {% render_table table %}
+    </div>
+    </form>
+</div>
+
+<link rel="stylesheet" href="//cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+{% endblock %}
+
+{% block script %}
+<script src="//cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+<script>
+    $(document).ready( function () {
+        $('.dataTable').DataTable();
+    });
+</script>
+{% endblock %}

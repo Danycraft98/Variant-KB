@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card mt-4">
+    <div class="card-body">
+        {% if form.errors %}
+        <p>Your username and password didn't match. Please try again.</p>
+        {% endif %}
+
+        {% if next %}
+        {% if user.is_authenticated %}
+        <p>Your account doesn't have access to this page. To proceed,
+            please login with an account that has access.</p>
+        {% else %}
+        <p>Please login to see this page.</p>
+        {% endif %}
+        {% endif %}
+
+        <div class="row pt-3">
+            <div class="col">
+                <form method="post" action="{% url 'login' %}">
+                    {% csrf_token %}
+                    <div class="input-group">
+                        <span class="input-group-addon"><span class="fa fa-user"></span></span>
+                        <input type="text" class="form-control" name="username" placeholder="Username">
+                    </div>
+                    <br/>
+                    <div class="input-group">
+                        <span class="input-group-addon"><span class="fa fa-key"></span></span>
+                        <input type="password" class="form-control" name="password" placeholder="Password">
+                    </div>
+                    <hr/>
+                    <button class="btn btn-lg btn-outline-primary btn-block" type="submit"><i class="fa fa-sign-in"></i> Login</button>
+                    <input type="hidden" name="next" value="{{ next }}"/>
+                </form>
+            </div>
+        </div>
+        <div class="row text-center mt-2">
+            <div class="col-6">
+                <p class="kpx_forgotPwd">
+                    <a href="/accounts/signup">Register</a>
+                </p>
+            </div>
+            <div class="col-6">
+                <p class="">
+                    {# Assumes you setup the password_reset view in your URLconf #}
+                    <a href="{% url 'password_reset' %}">Forgot password?</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
