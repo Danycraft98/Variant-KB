@@ -1,9 +1,26 @@
-Username: {{ user.username }}
+{% extends 'base.html' %}
 
-User Full name: {{ user.get_full_name }}
+{% block content %}
+<div class="container">
+    <div class="card o-hidden border-0 shadow-lg my-5">
+        <div class="card-header">
+            <h5 class="">Profile Page</h5>
+        </div>
+        <div class="card-body p-3">
+            <dl class="d-flex justify-content-center row">
+                <dt class="col-2">Username</dt>
+                <dd class="col-10">{{ user.username }}</dd>
 
-User Group: {{ user.groups.all.0 }}
+                <dt class="col-2">User Group</dt>
+                <dd class="col-10">{{ user.groups.first }}</dd>
 
-Email: {{ user.email }}
+                <dt class="col-2">Email</dt>
+                <dd class="col-10">{{ user.email }}</dd>
 
-Session Started at: {{ user.last_login }}
+                <dt class="col-2">Registered On</dt>
+                <dd class="col-10">{{ user.date_joined }}</dd>
+            </dl>
+        </div>
+    </div>
+</div>
+{% endblock %}

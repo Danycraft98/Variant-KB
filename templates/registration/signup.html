@@ -1,10 +1,61 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Sign up</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Sign up">
-</form>
+<div class="container">
+    <div class="card o-hidden border-0 shadow-lg my-5">
+        <div class="card-body p-0">
+            <!-- Nested Row within Card Body -->
+            <div class="row">
+                <div class="col-lg-5 d-none d-lg-block bg-image"></div>
+                <div class="col-lg-7">
+                    <div class="p-5">
+                        <div class="text-center">
+                            <h1 class="h4 text-gray-900 mb-4">Create an Account!</h1>
+                        </div>
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="form-group required">
+                                <input type="text" name="username" maxlength="150" class="form-control" autocomplete="username" autofocus required id="id_username" placeholder="Username" minlength="4">
+                            </div>
+                            <div class="form-group required">
+                                <input type="email" name="email" class="form-control form-control-user" id="email" placeholder="Email">
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-6 mb-3 mb-sm-0 required">
+                                    <input type="password" name="password1" class="form-control form-control-user" autocomplete="new-password" id="id_password1" placeholder="Password" minlength="8" required>
+                                </div>
+                                <div class="col-sm-6">
+                                    <input type="password" name="password2" class="form-control form-control-user" autocomplete="new-password" id="id_password2" placeholder="Confirm Password" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-user btn-block">Register Account</button>
+                        </form>
+                        <hr>
+                        <div class="text-center">
+                            <a class="small" href="/accounts/login">Already have an account? Login!</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    const password = document.getElementById("id_password1");
+    const confirm_password = document.getElementById("id_password2");
+
+    function validatePassword() {
+        if (password.value !== confirm_password.value) {
+            confirm_password.setCustomValidity("Passwords Don't Match");
+        } else {
+            confirm_password.setCustomValidity('');
+        }
+    }
+
+    password.onchange = validatePassword;
+    confirm_password.onkeyup = validatePassword;
+</script>
 {% endblock %}
