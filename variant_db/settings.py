@@ -79,7 +79,7 @@ DATABASES = {
 		'NAME': 'variant_db',
 		'USER': 'irene',
 		'PASSWORD': 'irene123',
-		'HOST': 'mysql',
+		'HOST': '10.0.2.2`',
 		'PORT': '3306',
 	}
 }
