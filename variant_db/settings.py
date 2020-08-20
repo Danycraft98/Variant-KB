@@ -76,10 +76,10 @@ WSGI_APPLICATION = 'variant_db.wsgi.application'
 DATABASES = {
 	'default': {
 		'ENGINE': 'django.db.backends.mysql',
-		'NAME': 'test_db',
-		'USER': 'root',
-		'PASSWORD': '',
-		'HOST': 'localhost',
+		'NAME': 'variant_db',
+		'USER': 'irene',
+		'PASSWORD': 'irene123',
+		'HOST': 'mysql',
 		'PORT': '3306',
 	}
 }
