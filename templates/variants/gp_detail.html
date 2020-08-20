@@ -21,7 +21,7 @@
         {% include 'partials/_detail.html' %}
 
     {% for disease in item.diseases.all %}
-    <div class="card">
+    <div class="card mb-3">
         <a id="d{{ forloop.counter }}_collapse" class="collapsed" data-toggle="collapse" data-target=".d{{ forloop.counter }}" onclick="collapse(this)">
             <div class="card-header d-flex">
                 <h6><strong>Disease: {{ disease.name }}</strong></h6>
@@ -43,8 +43,8 @@
             </div>
         </div>
     </div>
-    <br/>
-    <div class="d{{ forloop.counter }} collapse card">
+
+    <div class="d{{ forloop.counter }} collapse card mb-3">
         <div class="card-header">2015 ACMG Score Result</div>
         <div class="card-body ml-3">
             <div class="row form-group">
@@ -57,11 +57,10 @@
             </div>
         </div>
     </div>
-    <br/>
 
     {% regroup disease.evidences.all by item as dict_items %}
 
-    <div class="d{{ forloop.counter }} collapse card">
+    <div class="d{{ forloop.counter }} collapse card mb-3">
         <div class="card-header">
             Evidence FOR Pathogenicity
         </div>
@@ -95,9 +94,8 @@
             {% endfor %}
         </div>
     </div>
-    <br/>
 
-    <div class="d{{ forloop.counter }} collapse card">
+    <div class="d{{ forloop.counter }} collapse card mb-3">
         <div class="card-header">
             Evidence AGAINST Pathogenicity
         </div>
@@ -131,7 +129,6 @@
             {% endfor %}
         </div>
     </div>
-    <br/>
     {% endfor %}
     </div>
 </div>
