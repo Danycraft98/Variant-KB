@@ -4,10 +4,11 @@
 {% block content %}
 <style>
     .bg-image {
-        background: url({% static 'variant_image.jpg' %}) center;
+        background: url({% static 'variant_logo.jpg' %}) center;
         background-size: cover;
     }
 </style>
+
 <div class="container">
     <!-- Outer Row -->
     <div class="row justify-content-center">
@@ -32,8 +33,6 @@
                                 {% if user.is_authenticated %}
                                 <p>Your account doesn't have access to this page. To proceed,
                                     please login with an account that has access.</p>
-                                {% else %}
-                                <p>Please login to see this page.</p>
                                 {% endif %}
                                 {% endif %}
                                 <form class="user" method="POST" action="">

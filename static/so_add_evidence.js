@@ -1,8 +1,9 @@
-function collapse(element) {
-    if (element.className != "collapsed") {
-        document.getElementById(element.id.split("_")[0] + "_icon").setAttribute("class", "fa fa-chevron-down pr-2");
+function collapse(element, index) {
+    var arrow = document.getElementById(element.id.split("_").slice(0,index).join("_") + "_icon")
+    if (element.className.includes("collapsed")) {
+        arrow.className = arrow.className.replace("down", "up");
     } else {
-        document.getElementById(element.id.split("_")[0] + "_icon").setAttribute("class", "fa fa-chevron-up pr-2");
+        arrow.className = arrow.className.replace("up", "down");
     }
 }
 
@@ -22,10 +23,14 @@ function add_disease() {
     // Copy the element and its child nodes
     cln = document.getElementById("d0").cloneNode(true);
     cln.querySelectorAll("[id^='d0']").forEach(function(element, test) {
-        if (element.tagName != 'SELECT' && element.type != 'checkbox' && !element.id.includes('score') && !element.name.includes('report')) {
+        if (element.tagName != 'SELECT' && element.type != 'checkbox' && !element.id.includes('score') && element.name && !element.name.includes('report')) {
             element.value = '';
         }
-        element.name = element.name.replace(/^d\d/gi, 'd' + index)
+        if (element.name)
+            element.name = element.name.replace(/^d\d/gi, 'd' + index)
+        if (element.hasAttribute("data-target"))
+            //console.log(element.getAttribute("data-target"));
+            element.setAttribute("data-target", element.getAttribute("data-target").replace(/d\d/gi, 'd' + index));
         element.id = element.id.replace(/^d\d/gi, 'd' + index)
     })
     cln.id = "d" + index
@@ -40,17 +45,29 @@ function add_f_class(element) {
     var disease_num = element.id.split("_")[0];
     // Get the container
     var container = document.getElementById(disease_num + "_f_classes");
+    var fc_num = container.children.length/2
 
     // Copy the element and its child nodes
+    var cln = document.getElementById(disease_num + "_fc0_collapse").cloneNode(true);
+    cln.querySelectorAll("[id^='" + disease_num + "_fc']").forEach(function(element, test) {
+        element.id = element.id.replace(/fc\d/gi, 'fc' + fc_num)
+        if (element.name)
+            element.name = element.name.replace(/fc\d/gi, 'fc' + fc_num)
+    })
+    cln.id = disease_num + "_fc" + fc_num + "_collapse";
+    cln.setAttribute("data-target", "#" + disease_num + "_fc" + fc_num)
+    cln.removeAttribute('hidden')
+    container.appendChild(cln);
+
     var cln = document.getElementById(disease_num + "_fc0").cloneNode(true);
     cln.querySelectorAll("[id^='" + disease_num + "_fc']").forEach(function(element, test) {
-        element.id = element.id.replace(/fc\d/gi, 'fc' + container.children.length)
-        element.name = element.name.replace(/fc\d/gi, 'fc' + container.children.length)
-        if (element.id.includes("add") && container.children.length > 1) {
+        element.id = element.id.replace(/fc\d/gi, 'fc' + fc_num)
+        element.name = element.name.replace(/fc\d/gi, 'fc' + fc_num)
+        if (element.id.includes("add") && fc_num > 1) {
             element.setAttribute("hidden", "")
         }
     })
-    cln.id = disease_num + "_fc" + container.children.length;
+    cln.id = disease_num + "_fc" + fc_num;
     cln.removeAttribute('hidden')
 
     // Append the cloned <li> element to <ul> with id="myList1"
@@ -96,7 +113,6 @@ function add_evidence_type2(element) {
 
     // Append the cloned element to container
     container.appendChild(cln);
-    console.log(container)
 }
 
 function getElementsByValue(value, tag, id) {

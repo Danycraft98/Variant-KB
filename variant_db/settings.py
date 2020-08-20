@@ -31,8 +31,6 @@ ALLOWED_HOSTS = ["*"]
 INSTALLED_APPS = [
 	'api.apps.ApiConfig',
 	'main.apps.MainConfig',
-	'accounts.apps.AccountsConfig',
-	'accounts.apps.AccountsConfig',
 	'django.contrib.admin',
 	'django.contrib.auth',
 	'django.contrib.contenttypes',
@@ -82,7 +80,7 @@ DATABASES = {
 		'NAME': 'variant_db',
 		'USER': 'root',
 		'PASSWORD': '',
-		'HOST': 'mysql',
+		'HOST': 'localhost',
 		'PORT': '3306',
 	}
 }

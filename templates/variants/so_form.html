@@ -13,7 +13,7 @@
             <fieldset id="diseases">
                 <div id="add" class="row mt-2 mb-2">
                     <div class="col-2">
-                        <a class="collapsed" id="d0_collapse" href="" data-toggle="collapse" data-target="#d0" onclick="collapse(this)" hidden>Collapse Disease<i id="d0_icon" class="fa fa-chevron-down pr-2" aria-hidden="true"></i></a>
+                        <a class="collapsed" id="d0_collapse" href="" data-toggle="collapse" data-target="#d0" onclick="collapse(this,1)" hidden><i id="d0_icon" class="fa fa-chevron-down pr-2" aria-hidden="true"></i>Collapse Disease</a>
                     </div>
                     <div class="col-2 offset-md-8 text-right pr-5">
                         <button class="btn btn-primary btn-sm" type="button" onclick="var disease=add_disease(); add_f_class(disease);">Add Disease</button>
@@ -27,7 +27,7 @@
                             <input class="form-control" id="d0_disease" name="d0_disease">
                         </div>
 
-                        <div class="col-6 form-group">
+                        <div class="col-4 form-group">
                             <label for="d0_func_sig">Functional Significance</label>
                             <select class="form-control" id="d0_func_sig" name="d0_func_sig">
                                 <option disabled selected>Select</option>
@@ -38,9 +38,15 @@
                                 <option>Benign</option>
                             </select>
                         </div>
+                        <div class="col-2">
+                            <button type="button" class="btn btn-primary btn-sm" id="d0_fc0_add" name="d0_fc0_add" onclick="add_f_class(this)">Add Functional Class</button>
+                        </div>
                     </div>
                     <fieldset id="d0_f_classes">
-                        <fieldset class="mb-3" id="d0_fc0" hidden>
+                        <a id="d0_fc0_collapse" class="collapsed" data-toggle="collapse" data-target="#d0_fc0" onclick="collapse(this,2)" href="" hidden>
+                            <i id="d0_fc0_icon" class="fa fa-chevron-down pr-2" aria-hidden="true"></i>Collapse Functional Class<br/><br/>
+                        </a>
+                        <fieldset class="mb-3 collapse" id="d0_fc0" hidden>
                             <div class="row mb-2">
                                 <div class="col-6 form-group">
                                     <label>Functional Class</label><input id="d0_fc0_id" name="d0_fc0_id" hidden>
@@ -54,10 +60,6 @@
                                         <option>BRAF Class II</option>
                                         <option>BRAF Class III</option>
                                     </select>
-                                </div>
-
-                                <div class="col-6 text-right">
-                                    <button type="button" class="btn btn-primary btn-sm" id="d0_fc0_add" name="d0_fc0_add" onclick="add_f_class(this)">Add Functional Class</button>
                                 </div>
                             </div>
 
@@ -101,11 +103,15 @@
                         </fieldset>
                     </fieldset>
 
-                    <br/>
-                    <div class="row form-group">
+                    <div>
+                        <a id="d0_tier_collapse" class="collapsed" data-toggle="collapse" data-target="#d0_tier" onclick="collapse(this,2)" href="">
+                            <i id="d0_tier_icon" class="fa fa-chevron-down pr-2" aria-hidden="true"></i>Collapse Tier<br/><br/>
+                        </a>
+                    </div>
+                    <div id="d0_tier" class="row form-group collapse">
                         <div class="col-12">
-                            <label for="tier">AMP/ASCO Tier</label>
-                            <select class="form-control" id="tier">
+                            <label for="d0_others">AMP/ASCO Tier</label>
+                            <select class="form-control" id="d0_others" name="d0_others">
                                 <option>Tier I</option>
                                 <option>Tier II</option>
                                 <option>Tier III</option>
@@ -114,7 +120,7 @@
                         </div>
                     </div>
 
-                    <div class="card">
+                    <div id="d0_tier" class="card collapse mb-4">
                         <div class="card-header d-flex">
                             <div class="mr-auto">
                                 Evidences
@@ -211,32 +217,34 @@
                         </fieldset>
                     </div>
 
-                    <br/><br/>
-                    <div class="row form-group">
+                    <div class="row col-2">
+                        <a class="collapsed" id="d0_report_collapse" href="" data-toggle="collapse" data-target="#d0_report" onclick="collapse(this,2)"><i id="d0_report_icon" class="fa fa-chevron-down pr-2" aria-hidden="true"></i>Collapse Report<br/><br/></a>
+                    </div>
+                    <div id="d0_report" class="row form-group collapse">
                         <div class="col-12">
                             <label for="d0_gr">Gene Report</label><input id="d0_gr_id" name="d0_report_id" hidden><input id="d0_gr_name" name="d0_report_name" value="Gene Report" hidden>
                             <textarea class="form-control" id="d0_gr" name="d0_report"></textarea>
                         </div>
                     </div>
-                    <div class="row form-group">
+                    <div id="d0_report" class="row form-group collapse">
                         <div class="col-12">
                             <label for="d0_vr">Variant Report</label><input id="d0_vr_id" name="d0_report_id" hidden><input id="d0_vr_name" name="d0_report_name" value="Variant Report" hidden>
                             <textarea class="form-control" id="d0_vr" name="d0_report"></textarea>
                         </div>
                     </div>
-                    <div class="row form-group">
+                    <div id="d0_report" class="row form-group collapse">
                         <div class="col-12">
                             <label for="d0_gdr">Gene-Disease Report</label><input id="d0_gdr_id" name="d0_report_id" hidden><input id="d0_gdr_name" name="d0_report_name" value="Gene-Disease Report" hidden>
                             <textarea class="form-control" id="d0_gdr" name="d0_report"></textarea>
                         </div>
                     </div>
-                    <div class="row form-group">
+                    <div id="d0_report" class="row form-group collapse">
                         <div class="col-12">
                             <label for="d0_vdr">Variant-Disease Report</label><input id="d0_vdr_id" name="d0_report_id" hidden><input id="d0_vdr_name" name="d0_report_name" value="Variant-Disease Report" hidden>
                             <textarea class="form-control" id="d0_vdr" name="d0_report"></textarea>
                         </div>
                     </div>
-                    <div class="row form-group">
+                    <div id="d0_report" class="row form-group collapse">
                         <div class="col-12">
                             <label for="d0_vgir">Variant Germline Implications Report</label><input id="d0_vgir_id" name="d0_report_id" hidden><input id="d0_vgir_name" name="d0_report_name" value="Variant Germline Implications Report" hidden>
                             <textarea class="form-control" id="d0_vgir" name="d0_report"></textarea>
@@ -301,7 +309,7 @@
         {% for evidence in disease.evidences.all %}
         var element = document.getElementById(disease.id + '_etype2_{{ forloop.counter }}')
         if (element == null) {
-            add_evidence_type2();
+            add_evidence_type2(disease);
         }
         document.getElementById(disease.id + '_etype2_id{{ forloop.counter }}').value =  "{{ evidence.id }}";
         document.getElementById(disease.id + '_etype2_st{{forloop.counter}}').value = "{{ evidence.source_type }}";

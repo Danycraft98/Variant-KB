@@ -54,6 +54,7 @@ class PathItem(models.Model):
 
 class Disease(models.Model):
 	name = models.CharField(max_length=20, null=True)
+	others = models.CharField(max_length=20, null=True)
 	report = models.CharField(max_length=20, null=True)
 	variant = models.ForeignKey(Variant, related_name="diseases", on_delete=models.CASCADE, null=True, blank=True)
 

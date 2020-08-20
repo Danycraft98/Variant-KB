@@ -5,7 +5,7 @@ import datetime
 from api.models import Gene, Variant, Disease, Evidence, SubEvidence, History, PathItem
 
 
-def add_evidence(request, prefix, dx_id, item=None):
+def add_evidence(request, prefix, dx_id, variant, item=None):
 	for i, (e_id, source_type, source_id, statement) in enumerate(zip(request.POST.getlist(prefix + "_id"), request.POST.getlist(prefix + "_st"), request.POST.getlist(prefix + "_s"), request.POST.getlist(prefix + "_e"))):
 		if e_id.isdigit():
 			evidence = Evidence.objects.get(pk=e_id)
@@ -22,7 +22,7 @@ def add_evidence(request, prefix, dx_id, item=None):
 
 		if request.POST.getlist(prefix + "_sig"):
 			SubEvidence.objects.create(level=request.POST.getlist(prefix + "_level")[i], evid_sig=request.POST.getlist(prefix + "_sig")[i], evid_dir=request.POST.getlist(prefix + "_dir")[i], clin_sig=request.POST.getlist(prefix + "_clin_sig")[i], drug_class=request.POST.getlist(prefix + "_drug")[i], evid_rating=request.POST.getlist(prefix + "_rating")[i], evidence=evidence)
-		History.objects.create(content=statement, object=evidence, user=request.user, timestamp=datetime.datetime.now())
+		History.objects.create(content=statement, object=evidence, user=request.user, timestamp=datetime.datetime.now(), variant=variant)
 
 
 class GeneTable(tables.Table):
@@ -70,5 +70,5 @@ class HistoryTable(tables.Table):
 		model = History
 		order_by = "-timestamp"
 		sequence = ('timestamp', 'object', 'content', 'user')
-		exclude = ('id',)
+		exclude = ('id', 'variant')
 		attrs = {"class": "nowrap table table-bordered table-hover"}

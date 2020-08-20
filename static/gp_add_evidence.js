@@ -1,8 +1,9 @@
 function collapse(element) {
-    if (element.className != "collapsed") {
-        document.getElementById(element.id.split("_")[0] + "_icon").setAttribute("class", "fa fa-chevron-down pr-2");
+    var arrow = document.getElementById(element.id.split("_")[0] + "_icon")
+    if (element.className.includes("collapsed")) {
+        arrow.className = arrow.className.replace("down", "up");
     } else {
-        document.getElementById(element.id.split("_")[0] + "_icon").setAttribute("class", "fa fa-chevron-up pr-2");
+        arrow.className = arrow.className.replace("up", "down");
     }
 }
 

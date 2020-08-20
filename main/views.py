@@ -112,7 +112,7 @@ def save(request, variant_id):
 		i = 1
 		while request.POST.get("d" + str(i) + "_disease"):
 			if not request.POST.get("d" + str(i) + "_id").isdigit():
-				main_item = Disease.objects.create(name=request.POST.get("d" + str(i) + "_disease"), report=request.POST.get("d" + str(i) + "_desc"), variant=item)
+				main_item = Disease.objects.create(name=request.POST.get("d" + str(i) + "_disease"), report=request.POST.get("d" + str(i) + "_desc"), others=request.POST.get("d" + str(i) + "_others"), variant=item)
 				dx_id = Disease.objects.get(pk=main_item.pk)
 			else:
 				dx_id = Disease.objects.get(pk=request.POST.get("d" + str(i) + "_id"))
@@ -120,7 +120,7 @@ def save(request, variant_id):
 			if item.branch == 'gp':
 				for element in ITEMS.keys():
 					item_id = PathItem.objects.get(key=element)
-					add_evidence(request, "d" + str(i) + "_" + element, dx_id, item_id)
+					add_evidence(request, "d" + str(i) + "_" + element, dx_id, item, item_id)
 				for_score = request.POST.get("d" + str(i) + "_for_score")
 				against_score = request.POST.get("d" + str(i) + "_against_score")
 				if Score.objects.filter(disease=dx_id):
@@ -137,11 +137,11 @@ def save(request, variant_id):
 					else:
 						func_id = Functional.objects.get(pk=request.POST.get("d" + str(i) + "_fc" + str(j) + "_id").isdigit())
 
-					add_evidence(request, "d" + str(i) + "_fc" + str(j) + "_etype1", dx_id, func_id)
+					add_evidence(request, "d" + str(i) + "_fc" + str(j) + "_etype1", dx_id, item, func_id)
 					j += 1
-				add_evidence(request, "d" + str(i) + "_etype2", dx_id)
+				add_evidence(request, "d" + str(i) + "_etype2", dx_id, item)
 			for report_id, report, field_name in zip(request.POST.getlist("d" + str(i) + "_report_id"), request.POST.getlist("d" + str(i) + "_report"), request.POST.getlist("d" + str(i) + "_report_name")):
-				if not report_id.isdigit():
+				if not report_id.isdigit() and len(report) > 0:
 					Report.objects.create(name=field_name, content=report, disease=dx_id)
 			i += 1
 	except Variant.DoesNotExist:
@@ -192,6 +192,7 @@ def exported(request, variant_id):
 def history(request, variant_id):
 	try:
 		item = Variant.objects.get(pk=variant_id)
+		print(item.history.all())
 		histories = HistoryTable([h for h in item.history.all()])
 	except Variant.DoesNotExist:
 		raise Http404("Variant does not exist")

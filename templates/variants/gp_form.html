@@ -28,7 +28,7 @@
                         </div>
                         <div class="col-6 form-group">
                             <label>MIM#</label>
-                            <input class="form-control" id="d0_mim">
+                            <input class="form-control" id="d0_others" name="d0_others">
                         </div>
                     </div>
                     <div class="row form-group">
@@ -176,7 +176,7 @@
         j = 1;
         while (document.getElementById(field_partname + '_{{ evidence.item }}_id' + j.toString()).value.length > 0) {
             add_evidence(document.getElementById(field_partname + '_{{ evidence.item }}_btn'));
-            i++;
+            j++;
         }
         document.getElementById(field_partname + '_{{ evidence.item }}_id' + j.toString()).value = "{{evidence.id}}";
         document.getElementById(field_partname + '_{{ evidence.item }}_st' + j.toString()).value = "{{evidence.source_type}}";
