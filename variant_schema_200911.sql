@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.21, for osx10.15 (x86_64)
 --
--- Host: localhost    Database: variant_db
+-- Host: 127.0.0.1    Database: variant_db
 -- ------------------------------------------------------
 -- Server version	8.0.21
 
@@ -31,7 +31,7 @@ CREATE TABLE `api_disease` (
   PRIMARY KEY (`id`),
   KEY `api_disease_variant_id_81f53161_fk_api_variant_id` (`variant_id`),
   CONSTRAINT `api_disease_variant_id_81f53161_fk_api_variant_id` FOREIGN KEY (`variant_id`) REFERENCES `api_variant` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -65,7 +65,7 @@ CREATE TABLE `api_evidence` (
   CONSTRAINT `api_evidence_disease_id_0f0c81a5_fk_api_disease_id` FOREIGN KEY (`disease_id`) REFERENCES `api_disease` (`id`),
   CONSTRAINT `api_evidence_functional_id_8f0cb7e1_fk_api_functional_id` FOREIGN KEY (`functional_id`) REFERENCES `api_functional` (`id`),
   CONSTRAINT `api_evidence_item_id_46e9aba1_fk_api_pathitem_id` FOREIGN KEY (`item_id`) REFERENCES `api_pathitem` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -92,7 +92,7 @@ CREATE TABLE `api_functional` (
   PRIMARY KEY (`id`),
   KEY `api_functional_disease_id_9f50e00d_fk_api_disease_id` (`disease_id`),
   CONSTRAINT `api_functional_disease_id_9f50e00d_fk_api_disease_id` FOREIGN KEY (`disease_id`) REFERENCES `api_disease` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -117,7 +117,7 @@ CREATE TABLE `api_gene` (
   `pub_date` datetime(6) NOT NULL,
   `content` longtext NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -150,7 +150,7 @@ CREATE TABLE `api_history` (
   CONSTRAINT `api_history_object_id_33723063_fk_api_evidence_id` FOREIGN KEY (`object_id`) REFERENCES `api_evidence` (`id`),
   CONSTRAINT `api_history_user_id_b67a8aac_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`),
   CONSTRAINT `api_history_variant_id_9b04b65b_fk_api_variant_id` FOREIGN KEY (`variant_id`) REFERENCES `api_variant` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -173,7 +173,7 @@ CREATE TABLE `api_interpretation` (
   `id` int NOT NULL AUTO_INCREMENT,
   `content` longtext NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -201,7 +201,7 @@ CREATE TABLE `api_interpretation_genes` (
   KEY `api_interpretation_genes_gene_id_332b2314_fk_api_gene_id` (`gene_id`),
   CONSTRAINT `api_interpretation_g_interpretation_id_363ce684_fk_api_inter` FOREIGN KEY (`interpretation_id`) REFERENCES `api_interpretation` (`id`),
   CONSTRAINT `api_interpretation_genes_gene_id_332b2314_fk_api_gene_id` FOREIGN KEY (`gene_id`) REFERENCES `api_gene` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -229,7 +229,7 @@ CREATE TABLE `api_interpretation_variants` (
   KEY `api_interpretation_v_variant_id_81cb755e_fk_api_varia` (`variant_id`),
   CONSTRAINT `api_interpretation_v_interpretation_id_7712e4a0_fk_api_inter` FOREIGN KEY (`interpretation_id`) REFERENCES `api_interpretation` (`id`),
   CONSTRAINT `api_interpretation_v_variant_id_81cb755e_fk_api_varia` FOREIGN KEY (`variant_id`) REFERENCES `api_variant` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -253,7 +253,7 @@ CREATE TABLE `api_pathitem` (
   `key` varchar(5) DEFAULT NULL,
   `value` int NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -281,7 +281,7 @@ CREATE TABLE `api_report` (
   PRIMARY KEY (`id`),
   KEY `api_report_disease_id_7b991380_fk_api_disease_id` (`disease_id`),
   CONSTRAINT `api_report_disease_id_7b991380_fk_api_disease_id` FOREIGN KEY (`disease_id`) REFERENCES `api_disease` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -308,7 +308,7 @@ CREATE TABLE `api_score` (
   PRIMARY KEY (`id`),
   KEY `api_score_disease_id_36796f93_fk_api_disease_id` (`disease_id`),
   CONSTRAINT `api_score_disease_id_36796f93_fk_api_disease_id` FOREIGN KEY (`disease_id`) REFERENCES `api_disease` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -342,7 +342,7 @@ CREATE TABLE `api_subevidence` (
   KEY `api_subevidence_variant_id_46b41725_fk_api_variant_id` (`variant_id`),
   CONSTRAINT `api_subevidence_evidence_id_8eb5cfe0_fk_api_evidence_id` FOREIGN KEY (`evidence_id`) REFERENCES `api_evidence` (`id`),
   CONSTRAINT `api_subevidence_variant_id_46b41725_fk_api_variant_id` FOREIGN KEY (`variant_id`) REFERENCES `api_variant` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -363,19 +363,23 @@ DROP TABLE IF EXISTS `api_variant`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `api_variant` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(100) NOT NULL,
-  `type` varchar(10) DEFAULT NULL,
-  `g_dna` varchar(100) DEFAULT NULL,
-  `c_dna` varchar(10) DEFAULT NULL,
-  `exon` varchar(10) DEFAULT NULL,
-  `protein` varchar(10) DEFAULT NULL,
+  `genome_build` varchar(10) DEFAULT NULL,
+  `chromosome` varchar(100) DEFAULT NULL,
+  `start` varchar(10) DEFAULT NULL,
+  `end` varchar(10) DEFAULT NULL,
+  `ref` varchar(5) DEFAULT NULL,
+  `alt` varchar(5) DEFAULT NULL,
+  `transcript` varchar(20) DEFAULT NULL,
+  `c` varchar(10) DEFAULT NULL,
+  `p` varchar(20) DEFAULT NULL,
+  `consequence` varchar(10) DEFAULT NULL,
   `branch` varchar(2) NOT NULL,
   `reported` varchar(1) NOT NULL,
   `gene_id` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `api_variant_gene_id_5263a79c_fk_api_gene_id` (`gene_id`),
   CONSTRAINT `api_variant_gene_id_5263a79c_fk_api_gene_id` FOREIGN KEY (`gene_id`) REFERENCES `api_gene` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -399,7 +403,7 @@ CREATE TABLE `auth_group` (
   `name` varchar(150) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -427,7 +431,7 @@ CREATE TABLE `auth_group_permissions` (
   KEY `auth_group_permissio_permission_id_84c5c92e_fk_auth_perm` (`permission_id`),
   CONSTRAINT `auth_group_permissio_permission_id_84c5c92e_fk_auth_perm` FOREIGN KEY (`permission_id`) REFERENCES `auth_permission` (`id`),
   CONSTRAINT `auth_group_permissions_group_id_b120cbf9_fk_auth_group_id` FOREIGN KEY (`group_id`) REFERENCES `auth_group` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -454,7 +458,7 @@ CREATE TABLE `auth_permission` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `auth_permission_content_type_id_codename_01ab375a_uniq` (`content_type_id`,`codename`),
   CONSTRAINT `auth_permission_content_type_id_2f476e4b_fk_django_co` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=69 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=69 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -488,7 +492,7 @@ CREATE TABLE `auth_user` (
   `date_joined` datetime(6) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -497,7 +501,7 @@ CREATE TABLE `auth_user` (
 
 LOCK TABLES `auth_user` WRITE;
 /*!40000 ALTER TABLE `auth_user` DISABLE KEYS */;
-INSERT INTO `auth_user` VALUES (1,'pbkdf2_sha256$216000$CRAudMs7apO8$nDJdeIA9MQiW6vPBHKLfD9OLZimda0jOcYu5VcRF1XE=',NULL,1,'admin','','','',1,1,'2020-08-20 14:54:30.974628');
+INSERT INTO `auth_user` VALUES (1,'pbkdf2_sha256$216000$lfZUHj9vKmAM$cqzyxHVBTLCpuULrZSAriHS9jlnEr/OrjyIGR3LUVwc=','2020-09-11 14:34:21.429615',1,'admin','','','',1,1,'2020-09-11 14:33:49.251416');
 /*!40000 ALTER TABLE `auth_user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -517,7 +521,7 @@ CREATE TABLE `auth_user_groups` (
   KEY `auth_user_groups_group_id_97559544_fk_auth_group_id` (`group_id`),
   CONSTRAINT `auth_user_groups_group_id_97559544_fk_auth_group_id` FOREIGN KEY (`group_id`) REFERENCES `auth_group` (`id`),
   CONSTRAINT `auth_user_groups_user_id_6a12ed8b_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -545,7 +549,7 @@ CREATE TABLE `auth_user_user_permissions` (
   KEY `auth_user_user_permi_permission_id_1fbb5f2c_fk_auth_perm` (`permission_id`),
   CONSTRAINT `auth_user_user_permi_permission_id_1fbb5f2c_fk_auth_perm` FOREIGN KEY (`permission_id`) REFERENCES `auth_permission` (`id`),
   CONSTRAINT `auth_user_user_permissions_user_id_a95ead1b_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -579,7 +583,7 @@ CREATE TABLE `django_admin_log` (
   CONSTRAINT `django_admin_log_content_type_id_c4bce8eb_fk_django_co` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`),
   CONSTRAINT `django_admin_log_user_id_c564eba6_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`),
   CONSTRAINT `django_admin_log_chk_1` CHECK ((`action_flag` >= 0))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -604,7 +608,7 @@ CREATE TABLE `django_content_type` (
   `model` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `django_content_type_app_label_model_76bd3d3b_uniq` (`app_label`,`model`)
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -630,7 +634,7 @@ CREATE TABLE `django_migrations` (
   `name` varchar(255) NOT NULL,
   `applied` datetime(6) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -639,7 +643,7 @@ CREATE TABLE `django_migrations` (
 
 LOCK TABLES `django_migrations` WRITE;
 /*!40000 ALTER TABLE `django_migrations` DISABLE KEYS */;
-INSERT INTO `django_migrations` VALUES (1,'contenttypes','0001_initial','2020-08-20 14:54:09.629504'),(2,'auth','0001_initial','2020-08-20 14:54:09.757887'),(3,'admin','0001_initial','2020-08-20 14:54:09.977774'),(4,'admin','0002_logentry_remove_auto_add','2020-08-20 14:54:10.105385'),(5,'admin','0003_logentry_add_action_flag_choices','2020-08-20 14:54:10.115401'),(6,'api','0001_initial','2020-08-20 14:54:10.472642'),(7,'contenttypes','0002_remove_content_type_name','2020-08-20 14:54:10.882012'),(8,'auth','0002_alter_permission_name_max_length','2020-08-20 14:54:10.932601'),(9,'auth','0003_alter_user_email_max_length','2020-08-20 14:54:10.965431'),(10,'auth','0004_alter_user_username_opts','2020-08-20 14:54:10.976587'),(11,'auth','0005_alter_user_last_login_null','2020-08-20 14:54:11.014411'),(12,'auth','0006_require_contenttypes_0002','2020-08-20 14:54:11.017129'),(13,'auth','0007_alter_validators_add_error_messages','2020-08-20 14:54:11.030021'),(14,'auth','0008_alter_user_username_max_length','2020-08-20 14:54:11.078166'),(15,'auth','0009_alter_user_last_name_max_length','2020-08-20 14:54:11.123062'),(16,'auth','0010_alter_group_name_max_length','2020-08-20 14:54:11.151127'),(17,'auth','0011_update_proxy_permissions','2020-08-20 14:54:11.172261'),(18,'auth','0012_alter_user_first_name_max_length','2020-08-20 14:54:11.212935'),(19,'sessions','0001_initial','2020-08-20 14:54:11.227572');
+INSERT INTO `django_migrations` VALUES (1,'contenttypes','0001_initial','2020-09-11 14:33:24.262393'),(2,'auth','0001_initial','2020-09-11 14:33:24.378432'),(3,'admin','0001_initial','2020-09-11 14:33:24.724672'),(4,'admin','0002_logentry_remove_auto_add','2020-09-11 14:33:24.784621'),(5,'admin','0003_logentry_add_action_flag_choices','2020-09-11 14:33:24.795479'),(6,'api','0001_initial','2020-09-11 14:33:25.210240'),(7,'contenttypes','0002_remove_content_type_name','2020-09-11 14:33:25.640128'),(8,'auth','0002_alter_permission_name_max_length','2020-09-11 14:33:25.689405'),(9,'auth','0003_alter_user_email_max_length','2020-09-11 14:33:25.727246'),(10,'auth','0004_alter_user_username_opts','2020-09-11 14:33:25.739499'),(11,'auth','0005_alter_user_last_login_null','2020-09-11 14:33:25.782229'),(12,'auth','0006_require_contenttypes_0002','2020-09-11 14:33:25.785066'),(13,'auth','0007_alter_validators_add_error_messages','2020-09-11 14:33:25.797702'),(14,'auth','0008_alter_user_username_max_length','2020-09-11 14:33:25.845605'),(15,'auth','0009_alter_user_last_name_max_length','2020-09-11 14:33:25.894639'),(16,'auth','0010_alter_group_name_max_length','2020-09-11 14:33:25.925965'),(17,'auth','0011_update_proxy_permissions','2020-09-11 14:33:25.952093'),(18,'auth','0012_alter_user_first_name_max_length','2020-09-11 14:33:26.002280'),(19,'sessions','0001_initial','2020-09-11 14:33:26.017720');
 /*!40000 ALTER TABLE `django_migrations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -656,7 +660,7 @@ CREATE TABLE `django_session` (
   `expire_date` datetime(6) NOT NULL,
   PRIMARY KEY (`session_key`),
   KEY `django_session_expire_date_a5c62663` (`expire_date`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -665,6 +669,7 @@ CREATE TABLE `django_session` (
 
 LOCK TABLES `django_session` WRITE;
 /*!40000 ALTER TABLE `django_session` DISABLE KEYS */;
+INSERT INTO `django_session` VALUES ('tdwxmar4evnwo8um4g1273vzy1ix533d','.eJxVjEEOwiAQRe_C2hAHykBduu8ZyMCAVA0kpV0Z765NutDtf-_9l_C0rcVvPS1-ZnERIE6_W6D4SHUHfKd6azK2ui5zkLsiD9rl1Dg9r4f7d1Col2-tYLR8ji4yuAADQrYpsckOxwEMclYWIZDBrFG7mDMTokPDMChOVov3B9wON70:1kGk85:I4dZYmMosZgUXkDDSbFQqVa1Me_FvIAobYljx29OPFc','2020-09-25 14:34:21.432649');
 /*!40000 ALTER TABLE `django_session` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -677,4 +682,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-08-20 10:55:07
+-- Dump completed on 2020-09-11 10:35:24
