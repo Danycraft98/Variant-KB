@@ -21,11 +21,16 @@ class Gene(models.Model):
 
 class Variant(models.Model):
 	name = models.CharField(max_length=100)
-	type = models.CharField(max_length=10, null=True)
-	g_dna = models.CharField('gDNA', max_length=100, null=True)  # chr9:133747520-133747520
-	c_dna = models.CharField('cDNA', max_length=10, null=True)  # 827A>G or A827G
-	exon = models.CharField(max_length=10, null=True)
-	protein = models.CharField(max_length=10, null=True)
+	genome_build = models.CharField(max_length=10, null=True)
+	chromosome = models.CharField(max_length=100, null=True)
+	start = models.CharField(max_length=10, null=True)  # 827A>G or A827G
+	end = models.CharField(max_length=10, null=True)  # 827A>G or A827G
+	ref = models.CharField(max_length=1, null=True)
+	alt = models.CharField(max_length=1, null=True)
+	transcript = models.CharField(max_length=20, null=True)
+	c = models.CharField(max_length=10, null=True)
+	p = models.CharField(max_length=20, null=True)
+	consequence = models.CharField(max_length=10, null=True)
 	gene = models.ForeignKey(Gene, related_name="variants", on_delete=models.CASCADE, null=True, blank=True)
 	branch = models.CharField(choices=(
 		('gp', "Genomic Pathogenetic"),

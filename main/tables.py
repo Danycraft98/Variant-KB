@@ -42,8 +42,8 @@ class VariantTable(tables.Table):
 
 	class Meta:
 		model = Variant
-		sequence = ('edit', 'name', 'type', 'exon')
-		exclude = ('id', 'gene', 'interpretation', 'c_dna', 'g_dna')
+		sequence = ('edit', 'name', 'chromosome')
+		exclude = ('id', 'gene', 'transcript', 'consequence', 'c', 'p')
 		attrs = {"class": "dataTable nowrap table table-bordered table-hover"}
 
 

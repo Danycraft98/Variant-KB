@@ -90,7 +90,7 @@ def upload(request):
 	else:
 		raw_data = pandas.read_excel(request.FILES.get("file"))
 	for _, row in raw_data.iterrows():
-		exist_variants = Variant.objects.filter(gene__name=row.get("gene")).filter(Q(c_dna=row.get("c_dna")) | Q(protein=row.get("protein")))
+		exist_variants = Variant.objects.filter(gene__name=row.get("gene")).filter(Q(c=row.get("c")) | Q(p=row.get("p")))
 		gene_name = row.pop('gene')
 		try:
 			gene_item = Gene.objects.get(name=gene_name)
@@ -100,7 +100,6 @@ def upload(request):
 			Variant.objects.create(branch=request.POST.get("data_type"), gene=gene_item, **row)
 		else:
 			print(exist_variants.count())
-	# Variant.objects.create(name,type,g_dna,c_dna,exon,protein,gene,branch)
 	return HttpResponseRedirect(reverse('index'))
 
 
