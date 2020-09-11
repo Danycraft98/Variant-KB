@@ -20,7 +20,6 @@ class Gene(models.Model):
 
 
 class Variant(models.Model):
-	name = models.CharField(max_length=100)
 	genome_build = models.CharField(max_length=10, null=True)
 	chromosome = models.CharField(max_length=100, null=True)
 	start = models.CharField(max_length=10, null=True)  # 827A>G or A827G
@@ -41,12 +40,6 @@ class Variant(models.Model):
 		('c', "Checked but not reported"),
 		('r', "Reported"),
 	), max_length=1, default='n')
-
-	def __str__(self):
-		return self.name
-
-	class Meta:
-		ordering = ['name']
 
 
 class PathItem(models.Model):

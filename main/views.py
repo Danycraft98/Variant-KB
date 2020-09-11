@@ -33,14 +33,7 @@ def search(request):
 				item = Gene.objects.get(name=name)
 				return redirect('gene', gene_id=item.id)
 			except Gene.DoesNotExist:
-				variants = Variant.objects.filter(name=name)
-				if variants.count() > 1:
-					return redirect('/variants?name=' + name)
-				try:
-					item = Variant.objects.get(name=name)
-					return redirect('variant', variant_id=item.id)
-				except Variant.DoesNotExist:
-					pass
+				pass
 		else:
 			search_query = {key: value for key, value in search_query.items() if value != ''}
 			search_query.pop("csrfmiddlewaretoken")
@@ -96,7 +89,7 @@ def upload(request):
 			gene_item = Gene.objects.get(name=gene_name)
 		except Gene.DoesNotExist:
 			gene_item = Gene.objects.create(name=gene_name, pub_date=datetime.datetime.now())
-		if exist_variants.count() == 0:
+		if "consequence" in row or exist_variants.count() == 0:
 			Variant.objects.create(branch=request.POST.get("data_type"), gene=gene_item, **row)
 		else:
 			print(exist_variants.count())

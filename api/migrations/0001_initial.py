@@ -54,7 +54,6 @@ class Migration(migrations.Migration):
             name='Variant',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100)),
                 ('genome_build', models.CharField(max_length=10, null=True)),
                 ('chromosome', models.CharField(max_length=100, null=True)),
                 ('start', models.CharField(max_length=10, null=True)),

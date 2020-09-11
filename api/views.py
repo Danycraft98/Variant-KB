@@ -12,5 +12,5 @@ class GeneViewSet(viewsets.ModelViewSet):
 
 
 class VariantViewSet(viewsets.ModelViewSet):
-    queryset = Variant.objects.all().order_by('name')
+    queryset = Variant.objects.all()
     serializer_class = VariantSerializer
