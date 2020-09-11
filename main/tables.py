@@ -38,11 +38,11 @@ class GeneTable(tables.Table):
 
 class VariantTable(tables.Table):
 	edit = tables.LinkColumn('variant', args=[A('id')], text="edit", empty_values=())
-	name = tables.LinkColumn('variant_text', args=[A('id')], text=lambda record: record.name, empty_values=())
+	variant_detail = tables.LinkColumn('variant_text', args=[A('id')], text="detail", empty_values=())
 
 	class Meta:
 		model = Variant
-		sequence = ('edit', 'name', 'chromosome')
+		sequence = ('edit', 'variant_detail', 'chromosome')
 		exclude = ('id', 'gene', 'transcript', 'consequence', 'c', 'p')
 		attrs = {"class": "dataTable nowrap table table-bordered table-hover"}
 

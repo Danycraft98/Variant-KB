@@ -9,7 +9,7 @@
         <form method="post" action="">
             {% csrf_token %}
             <div>
-                Search by gene or variant name, or with variant field(s).
+                Search by gene name or with variant field(s).
             </div>
             <div class="form-group form-row">
                 <div class="col-12 input-group">
@@ -19,7 +19,6 @@
                     <input type="text" name="name" class="form-control text-sm">
                 </div>
             </div>
-            <hr/>
             <div class="form-group form-row">
                 <div class="col-12 input-group">
                     <div class="input-group-append">
