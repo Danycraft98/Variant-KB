@@ -9,6 +9,7 @@ from django.urls import reverse
 
 import datetime
 import pandas
+import math
 import urllib
 from weasyprint import HTML
 from api.models import *
@@ -83,14 +84,18 @@ def upload(request):
 	else:
 		raw_data = pandas.read_excel(request.FILES.get("file"))
 	for _, row in raw_data.iterrows():
+		if not math.isnan(row.get("chromosome")):
+			row["chromosome"] = int(row.get("chromosome"))
 		exist_variants = Variant.objects.filter(gene__name=row.get("gene")).filter(Q(c=row.get("c")) | Q(p=row.get("p")))
 		gene_name = row.pop('gene')
+		print(row.get("chromosome"))
 		try:
 			gene_item = Gene.objects.get(name=gene_name)
 		except Gene.DoesNotExist:
 			gene_item = Gene.objects.create(name=gene_name, pub_date=datetime.datetime.now())
 		if "consequence" in row or exist_variants.count() == 0:
-			Variant.objects.create(branch=request.POST.get("data_type"), gene=gene_item, **row)
+			variant = Variant.objects.create(branch=request.POST.get("data_type"), gene=gene_item, **row)
+			History.objects.create(content="Upload", user=request.user, timestamp=datetime.datetime.now(), variant=variant)
 		else:
 			print(exist_variants.count())
 	return HttpResponseRedirect(reverse('index'))
@@ -157,7 +162,7 @@ def export(request, variant_id):
 		disease_list = DiseaseTable(item.diseases.all())
 	except Variant.DoesNotExist:
 		raise Http404("Variant does not exist")
-	return render(request, 'variants/index.html', {'title': 'Export for Variant ' + item.name, 'item': item, 'table': disease_list})
+	return render(request, 'variants/index.html', {'title': 'Export for Variant', 'item': item, 'table': disease_list})
 
 
 def exported(request, variant_id):
@@ -172,20 +177,19 @@ def exported(request, variant_id):
 		html_string = render_to_string('general/so_export.html', {'item': item, 'diseases': diseases})
 
 	html = HTML(string=html_string)
-	html.write_pdf(target='/tmp/report_' + item.name + '.pdf')
+	html.write_pdf(target='/tmp/report.pdf')
 
 	fs = FileSystemStorage('/tmp')
-	with fs.open('report_' + item.name + '.pdf') as pdf:
+	with fs.open('report.pdf') as pdf:
 		response = HttpResponse(pdf, content_type='application/pdf')
-		response['Content-Disposition'] = 'attachment; filename="report_' + item.name + '.pdf"'
+		response['Content-Disposition'] = 'attachment; filename="report.pdf"'
 		return response
 
 
 def history(request, variant_id):
 	try:
 		item = Variant.objects.get(pk=variant_id)
-		print(item.history.all())
 		histories = HistoryTable([h for h in item.history.all()])
 	except Variant.DoesNotExist:
 		raise Http404("Variant does not exist")
-	return render(request, 'variants/index.html', {'item': item, 'table': histories, 'title': 'History of ' + str(item)})
+	return render(request, 'variants/index.html', {'item': item, 'table': histories, 'title': 'History'})

@@ -41,6 +41,9 @@ function add_disease() {
         if (element.tagName != 'SELECT' && element.type != 'checkbox' && !element.id.includes('score')) {
             element.value = '';
         }
+        if (element.id.includes("disease")) {
+            element.setAttribute("required","");
+        }
         element.name = element.name.replace(/^d\d/gi, 'd' + index)
         element.id = element.id.replace(/^d\d/gi, 'd' + index)
     })

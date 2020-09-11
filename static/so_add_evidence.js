@@ -26,11 +26,15 @@ function add_disease() {
         if (element.tagName != 'SELECT' && element.type != 'checkbox' && !element.id.includes('score') && element.name && !element.name.includes('report')) {
             element.value = '';
         }
-        if (element.name)
+        if (element.id.includes("disease")) {
+            element.setAttribute("required","");
+        }
+        if (element.name) {
             element.name = element.name.replace(/^d\d/gi, 'd' + index)
-        if (element.hasAttribute("data-target"))
-            //console.log(element.getAttribute("data-target"));
+        }
+        if (element.hasAttribute("data-target")) {
             element.setAttribute("data-target", element.getAttribute("data-target").replace(/d\d/gi, 'd' + index));
+        }
         element.id = element.id.replace(/^d\d/gi, 'd' + index)
     })
     cln.id = "d" + index
