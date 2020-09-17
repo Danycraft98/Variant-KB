@@ -47,7 +47,7 @@ def search(request):
 @login_required
 def variants(request):
 	if request.GET:
-		variant_list = VariantTable(Variant.objects.filter(**request.GET.dict()))
+		variant_list = VariantTable(Variant.objects.filter(chromosome__contains=request.GET.get("chromosome",""), p__contains=request.GET.get("p",""), c__contains=request.GET.get("c",""), ref__contains=request.GET.get("ref", ""), alt__contains=request.GET.get("alt", "")))
 	else:
 		variant_list = VariantTable(Variant.objects.all())
 	return render(request, 'variants/index.html', {'table': variant_list, 'title': 'List of Variants'})
@@ -78,6 +78,7 @@ def variant(request, variant_id):
 
 @login_required
 def upload(request):
+	exists_dict = {"yes":[], "no":[]}
 	spreadsheet = request.FILES.get("file")
 	if spreadsheet.name.split('.')[-1] == "csv":
 		raw_data = pandas.read_csv(request.FILES.get("file"))
@@ -88,7 +89,6 @@ def upload(request):
 			row["chromosome"] = int(row.get("chromosome"))
 		exist_variants = Variant.objects.filter(gene__name=row.get("gene")).filter(Q(c=row.get("c")) | Q(p=row.get("p")))
 		gene_name = row.pop('gene')
-		print(row.get("chromosome"))
 		try:
 			gene_item = Gene.objects.get(name=gene_name)
 		except Gene.DoesNotExist:
@@ -96,9 +96,11 @@ def upload(request):
 		if "consequence" in row or exist_variants.count() == 0:
 			variant = Variant.objects.create(branch=request.POST.get("data_type"), gene=gene_item, **row)
 			History.objects.create(content="Upload", user=request.user, timestamp=datetime.datetime.now(), variant=variant)
+			exists_dict["no"].append(variant)
 		else:
-			print(exist_variants.count())
-	return HttpResponseRedirect(reverse('index'))
+			exists_dict["yes"].append(exist_variants.first())
+	return render(request, 'general/uploaded.html', {'exist': VariantTable(exists_dict["yes"]), 'new': VariantTable(exists_dict["no"]), 'title': 'Uploads'})
+	#return HttpResponseRedirect(reverse('index'))
 
 
 @login_required

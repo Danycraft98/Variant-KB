@@ -21,11 +21,11 @@ class Gene(models.Model):
 
 class Variant(models.Model):
 	genome_build = models.CharField(max_length=10, null=True)
-	chromosome = models.CharField(max_length=100, null=True)
-	start = models.CharField(max_length=10, null=True)  # 827A>G or A827G
-	end = models.CharField(max_length=10, null=True)  # 827A>G or A827G
-	ref = models.CharField(max_length=5, null=True)
-	alt = models.CharField(max_length=5, null=True)
+	chromosome = models.CharField(max_length=6, null=True)
+	start = models.CharField(max_length=10, null=True)
+	end = models.CharField(max_length=10, null=True)
+	ref = models.CharField(max_length=100, null=True)
+	alt = models.CharField(max_length=100, null=True)
 	transcript = models.CharField(max_length=20, null=True)
 	c = models.CharField(max_length=10, null=True)
 	p = models.CharField(max_length=20, null=True)
