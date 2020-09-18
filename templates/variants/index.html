@@ -40,8 +40,13 @@
 {% block script %}
 <script src="//cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
 <script>
+    console.log("{{table.class_type}}");
     $(document).ready( function () {
-        $('.dataTable').DataTable();
+        $('.dataTable').DataTable(
+        {% if table.class_type == "Variant" %}
+        {"scrollX": true}
+        {% endif %}
+        );
     });
 </script>
 {% endblock %}

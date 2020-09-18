@@ -13,7 +13,7 @@
 Variant: {{ item }}
 Gene: {{ item.gene }}
 
-{% for disease in item.diseases.all %}
+{% for disease in diseases.all %}
 <div class="card">
     <div class="card-header">
         <h6><strong>Disease: {{ disease.name }}</strong></h6>

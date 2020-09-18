@@ -85,8 +85,6 @@ def upload(request):
 	else:
 		raw_data = pandas.read_excel(request.FILES.get("file"))
 	for _, row in raw_data.iterrows():
-		if not math.isnan(row.get("chromosome")):
-			row["chromosome"] = int(row.get("chromosome"))
 		exist_variants = Variant.objects.filter(gene__name=row.get("gene")).filter(Q(c=row.get("c")) | Q(p=row.get("p")))
 		gene_name = row.pop('gene')
 		try:
@@ -172,6 +170,7 @@ def exported(request, variant_id):
 		item = Variant.objects.get(pk=variant_id)
 	except Variant.DoesNotExist:
 		raise Http404("Variant does not exist")
+	#print(request.POST.getlist("disease"))
 	diseases = Disease.objects.filter(name__in=request.POST.getlist("disease"))
 	if item.branch == 'gp':
 		html_string = render_to_string('general/gp_export.html', {'item': item, 'diseases': diseases})

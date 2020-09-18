@@ -42,9 +42,12 @@ class VariantTable(tables.Table):
 
 	class Meta:
 		model = Variant
-		sequence = ('edit', 'variant_detail', 'chromosome', 'branch', 'p', 'transcript')
-		exclude = ('id', 'genome_build', 'gene', 'consequence', 'c', 'reported')
+		sequence = ('edit', 'variant_detail', 'chromosome', 'branch', 'c', 'p', 'transcript')
+		exclude = ('id', 'genome_build', 'gene', 'consequence', 'reported')
 		attrs = {"class": "dataTable nowrap table table-bordered table-hover"}
+
+	def class_type(self):
+		return "Variant"
 
 
 class CheckBoxColumn2(tables.CheckBoxColumn):
