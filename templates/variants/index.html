@@ -44,7 +44,7 @@
     $(document).ready( function () {
         $('.dataTable').DataTable(
         {% if table.class_type == "Variant" %}
-        {"scrollX": true}
+        {"scrollX": true, "sScrollX": "100%", "sScrollXInner": "110%"}
         {% endif %}
         );
     });
