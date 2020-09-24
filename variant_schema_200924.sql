@@ -113,7 +113,7 @@ DROP TABLE IF EXISTS `api_gene`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `api_gene` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(200) NOT NULL,
+  `name` varchar(20) NOT NULL,
   `pub_date` datetime(6) NOT NULL,
   `content` longtext NOT NULL,
   PRIMARY KEY (`id`)
@@ -364,11 +364,11 @@ DROP TABLE IF EXISTS `api_variant`;
 CREATE TABLE `api_variant` (
   `id` int NOT NULL AUTO_INCREMENT,
   `genome_build` varchar(10) DEFAULT NULL,
-  `chromosome` varchar(100) DEFAULT NULL,
+  `chromosome` varchar(6) DEFAULT NULL,
   `start` varchar(10) DEFAULT NULL,
   `end` varchar(10) DEFAULT NULL,
-  `ref` varchar(5) DEFAULT NULL,
-  `alt` varchar(5) DEFAULT NULL,
+  `ref` varchar(100) DEFAULT NULL,
+  `alt` varchar(100) DEFAULT NULL,
   `transcript` varchar(20) DEFAULT NULL,
   `c` varchar(10) DEFAULT NULL,
   `p` varchar(20) DEFAULT NULL,
@@ -501,7 +501,7 @@ CREATE TABLE `auth_user` (
 
 LOCK TABLES `auth_user` WRITE;
 /*!40000 ALTER TABLE `auth_user` DISABLE KEYS */;
-INSERT INTO `auth_user` VALUES (1,'pbkdf2_sha256$216000$lfZUHj9vKmAM$cqzyxHVBTLCpuULrZSAriHS9jlnEr/OrjyIGR3LUVwc=','2020-09-11 14:34:21.429615',1,'admin','','','',1,1,'2020-09-11 14:33:49.251416');
+INSERT INTO `auth_user` VALUES (1,'pbkdf2_sha256$216000$n0Sb3UrdH0gu$62RhSvApgBygi12yc9o5HVBlsBIwCyi066e3JLFWK2o=',NULL,1,'admin','','','',1,1,'2020-09-24 15:07:54.631734');
 /*!40000 ALTER TABLE `auth_user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -643,7 +643,7 @@ CREATE TABLE `django_migrations` (
 
 LOCK TABLES `django_migrations` WRITE;
 /*!40000 ALTER TABLE `django_migrations` DISABLE KEYS */;
-INSERT INTO `django_migrations` VALUES (1,'contenttypes','0001_initial','2020-09-11 14:33:24.262393'),(2,'auth','0001_initial','2020-09-11 14:33:24.378432'),(3,'admin','0001_initial','2020-09-11 14:33:24.724672'),(4,'admin','0002_logentry_remove_auto_add','2020-09-11 14:33:24.784621'),(5,'admin','0003_logentry_add_action_flag_choices','2020-09-11 14:33:24.795479'),(6,'api','0001_initial','2020-09-11 14:33:25.210240'),(7,'contenttypes','0002_remove_content_type_name','2020-09-11 14:33:25.640128'),(8,'auth','0002_alter_permission_name_max_length','2020-09-11 14:33:25.689405'),(9,'auth','0003_alter_user_email_max_length','2020-09-11 14:33:25.727246'),(10,'auth','0004_alter_user_username_opts','2020-09-11 14:33:25.739499'),(11,'auth','0005_alter_user_last_login_null','2020-09-11 14:33:25.782229'),(12,'auth','0006_require_contenttypes_0002','2020-09-11 14:33:25.785066'),(13,'auth','0007_alter_validators_add_error_messages','2020-09-11 14:33:25.797702'),(14,'auth','0008_alter_user_username_max_length','2020-09-11 14:33:25.845605'),(15,'auth','0009_alter_user_last_name_max_length','2020-09-11 14:33:25.894639'),(16,'auth','0010_alter_group_name_max_length','2020-09-11 14:33:25.925965'),(17,'auth','0011_update_proxy_permissions','2020-09-11 14:33:25.952093'),(18,'auth','0012_alter_user_first_name_max_length','2020-09-11 14:33:26.002280'),(19,'sessions','0001_initial','2020-09-11 14:33:26.017720');
+INSERT INTO `django_migrations` VALUES (1,'contenttypes','0001_initial','2020-09-24 15:07:16.957498'),(2,'auth','0001_initial','2020-09-24 15:07:17.127366'),(3,'admin','0001_initial','2020-09-24 15:07:17.467982'),(4,'admin','0002_logentry_remove_auto_add','2020-09-24 15:07:17.530403'),(5,'admin','0003_logentry_add_action_flag_choices','2020-09-24 15:07:17.543011'),(6,'api','0001_initial','2020-09-24 15:07:17.932278'),(7,'contenttypes','0002_remove_content_type_name','2020-09-24 15:07:18.392608'),(8,'auth','0002_alter_permission_name_max_length','2020-09-24 15:07:18.457380'),(9,'auth','0003_alter_user_email_max_length','2020-09-24 15:07:18.506825'),(10,'auth','0004_alter_user_username_opts','2020-09-24 15:07:18.518369'),(11,'auth','0005_alter_user_last_login_null','2020-09-24 15:07:18.560000'),(12,'auth','0006_require_contenttypes_0002','2020-09-24 15:07:18.563117'),(13,'auth','0007_alter_validators_add_error_messages','2020-09-24 15:07:18.575522'),(14,'auth','0008_alter_user_username_max_length','2020-09-24 15:07:18.626274'),(15,'auth','0009_alter_user_last_name_max_length','2020-09-24 15:07:18.674487'),(16,'auth','0010_alter_group_name_max_length','2020-09-24 15:07:18.709860'),(17,'auth','0011_update_proxy_permissions','2020-09-24 15:07:18.730863'),(18,'auth','0012_alter_user_first_name_max_length','2020-09-24 15:07:18.777316'),(19,'sessions','0001_initial','2020-09-24 15:07:18.795659');
 /*!40000 ALTER TABLE `django_migrations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -669,7 +669,6 @@ CREATE TABLE `django_session` (
 
 LOCK TABLES `django_session` WRITE;
 /*!40000 ALTER TABLE `django_session` DISABLE KEYS */;
-INSERT INTO `django_session` VALUES ('tdwxmar4evnwo8um4g1273vzy1ix533d','.eJxVjEEOwiAQRe_C2hAHykBduu8ZyMCAVA0kpV0Z765NutDtf-_9l_C0rcVvPS1-ZnERIE6_W6D4SHUHfKd6azK2ui5zkLsiD9rl1Dg9r4f7d1Col2-tYLR8ji4yuAADQrYpsckOxwEMclYWIZDBrFG7mDMTokPDMChOVov3B9wON70:1kGk85:I4dZYmMosZgUXkDDSbFQqVa1Me_FvIAobYljx29OPFc','2020-09-25 14:34:21.432649');
 /*!40000 ALTER TABLE `django_session` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -682,4 +681,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-09-11 10:35:24
+-- Dump completed on 2020-09-24 11:14:37
