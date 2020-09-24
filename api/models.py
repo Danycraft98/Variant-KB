@@ -8,7 +8,7 @@ ITEMS = {'PVS1': 10, 'PS1': 7, 'PS2': 7, 'PS3': 7, 'PS4': 7, 'PM': 2, 'PM1': 2, 
 
 # Create your models here.
 class Gene(models.Model):
-	name = models.CharField(max_length=200)
+	name = models.CharField(max_length=20)
 	pub_date = models.DateTimeField('date published')
 	content = models.TextField(blank=True)
 
