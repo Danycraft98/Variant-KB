@@ -26,7 +26,7 @@ def add_evidence(request, prefix, dx_id, variant, item=None):
 
 
 class GeneTable(tables.Table):
-	name = tables.LinkColumn('gene', args=[A('id')], text=lambda record: record.name, empty_values=())
+	name = tables.LinkColumn('gene', args=[A('name')], text=lambda record: record.name, empty_values=())
 	variants = tables.TemplateColumn("{{ record.variants.count }} variant(s)", verbose_name="Variants")
 
 	class Meta:
@@ -37,27 +37,40 @@ class GeneTable(tables.Table):
 
 
 class VariantTable(tables.Table):
-	edit = tables.LinkColumn('variant', args=[A('id')], text="edit", empty_values=())
-	variant_detail = tables.LinkColumn('variant_text', args=[A('id')], text="detail", empty_values=())
+	edit = tables.LinkColumn('variant', args=[A('gene__name'), A('protein')], text="edit", empty_values=())
+	variant_detail = tables.LinkColumn('variant_text', args=[A('gene.name'), A('protein')], text="detail", empty_values=())
 
 	class Meta:
 		model = Variant
-		sequence = ('edit', 'variant_detail', 'chromosome', 'branch', 'c', 'p', 'transcript')
-		exclude = ('id', 'genome_build', 'gene', 'consequence', 'reported')
+		sequence = ('edit', 'variant_detail', 'chr', 'branch', 'cdna', 'protein', 'transcript')
+		exclude = ('id', 'genome_build', 'gene', 'consequence', 'reported', 'existing')
 		attrs = {"class": "dataTable nowrap table table-bordered table-hover"}
 
 	def class_type(self):
 		return "Variant"
 
 
-class CheckBoxColumn2(tables.CheckBoxColumn):
+class CheckBoxColumnWithName(tables.CheckBoxColumn):
 	@property
 	def header(self):
 		return self.verbose_name
 
 
+class UploadTable(tables.Table):
+	add_or_update = CheckBoxColumnWithName(verbose_name="Add/Update", checked=True, accessor='pk')
+
+	class Meta:
+		model = Variant
+		sequence = ('add_or_update', 'chr', 'branch', 'cdna', 'protein', 'transcript')
+		exclude = ('id', 'genome_build', 'gene', 'consequence', 'reported', 'existing')
+		attrs = {"class": "nowrap table table-bordered table-hover"}
+
+	def class_type(self):
+		return "Variant"
+
+
 class DiseaseTable(tables.Table):
-	disease = CheckBoxColumn2(verbose_name="Disease", accessor="name")
+	disease = CheckBoxColumnWithName(verbose_name="Disease", accessor="name")
 	functionals = tables.TemplateColumn("{{ record.functionals.count }} functional(s)", verbose_name="Functionals")
 	evidences = tables.TemplateColumn("{{ record.evidences.count }} evidence(s)", verbose_name="Evidences")
 
