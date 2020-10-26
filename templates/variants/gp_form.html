@@ -6,7 +6,7 @@
     <div class="card-header">
         <h5><strong>Edit</strong></h5>
     </div>
-    <form action="{% url 'save_variant' item.id %}" method="post">
+    <form action="{% url 'save_variant' item.gene.name item.protein %}" method="post">
         {% csrf_token %}
         <div class="card-body container pt-5">
             {% include 'partials/_detail.html' %}

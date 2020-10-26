@@ -6,10 +6,23 @@
     <div class="card-header">
         <h5><strong>Edit</strong></h5>
     </div>
-    <form action="{% url 'save_variant' item.id %}" method="post">
+    <form action="{% url 'save_variant' item.gene.name item.protein %}" method="post">
         {% csrf_token %}
         <div class="card-body container">
             {% include 'partials/_detail.html' %}
+            <div class="row form-group">
+                <div class="col-12">
+                    <label for="gene_report">Gene Report</label>
+                    <textarea class="form-control" id="gene_report" name="gene_report">{{ item.gene.content }}</textarea>
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-12">
+                    <label for="variant_report">Variant Report</label><input id="d0_vr_id" name="d0_report_id" hidden><input id="d0_vr_name" name="d0_report_name" value="Variant Report" hidden>
+                    <textarea class="form-control" id="variant_report" name="variant_report"></textarea>
+                </div>
+            </div>
+            <br/><hr/>
             <fieldset id="diseases">
                 <div id="add" class="row mt-2 mb-2">
                     <div class="col-2">
@@ -220,18 +233,6 @@
 
                     <div class="row col-2">
                         <a class="collapsed" id="d0_report_collapse" href="" data-toggle="collapse" data-target="#d0_report" onclick="collapse(this,2)"><i id="d0_report_icon" class="fa fa-chevron-down pr-2" aria-hidden="true"></i>Collapse Report<br/><br/></a>
-                    </div>
-                    <div id="d0_report" class="row form-group collapse">
-                        <div class="col-12">
-                            <label for="d0_gr">Gene Report</label><input id="d0_gr_id" name="d0_report_id" hidden><input id="d0_gr_name" name="d0_report_name" value="Gene Report" hidden>
-                            <textarea class="form-control" id="d0_gr" name="d0_report"></textarea>
-                        </div>
-                    </div>
-                    <div id="d0_report" class="row form-group collapse">
-                        <div class="col-12">
-                            <label for="d0_vr">Variant Report</label><input id="d0_vr_id" name="d0_report_id" hidden><input id="d0_vr_name" name="d0_report_name" value="Variant Report" hidden>
-                            <textarea class="form-control" id="d0_vr" name="d0_report"></textarea>
-                        </div>
                     </div>
                     <div id="d0_report" class="row form-group collapse">
                         <div class="col-12">

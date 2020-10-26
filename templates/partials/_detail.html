@@ -79,6 +79,31 @@
     <div class="col-6 ">{{ item.p }}</div>
 </div>
 {% endif %}
+{% if item.chromosome and item.chromosome != "nan" and item.start and item.start != "nan"%}
+<div class="d-flex justify-content-center pt-2 text">
+    <div class="col-3 text-right">
+        <strong class="">IGV</strong>
+    </div>
+    <div class="col-custom p-0"></div>
+    <div class="col-6 "><a target="_blank" href="http://localhost:60151/goto?locus={{ item.chromosome }}:{{ item.start }}">Link to IGV</a></div>
+</div>
+{% endif %}
+{% if item.chromosome and item.chromosome != "nan" and item.start and item.start != "nan" and item.end and item.end != "nan"%}
+<div class="d-flex justify-content-center pt-2 text">
+    <div class="col-3 text-right">
+        <strong class="">UCSC</strong>
+    </div>
+    <div class="col-custom p-0"></div>
+    <div class="col-6 "><a target="_blank" href="http://https://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&position={{ item.chromosome }}:{{ item.start }}-{{ item.end }}">Link to UCSC</a></div>
+</div>
+{% endif %}
+<div class="d-flex justify-content-center pt-2 text">
+    <div class="col-3 text-right">
+        <strong class="">HGMD</strong>
+    </div>
+    <div class="col-custom p-0"></div>
+    <div class="col-6 "><a target="_blank" href="https://portal.biobase-international.com/hgmd/pro/gene.php?gene={{ item.gene.name }}">Link to HGMD</a></div>
+</div>
 {% if item.consequence and item.consequence != "nan" %}
 <div class="d-flex justify-content-center pt-2 text">
     <div class="col-3 text-right">
@@ -95,4 +120,255 @@
     <div class="col-custom p-0"></div>
     <div class="col-6 ">{{ item.gene }}</div>
 </div>
+{% if item.gene.content %}
+<div class="d-flex justify-content-center pt-2 text">
+    <div class="col-3 text-right">
+        <strong class="">Gene Report</strong>
+    </div>
+    <div class="col-custom p-0"></div>
+    <div class="col-6 ">{{ item.gene.content }}</div>
+</div>
+{% endif %}
+{% if item.content %}
+<div class="d-flex justify-content-center pt-2 text">
+    <div class="col-3 text-right">
+        <strong class="">Variant Report</strong>
+    </div>
+    <div class="col-custom p-0"></div>
+    <div class="col-6 ">{{ item.content }}</div>
+</div>
+{% endif %}
+<div class="d-flex justify-content-center pt-2 text">
+    <div class="col-3 text-right">
+        <strong class="">Cancer Hotspot</strong>
+    </div>
+    <div class="col-custom p-0"></div>
+    <div id="hotspot" class="col-6"><svg width="500" height="110"></svg></div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-latest.min.js"></script>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script>
+    var group = [{% for hotspot in item.hotspots.all %}"{{ hotspot.hotspot }}",{% endfor %}];
+    var data = [{ {% for hotspot in item.hotspots.all %}"{{ hotspot.hotspot }}": {{ hotspot.count }},{% endfor %} }];
+    var layers = d3.stack()
+        .keys(group)
+        .offset(d3.stackOffsetDiverging)
+        (data);
+
+    var svg = d3.select("svg");
+    margin = {
+        top: 20,
+        right: 30,
+        bottom: 60,
+        left: 0
+    };
+    width = +svg.attr("width");
+    height = +svg.attr("height");
+
+    var x = d3.scaleLinear().rangeRound([margin.left, width - margin.right]);
+    x.domain([d3.min(layers, stackMin), d3.max(layers, stackMax)]);
+
+    var y = d3.scaleBand()
+        .rangeRound([height - margin.bottom, margin.top])
+        .padding(0.1);
+    y.domain(data.map(function(d) {
+        return 1;
+    }))
+
+    function stackMin(layers) {
+        return d3.min(layers, function(d) {
+            return d[0];
+        });
+    }
+
+    function stackMax(layers) {
+        return d3.max(layers, function(d) {
+            return d[1];
+        });
+    }
+
+    var z = d3.scaleOrdinal(d3.schemeCategory10);
+
+    var main_g = svg.append("g")
+        .selectAll("g")
+        .data(layers);
+    var g = main_g.enter().append("g")
+        .attr("fill", function(d) {
+            return z(d.key);
+        });
+
+    var rect = g.selectAll("rect")
+        .data(function(d) {
+            d.forEach(function(d1) {
+                d1.key = d.key;
+                return d1;
+            });
+            return d;
+        })
+        .enter().append("rect")
+        .attr("data", function(d) {
+            var data = {};
+            data["key"] = d.key;
+            data["value"] = d.data[d.key];
+            var total = 0;
+            group.map(function(d1) {
+                total = total + d.data[d1]
+            });
+            data["total"] = total;
+            return JSON.stringify(data);
+        })
+        .attr("width", function(d) {
+            return x(d[1]) - x(d[0]);
+        })
+        .attr("x", function(d) {
+            return x(d[0]);
+        })
+        .attr("height", y.bandwidth);
+
+    rect.on("mouseover", function() {
+        var currentEl = d3.select(this);
+        var fadeInSpeed = 120;
+        d3.select("#recttooltip_hotspot")
+            .transition()
+            .duration(fadeInSpeed)
+            .style("opacity", function() {
+                return 1;
+            });
+        d3.select("#recttooltip_hotspot").attr("transform", function(d) {
+            var mouseCoords = d3.mouse(this.parentNode);
+            var xCo = 0;
+            if (mouseCoords[0] + 10 >= width * 0.80) {
+                xCo = mouseCoords[0] - parseFloat(d3.selectAll("#recttooltipRect_hotspot")
+                    .attr("width"));
+            } else {
+                xCo = mouseCoords[0] + 10;
+            }
+            var x = xCo;
+            var yCo = 0;
+            if (mouseCoords[0] + 10 >= width * 0.80) {
+                yCo = mouseCoords[1] + 10;
+            } else {
+                yCo = mouseCoords[1];
+            }
+            var x = xCo;
+            var y = yCo;
+            return "translate(" + x + "," + y + ")";
+        });
+        //CBT:calculate tooltips text
+        var tooltipData = JSON.parse(currentEl.attr("data"));
+        var tooltipsText = "";
+        d3.selectAll("#recttooltipText_hotspot").text("");
+        var yPos = 0;
+        d3.selectAll("#recttooltipText_hotspot").append("tspan").attr("x", 0).attr("y", yPos * 10).attr("dy", "1.9em").text(tooltipData.key + ":  " + tooltipData.value);
+        yPos = yPos + 1;
+        d3.selectAll("#recttooltipText_hotspot").append("tspan").attr("x", 0).attr("y", yPos * 10).attr("dy", "1.9em").text("Total" + ":  " + tooltipData.total);
+                //CBT:calculate width of the text based on characters
+        var dims = helpers.getDimensions("recttooltipText_hotspot");
+        d3.selectAll("#recttooltipText_hotspot" + " tspan")
+            .attr("x", dims.w + 4);
+
+        d3.selectAll("#recttooltipRect_hotspot")
+            .attr("width", dims.w + 10)
+            .attr("height", dims.h + 20);
+
+    });
+
+    rect.on("mousemove", function() {
+        var currentEl = d3.select(this);
+        currentEl.attr("r", 7);
+        d3.selectAll("#recttooltip_hotspot")
+            .attr("transform", function(d) {
+                var mouseCoords = d3.mouse(this.parentNode);
+                var xCo = 0;
+                if (mouseCoords[0] + 10 >= width * 0.80) {
+                    xCo = mouseCoords[0] - parseFloat(d3.selectAll("#recttooltipRect_hotspot")
+                        .attr("width"));
+                } else {
+                    xCo = mouseCoords[0] + 10;
+                }
+                var x = xCo;
+                var yCo = 0;
+                if (mouseCoords[0] + 10 >= width * 0.80) {
+                    yCo = mouseCoords[1] + 10;
+                } else {
+                    yCo = mouseCoords[1];
+                }
+                var x = xCo;
+                var y = yCo;
+                return "translate(" + x + "," + y + ")";
+            });
+    });
+
+    rect.on("mouseout", function() {
+        var currentEl = d3.select(this);
+        d3.select("#recttooltip_hotspot")
+            .style("opacity", function() {
+                return 0;
+            })
+            .attr("transform", function(d, i) {
+                // klutzy, but it accounts for tooltip padding which could push it onscreen
+                var x = -500;
+                var y = -500;
+                    return "translate(" + x + "," + y + ")";
+            });
+    });
+
+    var rectTooltipg = svg.append("g")
+        .attr("font-family", "sans-serif")
+        .attr("font-size", 10)
+        .attr("text-anchor", "end")
+        .attr("id", "recttooltip_hotspot")
+        .attr("style", "opacity:0")
+        .attr("transform", "translate(-500,-500)");
+
+    rectTooltipg.append("rect")
+        .attr("id", "recttooltipRect_hotspot")
+        .attr("x", 0)
+        .attr("width", 120)
+        .attr("height", 80)
+        .attr("opacity", 0.71)
+        .style("fill", "#000000");
+
+    rectTooltipg
+        .append("text")
+        .attr("id", "recttooltipText_hotspot")
+        .attr("x", 30)
+        .attr("y", 15)
+        .attr("fill", function() {
+            return "#fff"
+        })
+        .style("font-size", function(d) {
+            return 10;
+        })
+        .style("font-family", function(d) {
+            return "arial";
+        })
+        .text(function(d, i) {
+            return "";
+        });
+
+    var helpers = {
+        getDimensions: function(id) {
+            var el = document.getElementById(id);
+            var w = 0,
+                h = 0;
+            if (el) {
+                var dimensions = el.getBBox();
+                w = dimensions.width;
+                h = dimensions.height;
+            } else {
+                console.log("error: getDimensions() " + id + " not found.");
+            }
+            return {
+                w: w,
+                h: h
+            };
+        }
+    };
+</script>
+
+
+
 <hr class="mt-5 mb-5"/>

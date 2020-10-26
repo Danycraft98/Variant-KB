@@ -23,10 +23,8 @@
     <div class="card-body">
         {% if item.class_type == "Gene" %}
         <h6><strong><u>Gene Detail</u></strong></h6>
-        <div class="row col mb-3">
-            Gene Name: {{ item }}
-            Gene {{ item.content }}
-        </div>
+        <p><strong>Gene Name:</strong> {{ item }}</p>
+        <p><strong>Gene Report</strong> {{ item.content }}</p>
         <hr/>
         {% endif %}
         {% render_table table %}
