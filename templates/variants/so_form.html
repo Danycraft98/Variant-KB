@@ -18,11 +18,24 @@
             </div>
             <div class="row form-group">
                 <div class="col-12">
-                    <label for="variant_report">Variant Report</label><input id="d0_vr_id" name="d0_report_id" hidden><input id="d0_vr_name" name="d0_report_name" value="Variant Report" hidden>
+                    <label for="variant_report">Variant Report</label>
                     <textarea class="form-control" id="variant_report" name="variant_report"></textarea>
                 </div>
             </div>
-            <br/><hr/>
+            <div class="row form-group">
+                <div class="col-12">
+                    <label for="vgir">Gene Germline Implications Report</label>
+                    <textarea class="form-control" id="ggir" name="gene_germline_report"></textarea>
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-12">
+                    <label for="vgir">Variant Germline Implications Report</label>
+                    <textarea class="form-control" id="vgir" name="variant_germline_report"></textarea>
+                </div>
+            </div>
+            <br/>
+            <hr/>
             <fieldset id="diseases">
                 <div id="add" class="row mt-2 mb-2">
                     <div class="col-2">
@@ -37,7 +50,7 @@
                     <div class="row form-group mt-2">
                         <div class="col-6">
                             <label for="d0_disease">Disease</label>
-                            <input class="form-control" id="d0_disease" name="d0_disease">
+                            <input class="form-control" id="d0_disease" name="d0_disease" oninput="get_report(this)">
                         </div>
 
                         <div class="col-4 form-group">
@@ -246,24 +259,29 @@
                             <textarea class="form-control" id="d0_vdr" name="d0_report"></textarea>
                         </div>
                     </div>
-                    <div id="d0_report" class="row form-group collapse">
-                        <div class="col-12">
-                            <label for="d0_vgir">Variant Germline Implications Report</label><input id="d0_vgir_id" name="d0_report_id" hidden><input id="d0_vgir_name" name="d0_report_name" value="Variant Germline Implications Report" hidden>
-                            <textarea class="form-control" id="d0_vgir" name="d0_report"></textarea>
-                        </div>
-                    </div>
                 </fieldset>
             </fieldset>
         </div>
+        <fieldset id="auth_only">
+            <legend><h6>For Annotation Specialist and Scientist Use Only</h6></legend>
+            <div class="row form-group">
+                <div class="col-2 offset-md-1 form-check">
+                    <input type="checkbox" class="form-check-input" id="review">
+                    <label class="form-check-label" for="review">Reviewed</label>
+                </div>
+                <div class="col-2 form-check">
+                    <input type="checkbox" class="form-check-input" id="approve">
+                    <label class="form-check-label" for="approve">Approved</label>
+                </div>
+            </div>
+        </fieldset>
         <div class="card-footer">
-            <div class="container">
-                <div class="row form-group">
-                    <div class="col-2 offset-md-4">
-                        <button type="submit" class="btn btn-primary btn-block">Save</button>
-                    </div>
-                    <div class="col-2">
-                        <button type="button" class="btn btn-outline-primary btn-block" onclick="history.back();">Cancel</button>
-                    </div>
+            <div class="row form-group">
+                <div class="col-2 offset-md-4">
+                    <button type="submit" class="btn btn-primary btn-block">Save</button>
+                </div>
+                <div class="col-2">
+                    <button type="button" class="btn btn-outline-primary btn-block" onclick="history.back();">Cancel</button>
                 </div>
             </div>
         </div>
@@ -275,6 +293,32 @@
 
 {% block script %}
 <script>
+    function get_report(element) {
+        var disease_id = element.id.split("_")[0];
+        var disease_name = element.value;
+
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                var diseases = JSON.parse(this.responseText);
+                for (key in diseases) {
+                    var obj = diseases[key];
+                    if (obj.gene == {{ item.gene.pk }} && obj.variant != {{ item.pk }}) {
+                        document.getElementById(disease_id + "_gdr").innerText = obj.gdr;
+                    }
+                    if (obj.variant == {{ item.pk }}) {
+                        document.getElementById(disease_id + "_gdr").innerText = obj.gdr;
+                    }
+                }
+                if (Object.keys(diseases).length < 1) {
+                    document.getElementById(disease_id + "_gdr").innerText = "";
+                }
+            }
+        };
+        xhttp.open("GET", "http://localhost:8000/api/disease/" + disease_name + "/", true);
+        xhttp.send();
+    }
+
     $(document).ready(function() {
         var i;
         {% if item.diseases.all.count == 0 %}
