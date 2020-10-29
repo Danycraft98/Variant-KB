@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from accounts.models import User
 
 # Constant Pathogenic titles
 ITEMS = {'PVS1': 10, 'PS1': 7, 'PS2': 7, 'PS3': 7, 'PS4': 7, 'PM': 2, 'PM1': 2, 'PM2': 2, 'PM3': 2, 'PM4': 2, 'PM5': 2, 'PM6': 2, 'PP1': 1, 'PP2': 1, 'PP3': 1, 'PP4': 1, 'PP5': 1,

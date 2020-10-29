@@ -31,6 +31,7 @@ ALLOWED_HOSTS = ["*"]
 INSTALLED_APPS = [
 	'api.apps.ApiConfig',
 	'main.apps.MainConfig',
+	'accounts.apps.AccountsConfig',
 	'django.contrib.admin',
 	'django.contrib.auth',
 	'django.contrib.contenttypes',
@@ -50,6 +51,8 @@ MIDDLEWARE = [
 	'django.contrib.messages.middleware.MessageMiddleware',
 	'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+AUTH_USER_MODEL = 'accounts.User'
 
 ROOT_URLCONF = 'variant_db.urls'
 
