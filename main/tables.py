@@ -32,7 +32,7 @@ class GeneTable(tables.Table):
 	class Meta:
 		model = Gene
 		sequence = ('name', 'variants')
-		exclude = ('id', 'exon', 'pub_date', 'content')
+		exclude = ('id', 'exon', 'pub_date', 'content', 'germline_content')
 		attrs = {"class": "dataTable nowrap table table-bordered table-hover"}
 
 

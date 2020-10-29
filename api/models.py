@@ -11,6 +11,7 @@ class Gene(models.Model):
 	name = models.CharField(max_length=20)
 	pub_date = models.DateTimeField('date published')
 	content = models.TextField(blank=True)
+	germline_content = models.TextField(blank=True)
 
 	def __str__(self):
 		return self.name
@@ -32,6 +33,7 @@ class Variant(models.Model):
 	consequence = models.CharField(max_length=10, null=True)
 	exonic_function = models.CharField(max_length=20, null=True)
 	content = models.TextField(blank=True)
+	germline_content = models.TextField(blank=True)
 
 	af = models.CharField(verbose_name="AF", max_length=20, null=True)
 	af_popmax = models.CharField(verbose_name="AF_popmax", max_length=20, null=True)

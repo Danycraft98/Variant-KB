@@ -150,6 +150,8 @@
 <script src="https://code.jquery.com/jquery-latest.min.js"></script>
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script>
+    var color = d3.scaleOrdinal(d3.schemeCategory10).domain(["*","A","C","D","E","F","G","H","I","K","L","M","N","P","Q","R","S","T","V","W","Y","sp"]);
+    console.log(color);
     var group = [{% for hotspot in item.hotspots.all %}"{{ hotspot.hotspot }}",{% endfor %}];
     var data = [{ {% for hotspot in item.hotspots.all %}"{{ hotspot.hotspot }}": {{ hotspot.count }},{% endfor %} }];
     var layers = d3.stack()
@@ -189,14 +191,12 @@
         });
     }
 
-    var z = d3.scaleOrdinal(d3.schemeCategory10);
-
     var main_g = svg.append("g")
         .selectAll("g")
         .data(layers);
     var g = main_g.enter().append("g")
         .attr("fill", function(d) {
-            return z(d.key);
+            return color(d.key);
         });
 
     var rect = g.selectAll("rect")

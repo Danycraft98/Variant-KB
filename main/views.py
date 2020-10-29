@@ -104,8 +104,9 @@ def upload(request):
 		if "chr" not in row[0]:
 			continue
 		exist_variants = Variant.objects.filter(gene__name=row.get("gene")).filter(Q(cdna=row.get("cdna")) | Q(protein=row.get("protein")))
+		count = exist_variants.count()
 		gene_name = row.pop('gene')
-		raw_hopspots = str(row.pop('cancerhotspots')).split("|")
+		raw_hotspots = str(row.pop('cancerhotspots')).split("|")
 
 		try:
 			gene_item = Gene.objects.get(name=gene_name)
@@ -113,14 +114,16 @@ def upload(request):
 			gene_item = Gene.objects.create(name=gene_name, pub_date=datetime.datetime.now())
 
 		variant = Variant.objects.create(branch=request.POST.get("data_type"), gene=gene_item, **row)
-		if "consequence" in row or exist_variants.count() == 0:
+		if "consequence" in row or count == 0:
 			History.objects.create(content="Upload", user=request.user, timestamp=datetime.datetime.now(), variant=variant)
 			exists_dict["no"].append(variant)
 		else:
 			variant.existing = exist_variants.first()
 			exists_dict["yes"].append(variant)
 		variant_ids.append(str(variant.id))
-		for hotspot in raw_hopspots:
+		for hotspot in raw_hotspots:
+			if hotspot == "na":
+				break
 			values = hotspot.split(":")
 			cancer = CancerHotspot.objects.create(hotspot=values[0], variant=variant)
 			if len(values) > 1:
@@ -136,8 +139,10 @@ def save(request, gene_name, variant_p):
 		item = Variant.objects.get(gene__name=gene_name, protein=variant_p)
 		gene1 = Gene.objects.get(name=gene_name)
 		gene1.content = request.POST.get("gene_report")
+		gene1.germline_content = request.POST.get("gene_germline_report")
 		gene1.save()
 		item.content = request.POST.get("variant_report")
+		item.germline_content = request.POST.get("variant_germline_report")
 		item.save()
 
 		i = 1
@@ -173,7 +178,7 @@ def save(request, gene_name, variant_p):
 				add_evidence(request, "d" + str(i) + "_etype2", dx_id, item)
 			for report_id, report, field_name in zip(request.POST.getlist("d" + str(i) + "_report_id"), request.POST.getlist("d" + str(i) + "_report"), request.POST.getlist("d" + str(i) + "_report_name")):
 				if not report_id.isdigit() and len(report) > 0:
-					Report.objects.create(name=field_name, content=report, disease=dx_id)
+					Report.objects.create(name=field_name, content=report, gene=item.gene, variant=item, disease=dx_id)
 			i += 1
 	except Variant.DoesNotExist:
 		raise Http404("Variant does not exist")
