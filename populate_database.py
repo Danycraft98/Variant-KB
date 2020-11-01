@@ -10,4 +10,4 @@ django.setup()
 from api.models import PathItem, ITEMS
 
 for key, value in ITEMS.items():
-	PathItem.objects.get_or_create(key=key, value=value)
+    PathItem.objects.get_or_create(key=key, value=value)

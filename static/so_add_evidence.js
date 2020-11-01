@@ -120,10 +120,10 @@ function add_evidence_type2(element) {
 }
 
 function getElementsByValue(value, tag, id) {
-	var search = document.getElementsByTagName(tag);
-	var pat = new RegExp(value, "i");
-	for (var i=0; i < search.length; i++) {
-		if (pat.test(search[i].value)  && search[i].id.includes(id))
-			return [document.getElementById(search[i].id.slice(0,-5)), document.getElementById(search[i].id.slice(0,-5) + '_id')]
-	}
+    var search = document.getElementsByTagName(tag);
+    var pat = new RegExp(value, "i");
+    for (var i=0; i < search.length; i++) {
+        if (pat.test(search[i].value)  && search[i].id.includes(id))
+            return [document.getElementById(search[i].id.slice(0,-5)), document.getElementById(search[i].id.slice(0,-5) + '_id')]
+    }
 }

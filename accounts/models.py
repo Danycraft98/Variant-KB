@@ -31,6 +31,36 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
+    def create_specialist(self, username, email, password):
+        """
+        Creates and saves a superuser with the given email and password.
+        """
+        user = self.create_user(
+            username,
+            password,
+            email=email
+        )
+        user.staff = True
+        user.specialist = True
+        user.admin = True
+        user.save(using=self._db)
+        return user
+
+    def create_scientist(self, username, email, password):
+        """
+        Creates and saves a superuser with the given email and password.
+        """
+        user = self.create_user(
+            username,
+            password,
+            email=email
+        )
+        user.staff = True
+        user.specialist = True
+        user.scientist = True
+        user.save(using=self._db)
+        return user
+
     def create_superuser(self, username, email, password):
         """
         Creates and saves a superuser with the given email and password.
@@ -41,6 +71,8 @@ class UserManager(BaseUserManager):
             email=email
         )
         user.staff = True
+        user.specialist = True
+        user.scientist = True
         user.admin = True
         user.save(using=self._db)
         return user
@@ -50,7 +82,9 @@ class User(AbstractBaseUser):
     username = models.CharField(max_length=150, unique=True)
     email = models.EmailField(verbose_name='email address', max_length=255, null=True)
     active = models.BooleanField(default=True)
-    staff = models.BooleanField(default=False)  # a admin user; non super-user
+    staff = models.BooleanField(default=False)
+    specialist = models.BooleanField(default=False)
+    scientist = models.BooleanField(default=False)
     admin = models.BooleanField(default=False)  # a superuser
     objects = UserManager()
     # notice the absence of a "Password field", that is built in.
@@ -83,6 +117,16 @@ class User(AbstractBaseUser):
     def is_staff(self):
         """Is the user a member of staff?"""
         return self.staff
+
+    @property
+    def is_scientist(self):
+        """Is the user a member of staff?"""
+        return self.scientist
+
+    @property
+    def is_specialist(self):
+        """Is the user a member of staff?"""
+        return self.specialist
 
     @property
     def is_admin(self):
