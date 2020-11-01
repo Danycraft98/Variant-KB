@@ -24,7 +24,8 @@
             {% if item.class_type == "Gene" %}
             <h6><strong><u>Gene Detail</u></strong></h6>
             <p><strong>Gene Name:</strong> {{ item }}</p>
-            <p><strong>Gene Report</strong> {{ item.content }}</p>
+            {% if item.content %}<p><strong>Gene Report:</strong>{{ item.content }}</p>{% endif %}
+            {% if item.germline_content %}<p><strong>Gene Germline Report:</strong>{{ item.germline_content }}</p>{% endif %}
             <hr/>
             {% endif %}
             {% render_table table %}

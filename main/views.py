@@ -147,9 +147,9 @@ def save(request, gene_name, variant_p):
         i = 1
         while request.POST.get("d" + str(i) + "_disease"):
             if not request.POST.get("d" + str(i) + "_id").isdigit():
-                main_item = Disease.objects.create(name=request.POST.get("d" + str(i) + "_disease"), report=request.POST.get("d" + str(i) + "_desc"), others=request.POST.get("d" + str(i) + "_others"), variant=item)
-                dx_id = Disease.objects.get(pk=main_item.pk)
+                dx_id = Disease.objects.create(name=request.POST.get("d" + str(i) + "_disease"), report=request.POST.get("d" + str(i) + "_desc"), others=request.POST.get("d" + str(i) + "_others"), variant=item)
             else:
+                Disease.objects.filter(pk=request.POST.get("d" + str(i) + "_id")).update(name=request.POST.get("d" + str(i) + "_disease"), report=request.POST.get("d" + str(i) + "_desc"), others=request.POST.get("d" + str(i) + "_others"))
                 dx_id = Disease.objects.get(pk=request.POST.get("d" + str(i) + "_id"))
 
             if item.branch == 'gp':
@@ -167,17 +167,21 @@ def save(request, gene_name, variant_p):
                 func_sig = request.POST.get("d" + str(i) + "_func_sig")
                 while request.POST.get("d" + str(i) + "_fc" + str(j)):
                     if not request.POST.get("d" + str(i) + "_fc" + str(j) + "_id").isdigit():
-                        main_item = Functional.objects.create(key=func_sig, value=request.POST.get("d" + str(i) + "_fc" + str(j)), disease=dx_id)
-                        func_id = Functional.objects.get(pk=main_item.pk)
+                        func_id = Functional.objects.create(key=func_sig, value=request.POST.get("d" + str(i) + "_fc" + str(j)), disease=dx_id)
                     else:
-                        func_id = Functional.objects.get(pk=request.POST.get("d" + str(i) + "_fc" + str(j) + "_id").isdigit())
+                        func_id = Functional.objects.get(pk=request.POST.get("d" + str(i) + "_fc" + str(j) + "_id"))
+                        Functional.objects.filter(pk=request.POST.get("d" + str(i) + "_fc" + str(j) + "_id")).update(key=func_sig, value=request.POST.get("d" + str(i) + "_fc" + str(j)))
 
                     add_evidence(request, "d" + str(i) + "_fc" + str(j) + "_etype1", dx_id, item, func_id)
                     j += 1
                 add_evidence(request, "d" + str(i) + "_etype2", dx_id, item)
             for report_id, report, field_name in zip(request.POST.getlist("d" + str(i) + "_report_id"), request.POST.getlist("d" + str(i) + "_report"), request.POST.getlist("d" + str(i) + "_report_name")):
-                if not report_id.isdigit() and len(report) > 0:
-                    Report.objects.create(name=field_name, content=report, gene=item.gene, variant=item, disease=dx_id)
+                print(report)
+                if len(report) > 0:
+                    if not report_id.isdigit():
+                        Report.objects.create(name=field_name, content=report, gene=item.gene, variant=item, disease=dx_id)
+                    else:
+                        Report.objects.filter(pk=report_id).update(name=field_name, content=report)
             i += 1
     except Variant.DoesNotExist:
         raise Http404("Variant does not exist")

@@ -138,6 +138,24 @@
     <div class="col-6 ">{{ item.content }}</div>
 </div>
 {% endif %}
+{% if item.gene.germline_content %}
+<div class="d-flex justify-content-center pt-2 text">
+    <div class="col-3 text-right">
+        <strong class="">Gene Germline Report</strong>
+    </div>
+    <div class="col-custom p-0"></div>
+    <div class="col-6 ">{{ item.gene.germline_content }}</div>
+</div>
+{% endif %}
+{% if item.germline_content %}
+<div class="d-flex justify-content-center pt-2 text">
+    <div class="col-3 text-right">
+        <strong class="">Variant Germline Report</strong>
+    </div>
+    <div class="col-custom p-0"></div>
+    <div class="col-6 ">{{ item.germline_content }}</div>
+</div>
+{% endif %}
 <div class="d-flex justify-content-center pt-2 text">
     <div class="col-3 text-right">
         <strong class="">Cancer Hotspot</strong>
