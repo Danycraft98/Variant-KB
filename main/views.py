@@ -1,4 +1,6 @@
 from django.core.files.storage import FileSystemStorage
+from django.core.mail import send_mail
+from django.core import mail
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
@@ -17,14 +19,12 @@ from api.models import *
 from .tables import GeneTable, VariantTable, UploadTable, DiseaseTable, HistoryTable, add_evidence
 
 
-# Create your views here.
 @login_required
 def index(request):
     gene_list = GeneTable(Gene.objects.all())
     return render(request, 'variants/index.html', {'table': gene_list, 'title': 'List of Genes'})
 
 
-# Create your views here.
 @login_required
 def search(request):
     if request.POST:
@@ -44,7 +44,20 @@ def search(request):
     return render(request, 'general/search.html', {'title': 'List of Genes'})
 
 
-# Create your views here.
+@login_required
+def account_request(request):
+    if request.POST:
+        send_mail(
+            'Account User Level Request',
+            'Dear Sir/Madam,\nI am requesting for user level ' + request.POST.get("level", "") + ". My username is " + request.user.username + "\nRegards,\n" + request.POST.get("name", "anonymous"),
+            request.POST.get("email", "anonymous@variant.com"),
+            ['lee.daniel.jhl@gmail.com'],
+            fail_silently=False
+        )
+        return render(request, 'general/request.html', {'title': 'List of Genes'})
+    return render(request, 'general/request.html', {'title': 'List of Genes'})
+
+
 @login_required
 def variants(request):
     if request.GET:
@@ -140,7 +153,14 @@ def upload(request):
 @login_required
 def save(request, gene_name, variant_p):
     try:
-        Variant.objects.filter(gene__name=gene_name, protein=variant_p).update(content=request.POST.get("variant_report", ""), germline_content=request.POST.get("variant_germline_report", ""), reviewed=request.POST.getlist('review', ["n"])[-1])
+        review_val = request.POST.getlist('review', ["n"])[-1]
+        filter = Variant.objects.filter(gene__name=gene_name, protein=variant_p)
+        if review_val == "r":
+            filter.update(reviewed_date=datetime.datetime.now(), review_user=request.user)
+        elif review_val == "a":
+            filter.update(approved_date=datetime.datetime.now(), approve_user=request.user)
+        filter.update(content=request.POST.get("variant_report", ""), germline_content=request.POST.get("variant_germline_report", ""), reviewed=review_val)
+
         Gene.objects.filter(name=gene_name).update(content=request.POST.get("gene_report", ""), germline_content=request.POST.get("gene_germline_report", ""))
         item = Variant.objects.get(gene__name=gene_name, protein=variant_p)
 

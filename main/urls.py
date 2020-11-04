@@ -5,6 +5,7 @@ urlpatterns = [
     path('', views.index, name="index"),
     path('upload/', views.upload, name="upload"),
     path('search/', views.search, name="search"),
+    path('request/', views.account_request, name="request"),
     path('genes/', views.index, name="index"),
     path('gene/<str:gene_name>', views.gene, name="gene"),
     path('variants/', views.variants, name="variants"),

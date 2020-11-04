@@ -72,6 +72,10 @@ class Variant(models.Model):
         ('r', "reviewed"),
         ('a', "approved"),
     ), max_length=1, default='n')
+    reviewed_date = models.DateTimeField('date published', null=True)
+    review_user = models.ForeignKey(User, related_name="reviewed_variants", on_delete=models.CASCADE, null=True, blank=True)
+    approved_date = models.DateTimeField('date published', null=True)
+    approve_user = models.ForeignKey(User, related_name="approved_variants", on_delete=models.CASCADE, null=True, blank=True)
 
 
 class CancerHotspot(models.Model):

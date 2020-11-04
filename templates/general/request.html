@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card shadow mx-auto my-5" style="width:60%">
+    <div class="card-header">
+        <h5 class="m-0 text-primary">Request Account Level</h5>
+    </div>
+    <form method="post" action="{% url 'request' %}">
+        <div class="card-body mx-5 px-1">
+            {% csrf_token %}
+            <div class="form-group form-row">
+                <div class="col-8 input-group">
+                    <div class="input-group-append">
+                        <span class="input-group-text text-sm" style="width:125px">Name</span>
+                    </div>
+                    <input type="text" name="name" class="form-control text-sm">
+                </div>
+            </div>
+            <div class="form-group form-row">
+                <div class="col-8 input-group">
+                    <div class="input-group-append">
+                        <span class="input-group-text text-sm" style="width:125px">Email</span>
+                    </div>
+                    <input type="email" name="email" class="form-control text-sm">
+                </div>
+            </div>
+            <div class="form-row">
+                <fieldset id="level">
+                    <legend><h6>User Level</h6></legend>
+                    <div class="offset-md-1 form-check form-check-inline">
+                        <input type="radio" class="form-check-input" id="staff" name="level" value="staff">
+                        <label class="form-check-label" for="staff">Staff</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input type="radio" class="form-check-input" id="specialist" name="level" value="staff">
+                        <label class="form-check-label" for="specialist">Specialist</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input type="radio" class="form-check-input" id="scientist" name="level" value="staff">
+                        <label class="form-check-label" for="scientist">Scientist</label>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+        <div class="card-footer">
+            <div class="container">
+                <div class="row form-group">
+                    <div class="col-4 offset-md-2">
+                        <button class="btn btn-primary btn-block" type="submit">Send</button>
+                    </div>
+                    <div class="col-4">
+                        <button class="btn btn-outline-primary btn-block" type="button" onclick="history.back();">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block script %}
+<!-- Page level custom scripts -->
+<script>
+    function set_search_type(id1, id2) {
+        const element = document.getElementById(id1 + "_btn");
+        if (element.disabled === false) {
+            element.disabled = true;
+            document.getElementById(id2 + "_btn").disabled = false;
+
+            document.getElementById(id1 + "_search").hidden = false;
+            document.getElementById(id2 + "_search").hidden = true;
+        }
+    }
+
+
+
+</script>
+{% endblock %}
