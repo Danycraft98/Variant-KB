@@ -56,7 +56,7 @@ class Variant(models.Model):
     qci = models.CharField(verbose_name="QCI", max_length=20, null=True)
     qci_pmids = models.CharField(verbose_name="QCI_PMIDs", max_length=50, null=True)
     pmkb = models.CharField(verbose_name="PMKB", max_length=10, null=True)
-    pmkb_citations = models.CharField(verbose_name="PMKB_citations", max_length=100, null=True)
+    pmkb_citations = models.CharField(verbose_name="PMKB_citations", max_length=500, null=True)
     civic = models.CharField(verbose_name="CIViC", max_length=50, null=True)
     google = models.CharField(max_length=100, null=True)
     alamut = models.CharField(max_length=70, null=True)

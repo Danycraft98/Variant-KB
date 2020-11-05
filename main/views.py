@@ -111,7 +111,7 @@ def upload(request):
                 Variant.objects.get(pk=int(variant_id)).delete()
         return HttpResponseRedirect(reverse('index'))
     exists_dict = {"yes": [], "no": []}
-    raw_data = pandas.read_excel(request.FILES.get("file"), dtype=str)
+    raw_data = pandas.read_excel(request.FILES.get("file"), dtype=str, header=20)
     raw_data.fillna('na', inplace=True)
 
     variant_ids = []
@@ -121,6 +121,8 @@ def upload(request):
         if "chr" not in row[0]:
             continue
         gene_name = row.pop('gene')
+        [row.pop(key) for key in ["igv", "ucsc genome browser", "hgmd"]]
+        row["tcga"] = row.pop("tcga#occurances")
         exist_variants = Variant.objects.filter(gene__name=gene_name, protein=row.get("protein"))
         count = exist_variants.count()
         raw_hotspots = str(row.pop('cancerhotspots')).split("|")
