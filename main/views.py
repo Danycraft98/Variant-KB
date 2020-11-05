@@ -120,9 +120,9 @@ def upload(request):
     for _, row in raw_data.iterrows():
         if "chr" not in row[0]:
             continue
-        exist_variants = Variant.objects.filter(gene__name=row.get("gene")).filter(Q(cdna=row.get("cdna")) | Q(protein=row.get("protein")))
-        count = exist_variants.count()
         gene_name = row.pop('gene')
+        exist_variants = Variant.objects.filter(gene__name=gene_name, protein=row.get("protein"))
+        count = exist_variants.count()
         raw_hotspots = str(row.pop('cancerhotspots')).split("|")
 
         try:
