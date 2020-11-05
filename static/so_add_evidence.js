@@ -1,9 +1,11 @@
 function collapse(element, index) {
-    var arrow = document.getElementById(element.id.split("_").slice(0,index).join("_") + "_icon")
-    if (element.className.includes("collapsed")) {
+    var arrow = document.getElementById(element.id.split("_").slice(0,index).join("_") + "_icon");
+    if (element.innerText.includes("Expand")) {
         arrow.className = arrow.className.replace("down", "up");
+        element.innerHTML = element.innerHTML.replace('Expand', 'Collapse');
     } else {
         arrow.className = arrow.className.replace("up", "down");
+        element.innerHTML = element.innerHTML.replace('Collapse', 'Expand');
     }
 }
 
