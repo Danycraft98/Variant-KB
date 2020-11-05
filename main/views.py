@@ -95,7 +95,7 @@ def variant(request, gene_name, variant_p):
 
 @login_required
 def upload(request):
-    if "add_or_update" in request.POST:
+    if "variant_ids" in request.POST:
         variant_ids = request.POST.get("variant_ids").split(",")
         for variant_id in variant_ids:
             if variant_id in request.POST.getlist("add_or_update"):
