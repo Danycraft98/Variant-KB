@@ -151,7 +151,7 @@
             <div class="container">
                 <div class="row form-group">
                     <div class="col-2 offset-md-4">
-                        <button class="btn btn-primary btn-block" type="submit">Save</button>
+                        <button class="btn btn-primary btn-block" type="submit" onclick="return updateMsg();">Save</button>
                     </div>
                     <div class="col-2">
                         <button class="btn btn-outline-primary btn-block" type="button" onclick="history.back();">Cancel</button>
@@ -165,6 +165,7 @@
 
 {% block script %}
 <script src="{% static 'gp_add_evidence.js' %}"></script>
+<script src="{% static 'edit_variant.js' %}"></script>
 <script>
     $(document).ready(function() {
         var i,j;

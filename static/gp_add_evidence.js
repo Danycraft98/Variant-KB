@@ -74,10 +74,6 @@ function add_evidence(element) {
     container.appendChild(cln);
 }
 
-function calculate_score() {
-    $('input[type=checkbox]:checked')
-}
-
 function calculate_score(element) {
     var disease_num = element.id.slice(0, 2)
     var checkboxes = document.getElementsByName(disease_num);

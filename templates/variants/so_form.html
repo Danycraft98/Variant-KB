@@ -278,7 +278,7 @@
         <div class="card-footer">
             <div class="row form-group">
                 <div class="col-2 offset-md-4">
-                    <button type="submit" class="btn btn-primary btn-block">Save</button>
+                    <button type="submit" class="btn btn-primary btn-block" onclick="return updateMsg();">Save</button>
                 </div>
                 <div class="col-2">
                     <button type="button" class="btn btn-outline-primary btn-block" onclick="history.back();">Cancel</button>
@@ -289,6 +289,7 @@
 </div>
 
 <script src="{% static 'so_add_evidence.js' %}"></script>
+<script src="{% static 'edit_variant.js' %}"></script>
 {% endblock %}
 
 {% block script %}
