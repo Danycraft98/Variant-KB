@@ -148,7 +148,6 @@ def upload(request):
             if len(values) > 1:
                 cancer.count = int(values[1])
                 cancer.save()
-
     return render(request, 'general/uploaded.html', {'exist': UploadTable(exists_dict["yes"]), 'new': UploadTable(exists_dict["no"]), "variant_ids": ",".join(variant_ids), 'title': 'Uploads'})
 
 

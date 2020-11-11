@@ -37,3 +37,12 @@
 
 <link rel="stylesheet" href="//cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
 {% endblock %}
+
+{% block script %}
+<script>
+    $('.selectAll').click(function(e){
+        var table= $(e.target).closest('table');
+        $('td input:checkbox',table).prop('checked',this.checked);
+    });
+</script>
+{% endblock %}

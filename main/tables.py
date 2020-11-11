@@ -58,14 +58,8 @@ class VariantTable(tables.Table):
         return "Variant"
 
 
-class CheckBoxColumnWithName(tables.CheckBoxColumn):
-    @property
-    def header(self):
-        return self.verbose_name
-
-
 class UploadTable(tables.Table):
-    add_or_update = CheckBoxColumnWithName(verbose_name="Add/Update", checked=True, accessor='pk')
+    add_or_update = tables.CheckBoxColumn(checked=True, accessor='pk', attrs={'th__input': {'checked': 'checked', 'class': 'selectAll'}})
 
     class Meta:
         model = Variant
@@ -73,13 +67,14 @@ class UploadTable(tables.Table):
         sequence = ('add_or_update', 'chr', 'branch', 'cdna', 'protein', 'transcript')
         exclude = ('id', 'genome_build', 'gene', 'consequence', 'reported', 'existing')
         attrs = {"class": "nowrap table table-bordered table-hover"}
+        row_attrs = {"style": "overflow: hidden; height: 14px; white-space: nowrap;" }
 
     def class_type(self):
         return "Variant"
 
 
 class DiseaseTable(tables.Table):
-    disease = CheckBoxColumnWithName(verbose_name="Disease", accessor="name")
+    disease = tables.CheckBoxColumn(checked=True, accessor="name", attrs={'th__input': {'checked': 'checked', 'id': 'selectAll'}})
     functionals = tables.TemplateColumn("{{ record.functionals.count }} functional(s)", verbose_name="Functionals")
     evidences = tables.TemplateColumn("{{ record.evidences.count }} evidence(s)", verbose_name="Evidences")
 
