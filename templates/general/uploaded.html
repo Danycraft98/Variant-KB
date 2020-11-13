@@ -24,13 +24,13 @@
     <!-- Page Body -->
     <div class="card-body">
         <input name="variant_ids" value="{{ variant_ids }}" hidden>
-        <h5>Existing Variants</h5>
-        {% render_table exist %}
+        <h5>New Variants</h5>
+        {% render_table new %}
         <br/>
         <hr/>
         <br/>
-        <h5>New Variants</h5>
-        {% render_table new %}
+        <h5>Existing Variants</h5>
+        {% render_table exist %}
     </div>
     </form>
 </div>
