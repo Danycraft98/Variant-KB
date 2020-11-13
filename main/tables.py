@@ -45,7 +45,7 @@ class VariantTable(tables.Table):
     class Meta:
         model = Variant
         orderable = False
-        sequence = ('edit', 'variant_detail', 'chr', 'branch', 'cdna', 'protein', 'transcript')
+        sequence = ('edit', 'variant_detail', 'chr', 'cdna', 'protein', 'transcript')
         exclude = ('id', 'genome_build', 'gene', 'consequence', 'existing', 'exonic_function', 'content',
                    'germline_content', 'af', 'af_popmax', 'cosmic70', 'clinvar', 'insilicodamaging',
                    'insilicobenign', 'polyphen2_hdiv_pred', 'polyphen2_hvar_pred', 'sift_pred',
@@ -64,7 +64,7 @@ class UploadTable(tables.Table):
     class Meta:
         model = Variant
         orderable = False
-        sequence = ('add_or_update', 'chr', 'branch', 'cdna', 'protein', 'transcript')
+        sequence = ('add_or_update', 'chr', 'cdna', 'protein', 'transcript')
         exclude = ('id', 'genome_build', 'gene', 'consequence', 'reported', 'existing')
         attrs = {"class": "nowrap table table-bordered table-hover"}
         row_attrs = {"style": "overflow: hidden; height: 14px; white-space: nowrap;" }

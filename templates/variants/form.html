@@ -1,0 +1,478 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="card mt-4">
+    <div class="card-header">
+        <h5><strong>Edit</strong></h5>
+    </div>
+    <form action="{% url 'save_variant' item.gene.name item.protein %}" method="post">
+        {% csrf_token %}
+        <div class="card-body container pt-5">
+            {% include 'partials/_detail.html' %}
+            <fieldset id="diseases">
+                <div id="add" class="row mt-2 mb-2">
+                    <div class="col-2">
+                        <a id="d0_collapse" class="collapsed" href="" data-toggle="collapse" data-target="#d0" onclick="collapse(this,1)" hidden><i id="d0_icon" class="fa fa-chevron-down pr-2" aria-hidden="true"></i>Expand Disease</a>
+                    </div>
+                    <div class="col-2 offset-md-8 text-right pr-5">
+                        <button class="btn btn-primary btn-sm" type="button" data-toggle="modal" data-target="#dtypeModal">Add Disease</button>
+                    </div>
+                </div>
+                <fieldset id="d0" class="my-auto collapse" hidden>
+                    <input id="d0_type" name="d0_type" value="gp" hidden>
+                    <input id="d0_id" name="d0_id" hidden>
+                    <div class="row">
+                        <div class="col-6 form-group">
+                            <label>Disease</label>
+                            <input class="form-control" id="d0_disease" name="d0_disease">
+                        </div>
+                        <div class="col-6 form-group">
+                            <label>MIM#</label>
+                            <input class="form-control" id="d0_others" name="d0_others">
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-12">
+                            <label>Germline Gene-Disease Report</label>
+                            <textarea class="form-control" id="d0_desc" name="d0_desc"></textarea>
+                        </div>
+                    </div>
+                    <br/>
+                    <div class="card sticky-top">
+                        <div class="card-header">2015 ACMG Classification</div>
+                        <div class="card-body ml-3">
+                            <div class="row form-group">
+                                <div class="col-3 offset-md-1">Evidence FOR Pathogenicity</div>
+                                <div class="col-5"><input class="form-control" id="d0_for_score" name="d0_for_score" readonly></div>
+                            </div>
+                            <div class="row form-group">
+                                <div class="col-3 offset-md-1">Evidence AGAINST Pathogenicity</div>
+                                <div class="col-5"><input class="form-control" id="d0_against_score" name="d0_against_score" readonly></div>
+                            </div>
+                        </div>
+                    </div>
+                    <br/>
+                    <div class="card">
+                        <div class="card-header">
+                            Evidence FOR Pathogenicity
+                        </div>
+                        <div class="card-body ml-3 overflow-auto">
+                            {% for item in items %}
+                            {% if 'P' in item.key and 'B' not in item.key %}
+                            <fieldset id="d0_{{ item }}_fields">
+                                <fieldset id="d0_{{ item }}_field">
+                                    <div class="row form-group">
+                                        <div class="form-check col-1">
+                                            <label class="form-check-label"><input class="form-check-input" type="checkbox" name="d0" id="d0_{{ item }}" value="{{ item.value }}" onclick="select_evidence(this)">{{ item }}</label>
+                                        </div>
+                                        <div class="col-1"><label>Source</label><input id="d0_{{ item }}_id1" name="d0_{{ item }}_id" hidden></div>
+                                        <div class="input-group col-8">
+                                            <div class="input-group-prepend" style="width: 30%">
+                                                <select class="custom-select" id="d0_{{ item }}_st1" name="d0_{{ item }}_st" disabled>
+                                                    <option disabled selected>Source Type</option>
+                                                    <option value="PM">PMID</option>
+                                                    <option value="O">Others</option>
+                                                </select>
+                                            </div>
+                                            <input class="form-control" id="d0_{{ item }}_s1" name="d0_{{ item }}_s" placeholder="Source ID" disabled>
+                                        </div>
+                                        <div class="col-2 text-right">
+                                            <button class="btn btn-primary btn-sm" type="button" id="d0_{{item}}_btn" onclick="add_evidence(this)" disabled>Add Evidence</button>
+                                        </div>
+                                    </div>
+                                    <div class="row form-group mb-4">
+                                        <div class="col-1 offset-md-1"><label>Evidence Statement</label></div>
+                                        <div class="col-8"><textarea class="form-control" id="d0_{{ item }}_e1" name="d0_{{ item }}_e" disabled></textarea></div>
+                                    </div>
+                                </fieldset>
+                            </fieldset>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <br/>
+
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Evidence AGAINST Pathogenicity</h5>
+                        </div>
+                        <div class="card-body ml-3">
+                            {% for item in items %}
+                            {% if 'B' in item.key %}
+                            <fieldset id="d0_{{ item }}_fields">
+                                <fieldset id="d0_{{ item }}_field">
+                                    <div class="row form-group">
+                                        <div class="form-check col-1">
+                                            <label class="form-check-label"><input class="form-check-input" type="checkbox" name="d0" id="d0_{{ item }}" value="{{ item.value }}" onclick="select_evidence(this)">{{ item }}</label>
+                                        </div>
+                                        <div class="col-1"><label>Source</label><input id="d0_{{ item }}_id1" name="d0_{{ item }}_id" hidden></div>
+                                        <div class="input-group col-8">
+                                            <div class="input-group-prepend" style="width: 30%">
+                                                <select class="custom-select" id="d0_{{ item }}_st1" name="d0_{{ item }}_st" disabled>
+                                                    <option disabled selected>Source Type</option>
+                                                    <option value="PM">PMID</option>
+                                                    <option value="O">Others</option>
+                                                </select>
+                                            </div>
+                                            <input class="form-control" id="d0_{{ item }}_s1" name="d0_{{ item }}_s" placeholder="Source ID" disabled>
+                                        </div>
+                                        <div class="col-2 text-right">
+                                            <button class="btn btn-primary btn-sm" type="button" id="d0_{{item}}_btn" onclick="add_evidence(this)" disabled>Add Evidence</button>
+                                        </div>
+                                    </div>
+                                    <div class="row form-group mb-4">
+                                        <div class="col-1 offset-md-1"><label>Evidence Statement</label></div>
+                                        <div class="col-8"><textarea class="form-control" id="d0_{{ item }}_e1" name="d0_{{ item }}_e" disabled></textarea></div>
+                                    </div>
+                                </fieldset>
+                            </fieldset>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset class="collapse" id="d1" hidden>
+                    <input name="d1_type" value="so" hidden>
+                    <input id="d1_id" name="d1_id" hidden>
+                    <div class="row form-group mt-2">
+                        <div class="col-6">
+                            <label for="d1_disease">Disease</label>
+                            <input class="form-control" id="d1_disease" name="d1_disease" oninput="get_report(this)">
+                        </div>
+
+                        <div class="col-4 form-group">
+                            <label for="d1_func_sig">Functional Significance</label>
+                            <select class="form-control" id="d1_func_sig" name="d1_func_sig">
+                                <option disabled selected>Select</option>
+                                <option>Established</option>
+                                <option>Likely</option>
+                                <option>Predicted</option>
+                                <option>VUS</option>
+                                <option>Benign</option>
+                            </select>
+                        </div>
+                        <div class="col-2">
+                            <label style="visibility: hidden;">Test</label>
+                            <button type="button" class="btn btn-primary btn-sm" id="d1_fc0_add" name="d1_fc0_add" onclick="add_f_class(this)">Add Functional Class</button>
+                        </div>
+                    </div>
+                    <fieldset id="d1_f_classes">
+                        <a id="d1_fc0_collapse" class="collapsed" data-toggle="collapse" data-target="#d1_fc0" onclick="collapse(this,2)" href="" hidden>
+                            <i id="d1_fc0_icon" class="fa fa-chevron-down pr-2" aria-hidden="true"></i>Expand Functional Class<br/><br/>
+                        </a>
+                        <fieldset class="mb-3 collapse" id="d1_fc0" hidden>
+                            <div class="row mb-2">
+                                <div class="col-6 form-group">
+                                    <label>Functional Class</label><input id="d1_fc0_id" name="d1_fc0_id" hidden>
+                                    <select class="form-control" id="d1_fc0_func_class" name="d1_fc0">
+                                        <option disabled selected>Select</option>
+                                        <option>GOF</option>
+                                        <option>LOF</option>
+                                        <option>TP53 functional</option>
+                                        <option>TP53 nonfuntional</option>
+                                        <option>BRAF Class I</option>
+                                        <option>BRAF Class II</option>
+                                        <option>BRAF Class III</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-header d-flex">
+                                    <div class="mr-auto">
+                                        Evidences
+                                    </div>
+                                    <div class="ml-auto">
+                                        <button type="button" class="btn btn-primary btn-sm" id="d1_fc0_btn" onclick="add_evidence_type1(this)">Add Evidence</button>
+                                    </div>
+                                </div>
+                                <fieldset id="d1_fc0_evidences1" class="card-body">
+                                    <fieldset id="d1_fc0_etype1_1">
+                                        <div class="row form-group">
+                                            <div class="col-12">
+                                                <label>Source</label><input id="d1_fc0_etype1_id1" name="d1_fc0_etype1_id" hidden>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend" style="width: 30%">
+                                                        <select class="custom-select" id="d1_fc0_etype1_st1" name="d1_fc0_etype1_st">
+                                                            <option disabled selected>Source Type</option>
+                                                            <option value="PM">PMID</option>
+                                                            <option value="O">Others</option>
+                                                        </select>
+                                                    </div>
+                                                    <input class="form-control" id="d1_fc0_etype1_s1" name="d1_fc0_etype1_s" placeholder="Source ID">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row form-group">
+                                            <div class="col-12">
+                                                <label>Evidence Statement</label>
+                                                <textarea class="form-control" id="d1_fc0_etype1_e1" name="d1_fc0_etype1_e"></textarea>
+                                            </div>
+                                        </div>
+                                        <br/>
+                                    </fieldset>
+                                </fieldset>
+                            </div>
+                            <br/>
+                        </fieldset>
+                    </fieldset>
+
+                    <div>
+                        <a id="d1_tier_collapse" class="collapsed" data-toggle="collapse" data-target="#d1_tier" onclick="collapse(this,2)" href="">
+                            <i id="d1_tier_icon" class="fa fa-chevron-down pr-2" aria-hidden="true"></i>Expand Tier<br/><br/>
+                        </a>
+                    </div>
+                    <div id="d1_tier" class="row form-group collapse">
+                        <div class="col-12">
+                            <label for="d1_others">AMP/ASCO Tier</label>
+                            <select class="form-control" id="d1_others" name="d1_others">
+                                <option>Tier I</option>
+                                <option>Tier II</option>
+                                <option>Tier III</option>
+                                <option>Tier VI</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="d1_tier" class="card collapse mb-4">
+                        <div class="card-header d-flex">
+                            <div class="mr-auto">
+                                Evidences
+                            </div>
+                            <div class="ml-auto">
+                                <button type="button" class="btn btn-primary btn-sm" id="d1_etype2" onclick="add_evidence_type2(this)">Add Evidence</button>
+                            </div>
+                        </div>
+                        <fieldset id="d1_evidences2" class="card-body">
+                            <fieldset id="d1_etype2_1">
+                                <div class="row form-group">
+                                    <div class="col-12">
+                                        <label>Source</label><input id="d1_etype2_id1" name="d1_etype2_id" hidden>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend" style="width: 30%">
+                                                <select class="custom-select" id="d1_etype2_st1" name="d1_etype2_st">
+                                                    <option disabled selected>Source Type</option>
+                                                    <option value="PM">PMID</option>
+                                                    <option value="O">Others</option>
+                                                </select>
+                                            </div>
+                                            <input class="form-control" id="d1_etype2_s1" name="d1_etype2_s" placeholder="Source ID">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row form-group mt-2">
+                                    <div class="col-12">
+                                        <label>Evidence Statement</label>
+                                        <textarea class="form-control" id="d1_etype2_e1" name="d1_etype2_e"></textarea>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6 form-group">
+                                        <label for="d1_etype2_sig1">Evidence Significance</label>
+                                        <select class="form-control" id="d1_etype2_sig1" name="d1_etype2_sig">
+                                            <option value="Pred">Predictive</option>
+                                            <option value="Prog">Prognostic</option>
+                                            <option value="Diag">Diagnostic</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-6 form-group">
+                                        <label for="d1_etype2_level1">Evidence Level</label>
+                                        <select class="form-control" id="d1_etype2_level1" name="d1_etype2_level">
+                                            <option>A</option>
+                                            <option>B</option>
+                                            <option>C</option>
+                                            <option>D</option>
+                                            <option>E</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-6 form-group">
+                                        <label for="d1_etype2_dir1">Evidence Direction</label>
+                                        <select class="form-control" id="d1_etype2_dir1" name="d1_etype2_dir">
+                                            <option value=True>Support</option>
+                                            <option value=False>Does not support</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-6 form-group">
+                                        <label for="d1_etype2_clin_sig1">Clinical Significance</label>
+                                        <select class="form-control" id="d1_etype2_clin_sig1" name="d1_etype2_clin_sig">
+                                            <option>Pred: Resistance</option>
+                                            <option>Pred: Adverse Response</option>
+                                            <option>Pred: Reduced Sensitivity</option>
+                                            <option>Prog: Better Outcome</option>
+                                            <option>Prog: Poorer Outcome</option>
+                                            <option>Dx: Positive Diagnosis</option>
+                                            <option>Dx: Negative Diagnosis</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-6 form-group">
+                                        <label for="d1_etype2_drug1">Drug / Class</label>
+                                        <input class="form-control" id="d1_etype2_drug1" name="d1_etype2_drug">
+                                    </div>
+                                    <div class="col-6 form-group">
+                                        <label for="d1_etype2_rating1">Evidence Rating</label>
+                                        <select class="form-control" id="d1_etype2_rating1" name="d1_etype2_rating">
+                                            <option value=1>1 Star</option>
+                                            <option value=2>2 Stars</option>
+                                            <option value=3>3 Stars</option>
+                                            <option value=4>4 Stars</option>
+                                            <option value=5>5 Stars</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <hr/>
+                                <br/>
+                            </fieldset>
+                        </fieldset>
+                    </div>
+
+                    <div class="row col-2">
+                        <a class="collapsed" id="d1_report_collapse" href="" data-toggle="collapse" data-target="#d1_report" onclick="collapse(this,2)"><i id="d1_report_icon" class="fa fa-chevron-down pr-2" aria-hidden="true"></i>Expand Report<br/><br/></a>
+                    </div>
+                    <div id="d1_report" class="row form-group collapse">
+                        <div class="col-12">
+                            <label for="d1_gdr">Gene-Disease Report</label><input id="d1_gdr_id" name="d1_report_id" hidden><input id="d1_gdr_name" name="d1_report_name" value="Gene-Disease Report" hidden>
+                            <textarea class="form-control" id="d1_gdr" name="d1_report"></textarea>
+                        </div>
+                    </div>
+                    <div id="d1_report" class="row form-group collapse">
+                        <div class="col-12">
+                            <label for="d1_vdr">Variant-Disease Report</label><input id="d1_vdr_id" name="d1_report_id" hidden><input id="d1_vdr_name" name="d1_report_name" value="Variant-Disease Report" hidden>
+                            <textarea class="form-control" id="d1_vdr" name="d1_report"></textarea>
+                        </div>
+                    </div>
+                </fieldset>
+            </fieldset>
+        </div>
+        <fieldset id="auth_only">
+            <legend><h6>For Annotation Specialist and Scientist Use Only</h6></legend>
+            <div class="row form-group">
+                <div class="col-2 offset-md-1 form-check">
+                    <input type="checkbox" class="form-check-input" id="review" name="review" value="r" {% if user.is_specialist == False or item.reviewed != 'n' %}disabled{% endif %} {% if item.reviewed != 'n' %} checked {% endif %}>
+                    <label class="form-check-label" for="review">Reviewed</label>
+                </div>
+                <div class="col-2 form-check">
+                    <input type="checkbox" class="form-check-input" id="approve" name="review" value="a" {% if user.is_scientist == False or item.reviewed != 'r' %}disabled{% endif %} {% if item.reviewed == 'a' %} checked {% endif %}>
+                    <label class="form-check-label" for="approve">Approved</label>
+                </div>
+            </div>
+        </fieldset>
+        <div class="card-footer">
+            <div class="container">
+                <div class="row form-group">
+                    <div class="col-2 offset-md-4">
+                        <button class="btn btn-primary btn-block" type="submit" onclick="return updateMsg();">Save</button>
+                    </div>
+                    <div class="col-2">
+                        <button class="btn btn-outline-primary btn-block" type="button" onclick="history.back();">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block modal %}
+<!--Disease Type Modal-->
+<div class="modal fade" id="dtypeModal" tabindex="-1" aria-labelledby="dtypeModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="card shadow modal-content">
+            <!-- Card Header -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h5 class="modal-title">Disease Branch</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+
+            <!-- Card Body -->
+            <div class="card-body">
+                <div class="container">
+                    <div class="row form-group">
+                        <div class="col-6 form-check">
+                            <input type="radio" class="form-check-input" name="dtype" id="gp" value="gp">
+                            <label class="form-check-label" for="gp">Germline Pathogenecity</label>
+                        </div>
+                        <div class="col-6 form-check">
+                            <input type="radio" class="form-check-input" name="dtype" id="so" value="so">
+                            <label class="form-check-label" for="so">Somatic Oncogenecity</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card Footer -->
+            <div class="card-footer">
+                <div class="row form-group">
+                    <div class="col-4 offset-md-2">
+                        <button class="btn btn-primary btn-block" type="button" data-dismiss="modal" onclick="add_disease()">Add</button>
+                    </div>
+                    <div class="col-4">
+                        <button class="btn btn-outline-primary btn-block" type="button" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'add_evidence.js' %}"></script>
+<script src="{% static 'edit_variant.js' %}"></script>
+<script>
+    $(document).ready(function() {
+
+        {% for disease in item.diseases.all %}
+        i = {{ forloop.counter }} + 1;
+        {% if disease.score.first %}
+
+        add_disease("gp");
+        var field_partname = 'd' + i.toString();
+        document.getElementById(field_partname + '_id').value = "{{ disease.id }}";
+        document.getElementById(field_partname + '_disease').value = "{{ disease.name }}";
+        document.getElementById(field_partname + '_desc').value = "{{ disease.report|escapejs }}";
+
+        {% for evidence in disease.evidences.all %}
+        var element = document.getElementById(field_partname + '_{{ evidence.item }}')
+
+        element.setAttribute("checked", "");
+        select_evidence(element);
+
+        j = 1;
+        while (document.getElementById(field_partname + '_{{ evidence.item }}_id' + j.toString()).value.length > 0) {
+            add_evidence(document.getElementById(field_partname + '_{{ evidence.item }}_btn'));
+            j++;
+        }
+        document.getElementById(field_partname + '_{{ evidence.item }}_id' + j.toString()).value = "{{evidence.id}}";
+        document.getElementById(field_partname + '_{{ evidence.item }}_st' + j.toString()).value = "{{evidence.source_type}}";
+        document.getElementById(field_partname + '_{{ evidence.item }}_s' + j.toString()).value = "{{evidence.source_id}}";
+        document.getElementById(field_partname + '_{{ evidence.item }}_e' + j.toString()).value = "{{evidence.statement}}";
+        {% endfor %}
+        calculate_score(document.getElementById(field_partname + '_id'));
+
+        {% else %}
+
+        add_disease("so");
+
+
+        {% endif %}
+        {% endfor %}
+    });
+
+
+
+
+
+
+</script>
+{% endblock %}

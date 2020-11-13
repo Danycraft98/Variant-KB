@@ -60,22 +60,20 @@ class Variant(models.Model):
     civic = models.CharField(verbose_name="CIViC", max_length=50, null=True)
     google = models.CharField(max_length=100, null=True)
     alamut = models.CharField(max_length=70, null=True)
-
     gene = models.ForeignKey(Gene, related_name="variants", on_delete=models.CASCADE, null=True, blank=True)
     existing = models.ForeignKey('self', related_name="variants", on_delete=models.CASCADE, null=True, blank=True)
-    branch = models.CharField(choices=(
-        ('gp', "Genomic Pathogenetic"),
-        ('so', "Somatic Oncogenetic"),
-    ), max_length=2, default='gp')
     reviewed = models.CharField(choices=(
         ('n', "not reviewed"),
         ('r', "reviewed"),
         ('a', "approved"),
     ), max_length=1, default='n')
-    reviewed_date = models.DateTimeField('date published', null=True)
+    reviewed_date = models.DateTimeField('reviewed date', null=True)
     review_user = models.ForeignKey(User, related_name="reviewed_variants", on_delete=models.CASCADE, null=True, blank=True)
-    approved_date = models.DateTimeField('date published', null=True)
+    approved_date = models.DateTimeField('approved date', null=True)
     approve_user = models.ForeignKey(User, related_name="approved_variants", on_delete=models.CASCADE, null=True, blank=True)
+
+    def __str__(self):
+        return self.protein
 
 
 class CancerHotspot(models.Model):

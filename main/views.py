@@ -1,9 +1,7 @@
 from django.core.files.storage import FileSystemStorage
 from django.core.mail import send_mail
-from django.core import mail
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q
 from django.forms.models import model_to_dict
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import redirect
@@ -14,7 +12,7 @@ from django.urls import reverse
 import datetime
 import pandas
 import urllib
-from weasyprint import HTML
+from weasyprint import HTML, CSS
 from api.models import *
 from .tables import GeneTable, VariantTable, UploadTable, DiseaseTable, HistoryTable, add_evidence
 
@@ -87,10 +85,7 @@ def variant(request, gene_name, variant_p):
         score_items = PathItem.objects.all()
     except Variant.DoesNotExist:
         raise Http404("Variant does not exist")
-    if item.branch == 'gp':
-        return render(request, 'variants/gp_form.html', {'item': item, 'items': score_items})
-    else:
-        return render(request, 'variants/so_form.html', {'item': item})
+    return render(request, 'variants/form.html', {'item': item, 'items': score_items})
 
 
 @login_required
@@ -132,7 +127,7 @@ def upload(request):
         except Gene.DoesNotExist:
             gene_item = Gene.objects.create(name=gene_name, pub_date=datetime.datetime.now())
 
-        variant = Variant.objects.create(branch=request.POST.get("data_type"), gene=gene_item, **row)
+        variant = Variant.objects.create(gene=gene_item, **row)
         if "consequence" in row or count == 0:
             History.objects.create(content="Upload", user=request.user, timestamp=datetime.datetime.now(), variant=variant)
             exists_dict["no"].append(variant)
@@ -165,7 +160,7 @@ def save(request, gene_name, variant_p):
         Gene.objects.filter(name=gene_name).update(content=request.POST.get("gene_report", ""), germline_content=request.POST.get("gene_germline_report", ""))
         item = Variant.objects.get(gene__name=gene_name, protein=variant_p)
 
-        i = 1
+        i = 2
         while request.POST.get("d" + str(i) + "_disease"):
             if not request.POST.get("d" + str(i) + "_id").isdigit():
                 dx_id = Disease.objects.create(name=request.POST.get("d" + str(i) + "_disease"), report=request.POST.get("d" + str(i) + "_desc"), others=request.POST.get("d" + str(i) + "_others"), variant=item)
@@ -173,7 +168,8 @@ def save(request, gene_name, variant_p):
                 Disease.objects.filter(pk=request.POST.get("d" + str(i) + "_id")).update(name=request.POST.get("d" + str(i) + "_disease"), report=request.POST.get("d" + str(i) + "_desc"), others=request.POST.get("d" + str(i) + "_others"))
                 dx_id = Disease.objects.get(pk=request.POST.get("d" + str(i) + "_id"))
 
-            if item.branch == 'gp':
+            print(request.POST.get("d" + str(i) + "_type"))
+            if request.POST.get("d" + str(i) + "_type") == 'gp':
                 for element in ITEMS.keys():
                     item_id = PathItem.objects.get(key=element)
                     add_evidence(request, "d" + str(i) + "_" + element, dx_id, item, item_id)
@@ -197,7 +193,6 @@ def save(request, gene_name, variant_p):
                     j += 1
                 add_evidence(request, "d" + str(i) + "_etype2", dx_id, item)
             for report_id, report, field_name in zip(request.POST.getlist("d" + str(i) + "_report_id"), request.POST.getlist("d" + str(i) + "_report"), request.POST.getlist("d" + str(i) + "_report_name")):
-                print(report)
                 if len(report) > 0:
                     if not report_id.isdigit():
                         Report.objects.create(name=field_name, content=report, gene=item.gene, variant=item, disease=dx_id)
@@ -215,7 +210,7 @@ def variant_text(request, gene_name, variant_p):
         item = Variant.objects.get(protein=variant_p, gene__name=gene_name)
     except Variant.DoesNotExist:
         raise Http404("Variant does not exist")
-    return render(request, 'variants/' + item.branch + '_detail.html', {'item': item})
+    return render(request, 'variants/detail.html', {'item': item})
 
 
 @login_required
@@ -234,13 +229,8 @@ def exported(request, gene_name, variant_p):
     except Variant.DoesNotExist:
         raise Http404("Variant does not exist")
     diseases = Disease.objects.filter(name__in=request.POST.getlist("disease"))
-    if item.branch == 'gp':
-        html_string = render_to_string('general/gp_export.html', {'item': item, 'diseases': diseases})
-    else:
-        html_string = render_to_string('general/so_export.html', {'item': item, 'diseases': diseases})
-
-    html = HTML(string=html_string)
-    html.write_pdf(target='/tmp/report.pdf')
+    html = HTML(string=render_to_string('general/export.html', {'item': item, 'diseases': diseases}))
+    html.write_pdf(target='/tmp/report.pdf', stylesheets=[CSS('static/bootstrap.min.css')])
 
     fs = FileSystemStorage('/tmp')
     with fs.open('report.pdf') as pdf:
