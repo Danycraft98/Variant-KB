@@ -10,6 +10,32 @@
         {% csrf_token %}
         <div class="card-body container pt-5">
             {% include 'partials/_detail.html' %}
+            <div class="row form-group">
+                <div class="col-12">
+                    <label for="gene_report">Gene Report</label>
+                    <textarea class="form-control" id="gene_report" name="gene_report">{{ item.gene.content }}</textarea>
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-12">
+                    <label for="variant_report">Variant Report</label>
+                    <textarea class="form-control" id="variant_report" name="variant_report"></textarea>
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-12">
+                    <label for="vgir">Gene Germline Implications Report</label>
+                    <textarea class="form-control" id="ggir" name="gene_germline_report">{{ item.gene.germline_content }}</textarea>
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-12">
+                    <label for="vgir">Variant Germline Implications Report</label>
+                    <textarea class="form-control" id="vgir" name="variant_germline_report"></textarea>
+                </div>
+            </div>
+            <br/>
+            <hr/>
             <fieldset id="diseases">
                 <div id="add" class="row mt-2 mb-2">
                     <div class="col-2">
@@ -430,6 +456,33 @@
 <script src="{% static 'add_evidence.js' %}"></script>
 <script src="{% static 'edit_variant.js' %}"></script>
 <script>
+    function get_report(element) {
+        var disease_id = element.id.split("_")[0];
+        var disease_name = element.value;
+
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                var diseases = JSON.parse(this.responseText);
+                for (key in diseases) {
+                    var obj = diseases[key];
+                    console.log(obj.gdr);
+                    if (obj.gene == {{ item.gene.pk }} && obj.variant != {{ item.pk }}) {
+                        document.getElementById(disease_id + "_gdr").value = obj.gdr;
+                    }
+                    if (obj.variant == {{ item.pk }}) {
+                        document.getElementById(disease_id + "_vdr").value = obj.vdr;
+                    }
+                }
+                if (Object.keys(diseases).length < 1) {
+                    document.getElementById(disease_id + "_gdr").value = "";
+                }
+            }
+        };
+        xhttp.open("GET", "http://localhost:8000/api/disease/" + disease_name + "/", true);
+        xhttp.send();
+    }
+
     $(document).ready(function() {
 
         {% for disease in item.diseases.all %}
@@ -462,17 +515,58 @@
 
         {% else %}
 
-        add_disease("so");
+        var disease = add_disease("so");
+        document.getElementById(disease.id + '_id').value = "{{ disease.id }}";
+        document.getElementById(disease.id + '_disease').value = "{{ disease.name }}";
+        {% if disease.functionals.all.count == 0 %}
+        var func_class = add_f_class(disease);
+        {% endif %}
 
+        {% for func in disease.functionals.all %}
+        var func_class = add_f_class(disease);
+        document.getElementById(func_class.id + '_id').value = "{{ func.id }}";
+        document.getElementById(disease.id + '_func_sig').value = "{{ func.key }}";
+        document.getElementById(func_class.id + '_func_class').value = "{{ func.value }}";
+
+        var btn = document.getElementById(func_class.id + '_btn');
+        {% for evidence in func.evidences.all %}
+        {% if forloop.counter > 1 %}
+        add_evidence_type1(btn);
+        {% endif %}
+        document.getElementById(func_class.id + '_etype1_id{{forloop.counter}}').value = "{{ evidence.id }}";
+        document.getElementById(func_class.id + '_etype1_st{{forloop.counter}}').value = "{{ evidence.source_type }}";
+        document.getElementById(func_class.id + '_etype1_s{{forloop.counter}}').value = "{{ evidence.source_id }}";
+        document.getElementById(func_class.id + '_etype1_e{{forloop.counter}}').value = "{{ evidence.statement }}";
+        {% endfor %}
+
+        {% endfor %}
+        {% for evidence in disease.evidences.all %}
+        var element = document.getElementById(disease.id + '_etype2_{{ forloop.counter }}')
+        if (element == null) {
+            add_evidence_type2(disease);
+        }
+        document.getElementById(disease.id + '_etype2_id{{ forloop.counter }}').value =  "{{ evidence.id }}";
+        document.getElementById(disease.id + '_etype2_st{{forloop.counter}}').value = "{{ evidence.source_type }}";
+        document.getElementById(disease.id + '_etype2_s{{forloop.counter}}').value = "{{ evidence.source_id }}";
+        document.getElementById(disease.id + '_etype2_e{{forloop.counter}}').value = "{{ evidence.statement }}";
+
+        {% with sub=evidence.subevidences.first %}
+        document.getElementById(disease.id + '_etype2_sig{{forloop.counter}}').value = "{{ sub.evid_sig }}";
+        document.getElementById(disease.id + '_etype2_level{{forloop.counter}}').value = "{{ sub.level }}";
+        document.getElementById(disease.id + '_etype2_dir{{forloop.counter}}').value = "{{ sub.evid_dir }}";
+        document.getElementById(disease.id + '_etype2_clin_sig{{forloop.counter}}').value = "{{ sub.clin_sig }}";
+        document.getElementById(disease.id + '_etype2_drug{{forloop.counter}}').value = "{{ sub.drug_class }}";
+        document.getElementById(disease.id + '_etype2_rating{{forloop.counter}}').value = "{{ sub.evid_rating }}";
+        {% endwith %}
+        {% endfor %}
+
+        {% for report in disease.reports.all %}
+        getElementsByValue('{{ report.name }}','input', disease.id)[0].value = "{{ report.content }}"
+        getElementsByValue('{{ report.name }}','input', disease.id)[1].value = "{{ report.id }}"
+        {% endfor %}
 
         {% endif %}
         {% endfor %}
     });
-
-
-
-
-
-
 </script>
 {% endblock %}

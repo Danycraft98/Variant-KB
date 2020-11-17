@@ -59,7 +59,7 @@ def account_request(request):
 @login_required
 def variants(request):
     if request.GET:
-        variant_list = VariantTable(Variant.objects.filter(chromosome__contains=request.GET.get("chromosome",""), p__contains=request.GET.get("p",""), c__contains=request.GET.get("c",""), ref__contains=request.GET.get("ref", ""), alt__contains=request.GET.get("alt", "")))
+        variant_list = VariantTable(Variant.objects.filter(chr__contains=request.GET.get("chromosome",""), protein__contains=request.GET.get("protein",""), cdna__contains=request.GET.get("cdna",""), ref__contains=request.GET.get("ref", ""), alt__contains=request.GET.get("alt", "")))
     else:
         variant_list = VariantTable(Variant.objects.all())
     return render(request, 'variants/index.html', {'table': variant_list, 'title': 'List of Variants'})
@@ -96,7 +96,7 @@ def upload(request):
             if variant_id in request.POST.getlist("add_or_update"):
                 variant_item = Variant.objects.get(pk=variant_id)
                 if variant_item.existing:
-                    existing = variant_item.existing
+                    existing = Variant.objects.filter(pk=variant_item.existing.id)
                     data = model_to_dict(variant_item)
                     data.pop('id', None)
                     data.pop('existing', None)
@@ -133,6 +133,7 @@ def upload(request):
             exists_dict["no"].append(variant)
         else:
             variant.existing = exist_variants.first()
+            variant.save()
             exists_dict["yes"].append(variant)
         variant_ids.append(str(variant.id))
         for hotspot in raw_hotspots:

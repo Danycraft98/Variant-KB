@@ -59,7 +59,7 @@ class VariantTable(tables.Table):
 
 
 class UploadTable(tables.Table):
-    add_or_update = tables.CheckBoxColumn(accessor='pk', attrs={'th__input': {'checked': 'checked', 'class': 'selectAll'}})
+    add_or_update = tables.CheckBoxColumn(accessor='pk', attrs={'th__input': {'class': 'selectAll'}})
 
     class Meta:
         model = Variant
