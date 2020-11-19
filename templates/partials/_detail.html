@@ -1,183 +1,415 @@
-{% if item.genome_build and item.genome_build != "nan" %}
-<div class="d-flex justify-content-center ">
-    <div class="col-3 text-right">
-        <strong class="">genome build</strong>
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item">
+        <a class="nav-link active" data-toggle="tab" href="#main" role="tab" aria-controls="main" aria-selected="true">Main</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" data-toggle="tab" href="#detail" role="tab" aria-controls="detail" aria-selected="false">Detail</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" data-toggle="tab" href="#score" role="tab" aria-controls="score" aria-selected="false">Scores</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" data-toggle="tab" href="#report" role="tab" aria-controls="report" aria-selected="false">Reports</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" data-toggle="tab" href="#link" role="tab" aria-controls="link" aria-selected="false">Links</a>
+    </li>
+</ul>
+<div class="tab-content border-bottom border-left border-right" id="tab-content">
+    <div class="tab-pane fade show active" id="main" role="tabpanel" aria-labelledby="main-tab">
+        <div class="d-flex justify-content-center pt-2 text">
+            <div class="col-3 text-right">
+                <strong>Gene</strong>
+            </div>
+            <div class="col-custom p-0"></div>
+            <div class="col-6 ">{{ item.gene }}</div>
+        </div>
+        {% if item.genome_build and item.genome_build != "na" %}
+            <div class="d-flex justify-content-center ">
+                <div class="col-3 text-right">
+                    <strong>genome build</strong>
+                </div>
+                <div class="col-custom p-0"></div>
+                <div class="col-6 ">{{ item.genome_build }}</div>
+            </div>
+        {% endif %}
+        {% if item.chr and item.chr != "na" %}
+            <div class="d-flex justify-content-center pt-2 text">
+                <div class="col-3 text-right">
+                    <strong>chromosome</strong>
+                </div>
+                <div class="col-custom p-0"></div>
+                <div class="col-6 ">{{ item.chr }}</div>
+            </div>
+        {% endif %}
+        {% if item.cdna and item.cdna != "na" %}
+            <div class="d-flex justify-content-center pt-2 text">
+                <div class="col-3 text-right">
+                    <strong>c.</strong>
+                </div>
+                <div class="col-custom p-0"></div>
+                <div class="col-6 ">{{ item.cdna }}</div>
+            </div>
+        {% endif %}
+        {% if item.protein and item.protein != "na" %}
+            <div class="d-flex justify-content-center pt-2 text">
+                <div class="col-3 text-right">
+                    <strong>p.</strong>
+                </div>
+                <div class="col-custom p-0"></div>
+                <div class="col-6 ">{{ item.protein }}</div>
+            </div>
+        {% endif %}
+        {% if item.transcript and item.transcript != "na" %}
+            <div class="d-flex justify-content-center pt-2 text">
+                <div class="col-3 text-right">
+                    <strong>Transcript</strong>
+                </div>
+                <div class="col-custom p-0"></div>
+                <div class="col-6 ">{{ item.transcript }}</div>
+            </div>
+        {% endif %}
+        {% if item.start and item.start != "na" %}
+            <div class="d-flex justify-content-center pt-2 text">
+                <div class="col-3 text-right">
+                    <strong>start</strong>
+                </div>
+                <div class="col-custom p-0"></div>
+                <div class="col-6 ">{{ item.start }}</div>
+            </div>
+        {% endif %}
+        {% if item.end and item.end != "na" %}
+            <div class="d-flex justify-content-center pt-2 text">
+                <div class="col-3 text-right">
+                    <strong>end</strong>
+                </div>
+                <div class="col-custom p-0"></div>
+                <div class="col-6 ">{{ item.end }}</div>
+            </div>
+        {% endif %}
+        {% if item.ref and item.ref != "na" %}
+            <div class="d-flex justify-content-center pt-2 text">
+                <div class="col-3 text-right">
+                    <strong>ref</strong>
+                </div>
+                <div class="col-custom p-0"></div>
+                <div class="col-6 ">{{ item.ref }}</div>
+            </div>
+        {% endif %}
+        {% if item.alt and item.alt != "na" %}
+            <div class="d-flex justify-content-center pt-2 text">
+                <div class="col-3 text-right">
+                    <strong>alt</strong>
+                </div>
+                <div class="col-custom p-0"></div>
+                <div class="col-6 ">{{ item.alt }}</div>
+            </div>
+        {% endif %}
+        {% if item.hotspots.count > 0 %}
+            <div class="d-flex justify-content-center pt-2 text">
+                <div class="col-3 text-right">
+                    <strong>Cancer Hotspot</strong>
+                </div>
+                <div class="col-custom p-0"></div>
+                <div id="hotspot" class="col-6">
+                    <svg width="500" height="20"></svg>
+                </div>
+            </div>
+        {% endif %}
     </div>
-    <div class="col-custom p-0"></div>
-    <div class="col-6 ">{{ item.genome_build }}</div>
+    <div class="tab-pane fade" id="detail" role="tabpanel" aria-labelledby="detail-tab">
+        {% if item.af and item.af != "na" %}
+            <div class="d-flex justify-content-center pt-2 text">
+                <div class="col-3 text-right">
+                    <strong>AF</strong>
+                </div>
+                <div class="col-custom p-0"></div>
+                <div id="af" class="col-6">{{ item.af }}</div>
+            </div>
+        {% endif %}
+        {% if item.af_popmax and item.af_popmax != "na" %}
+            <div class="d-flex justify-content-center pt-2 text">
+                <div class="col-3 text-right">
+                    <strong>AF Popmax</strong>
+                </div>
+                <div class="col-custom p-0"></div>
+                <div id="af_popmax" class="col-6">{{ item.af_popmax }}</div>
+            </div>
+        {% endif %}
+        {% if item.cosmic70 and item.cosmic70 != "na" %}
+            <div class="d-flex justify-content-center pt-2 text">
+                <div class="col-3 text-right">
+                    <strong>cosmic70</strong>
+                </div>
+                <div class="col-custom p-0"></div>
+                <div id="cosmic70" class="col-6">{{ item.cosmic70 }}</div>
+            </div>
+        {% endif %}
+        {% if item.clinvar and item.clinvar != "na" %}
+            <div class="d-flex justify-content-center pt-2 text">
+                <div class="col-3 text-right">
+                    <strong>CLINVAR</strong>
+                </div>
+                <div class="col-custom p-0"></div>
+                <div id="clinvar" class="col-6">{{ item.clinvar }}</div>
+            </div>
+        {% endif %}
+        {% if item.insilicodamaging and item.insilicodamaging != "na" %}
+            <div class="d-flex justify-content-center pt-2 text">
+                <div class="col-3 text-right">
+                    <strong>InSilicoDamaging</strong>
+                </div>
+                <div class="col-custom p-0"></div>
+                <div id="insilicodamaging" class="col-6">{{ item.insilicodamaging }}</div>
+            </div>
+        {% endif %}
+        {% if item.insilicobenign and item.insilicobenign != "na" %}
+            <div class="d-flex justify-content-center pt-2 text">
+                <div class="col-3 text-right">
+                    <strong>InSilicoBenign</strong>
+                </div>
+                <div class="col-custom p-0"></div>
+                <div id="insilicobenign" class="col-6">{{ item.insilicobenign }}</div>
+            </div>
+        {% endif %}
+        {% if item.polyphen2_hdiv_pred and item.polyphen2_hdiv_pred != "na" %}
+            <div class="d-flex justify-content-center pt-2 text">
+                <div class="col-3 text-right">
+                    <strong>Polyphen2_HDIV_pred</strong>
+                </div>
+                <div class="col-custom p-0"></div>
+                <div id="polyphen2_hdiv_pred" class="col-6">{{ item.polyphen2_hdiv_pred }}</div>
+            </div>
+        {% endif %}
+        {% if item.polyphen2_hvar_pred and item.polyphen2_hvar_pred != "na" %}
+            <div class="d-flex justify-content-center pt-2 text">
+                <div class="col-3 text-right">
+                    <strong>Polyphen2_HVAR_pred</strong>
+                </div>
+                <div class="col-custom p-0"></div>
+                <div id="polyphen2_hvar_pred" class="col-6">{{ item.polyphen2_hvar_pred }}</div>
+            </div>
+        {% endif %}
+        {% if item.sift_pred and item.sift_pred != "na" %}
+            <div class="d-flex justify-content-center pt-2 text">
+                <div class="col-3 text-right">
+                    <strong>SIFT_pred</strong>
+                </div>
+                <div class="col-custom p-0"></div>
+                <div id="sift_pred" class="col-6">{{ item.sift_pred }}</div>
+            </div>
+        {% endif %}
+        {% if item.provean_pred and item.provean_pred != "na" %}
+            <div class="d-flex justify-content-center pt-2 text">
+                <div class="col-3 text-right">
+                    <strong>PROVEAN_pred</strong>
+                </div>
+                <div class="col-custom p-0"></div>
+                <div id="provean_pred" class="col-6">{{ item.provean_pred }}</div>
+            </div>
+        {% endif %}
+        {% if item.lrt_pred and item.lrt_pred != "na" %}
+            <div class="d-flex justify-content-center pt-2 text">
+                <div class="col-3 text-right">
+                    <strong>LRT_pred</strong>
+                </div>
+                <div class="col-custom p-0"></div>
+                <div id="lrt_pred" class="col-6">{{ item.lrt_pred }}</div>
+            </div>
+        {% endif %}
+        {% if item.tcga and item.tcga != "na" %}
+            <div class="d-flex justify-content-center pt-2 text">
+                <div class="col-3 text-right">
+                    <strong>TCGA#occurances</strong>
+                </div>
+                <div class="col-custom p-0"></div>
+                <div id="tcga" class="col-6">{{ item.tcga }}</div>
+            </div>
+        {% endif %}
+    </div>
+    <div class="tab-pane fade" id="score" role="tabpanel" aria-labelledby="score-tab">
+        {% if item.oncokb and item.oncokb != "na" %}
+            <div class="d-flex justify-content-center pt-2 text">
+                <div class="col-3 text-right">
+                    <strong>oncoKB</strong>
+                </div>
+                <div class="col-custom p-0"></div>
+                <div id="oncokb" class="col-6">{{ item.oncokb }}</div>
+            </div>
+        {% endif %}
+        {% if item.oncokb_pmids and item.oncokb_pmids != "na" %}
+            <div class="d-flex justify-content-center pt-2 text">
+                <div class="col-3 text-right">
+                    <strong>oncoKB PMIDs</strong>
+                </div>
+                <div class="col-custom p-0"></div>
+                <div id="oncokb_pmids" class="col-6">{{ item.oncokb_pmids }}</div>
+            </div>
+        {% endif %}
+        {% if item.watson and item.watson != "na" %}
+            <div class="d-flex justify-content-center pt-2 text">
+                <div class="col-3 text-right">
+                    <strong>Watson</strong>
+                </div>
+                <div class="col-custom p-0"></div>
+                <div id="watson" class="col-6">{{ item.watson }}</div>
+            </div>
+        {% endif %}
+        {% if item.watson_pmids and item.watson_pmids != "na" %}
+            <div class="d-flex justify-content-center pt-2 text">
+                <div class="col-3 text-right">
+                    <strong>Watson PMIDs</strong>
+                </div>
+                <div class="col-custom p-0"></div>
+                <div id="watson_pmids" class="col-6">{{ item.watson_pmids }}</div>
+            </div>
+        {% endif %}
+        {% if item.qci and item.qci != "na" %}
+            <div class="d-flex justify-content-center pt-2 text">
+                <div class="col-3 text-right">
+                    <strong>QCI</strong>
+                </div>
+                <div class="col-custom p-0"></div>
+                <div id="qci" class="col-6">{{ item.qci }}</div>
+            </div>
+        {% endif %}
+        {% if item.qci_pmids and item.qci_pmids != "na" %}
+            <div class="d-flex justify-content-center pt-2 text">
+                <div class="col-3 text-right">
+                    <strong>QCI PMIDs</strong>
+                </div>
+                <div class="col-custom p-0"></div>
+                <div id="qci_pmids" class="col-6">{{ item.qci_pmids }}</div>
+            </div>
+        {% endif %}
+        {% if item.pmkb and item.pmkb != "na" %}
+            <div class="d-flex justify-content-center pt-2 text">
+                <div class="col-3 text-right">
+                    <strong>PMKB</strong>
+                </div>
+                <div class="col-custom p-0"></div>
+                <div id="pmkb" class="col-6">{{ item.pmkb }}</div>
+            </div>
+        {% endif %}
+        {% if item.pmkb_citations and item.pmkb_citations != "na" %}
+            <div class="d-flex justify-content-center pt-2 text">
+                <div class="col-3 text-right">
+                    <strong>PMKB_citations</strong>
+                </div>
+                <div class="col-custom p-0"></div>
+                <div id="pmkb_citations" class="col-6">{{ item.pmkb_citations }}</div>
+            </div>
+        {% endif %}
+    </div>
+    <div class="tab-pane fade" id="report" role="tabpanel" aria-labelledby="report-tab">
+        {% if item.consequence and item.consequence != "na" %}
+            <div class="d-flex justify-content-center pt-2 text">
+                <div class="col-3 text-right">
+                    <strong>consequence</strong>
+                </div>
+                <div class="col-custom p-0"></div>
+                <div class="col-6 ">{{ item.consequence }}</div>
+            </div>
+        {% endif %}
+        {% if item.gene.content %}
+            <div class="d-flex justify-content-center pt-2 text">
+                <div class="col-3 text-right">
+                    <strong>Gene Report</strong>
+                </div>
+                <div class="col-custom p-0"></div>
+                <div class="col-6 ">{{ item.gene.content }}</div>
+            </div>
+        {% endif %}
+        {% if item.content %}
+            <div class="d-flex justify-content-center pt-2 text">
+                <div class="col-3 text-right">
+                    <strong>Variant Report</strong>
+                </div>
+                <div class="col-custom p-0"></div>
+                <div class="col-6 ">{{ item.content }}</div>
+            </div>
+        {% endif %}
+        {% if item.gene.germline_content %}
+            <div class="d-flex justify-content-center pt-2 text">
+                <div class="col-3 text-right">
+                    <strong>Gene Germline Report</strong>
+                </div>
+                <div class="col-custom p-0"></div>
+                <div class="col-6 ">{{ item.gene.germline_content }}</div>
+            </div>
+        {% endif %}
+        {% if item.germline_content %}
+            <div class="d-flex justify-content-center pt-2 text">
+                <div class="col-3 text-right">
+                    <strong>Variant Germline Report</strong>
+                </div>
+                <div class="col-custom p-0"></div>
+                <div class="col-6 ">{{ item.germline_content }}</div>
+            </div>
+        {% endif %}
+    </div>
+    <div class="tab-pane fade" id="link" role="tabpanel" aria-labelledby="link-tab">
+        <div class="d-flex justify-content-center pt-2 text">
+            <div class="col-3 text-right">
+                <strong>HGMD</strong>
+            </div>
+            <div class="col-custom p-0"></div>
+            <div class="col-6 "><a target="_blank" href="https://portal.biobase-international.com/hgmd/pro/gene.php?gene={{ item.gene.name }}">Link to HGMD</a></div>
+        </div>
+        {% if item.civic and item.civic != "na" %}
+            <div class="d-flex justify-content-center pt-2 text">
+                <div class="col-3 text-right">
+                    <strong>CIViC</strong>
+                </div>
+                <div class="col-custom p-0"></div>
+                <div id="civic" class="col-6"><a target="_blank" href="{{ item.civic }}">Link to CIViC</a></div>
+            </div>
+        {% endif %}
+        {% if item.google and item.google != "na" %}
+            <div class="d-flex justify-content-center pt-2 text">
+                <div class="col-3 text-right">
+                    <strong>Google</strong>
+                </div>
+                <div class="col-custom p-0"></div>
+                <div id="google" class="col-6"><a target="_blank" href="{{ item.google }}">Link to Google</a></div>
+            </div>
+        {% endif %}
+        {% if item.alamut and item.alamut != "na" %}
+            <div class="d-flex justify-content-center pt-2 text">
+                <div class="col-3 text-right">
+                    <strong>Alamut</strong>
+                </div>
+                <div class="col-custom p-0"></div>
+                <div id="alamut" class="col-6"><a target="_blank" href="{{ item.alamut }}">Link to Alamut</a></div>
+            </div>
+        {% endif %}
+    </div>
 </div>
-{% endif %}
-{% if item.chromosome and item.chromosome != "nan" %}
-<div class="d-flex justify-content-center pt-2 text">
-    <div class="col-3 text-right">
-        <strong class="">chromosome</strong>
-    </div>
-    <div class="col-custom p-0"></div>
-    <div class="col-6 ">{{ item.chromosome }}</div>
-</div>
-{% endif %}
-{% if item.start and item.start != "nan" %}
-<div class="d-flex justify-content-center pt-2 text">
-    <div class="col-3 text-right">
-        <strong class="">start</strong>
-    </div>
-    <div class="col-custom p-0"></div>
-    <div class="col-6 ">{{ item.start }}</div>
-</div>
-{% endif %}
-{% if item.end and item.end != "nan" %}
-<div class="d-flex justify-content-center pt-2 text">
-    <div class="col-3 text-right">
-        <strong class="">end</strong>
-    </div>
-    <div class="col-custom p-0"></div>
-    <div class="col-6 ">{{ item.end }}</div>
-</div>
-{% endif %}
-{% if item.ref and item.ref != "nan" %}
-<div class="d-flex justify-content-center pt-2 text">
-    <div class="col-3 text-right">
-        <strong class="">ref</strong>
-    </div>
-    <div class="col-custom p-0"></div>
-    <div class="col-6 ">{{ item.ref }}</div>
-</div>
-{% endif %}
-{% if item.alt and item.alt != "nan" %}
-<div class="d-flex justify-content-center pt-2 text">
-    <div class="col-3 text-right">
-        <strong class="">alt</strong>
-    </div>
-    <div class="col-custom p-0"></div>
-    <div class="col-6 ">{{ item.alt }}</div>
-</div>
-{% endif %}
-{% if item.transcript and item.transcript != "nan" %}
-<div class="d-flex justify-content-center pt-2 text">
-    <div class="col-3 text-right">
-        <strong class="">Refseq Transcript</strong>
-    </div>
-    <div class="col-custom p-0"></div>
-    <div class="col-6 ">{{ item.transcript }}</div>
-</div>
-{% endif %}
-{% if item.c and item.c != "nan" %}
-<div class="d-flex justify-content-center pt-2 text">
-    <div class="col-3 text-right">
-        <strong class="">c.</strong>
-    </div>
-    <div class="col-custom p-0"></div>
-    <div class="col-6 ">{{ item.c }}</div>
-</div>
-{% endif %}
-{% if item.p and item.p != "nan" %}
-<div class="d-flex justify-content-center pt-2 text">
-    <div class="col-3 text-right">
-        <strong class="">p.</strong>
-    </div>
-    <div class="col-custom p-0"></div>
-    <div class="col-6 ">{{ item.p }}</div>
-</div>
-{% endif %}
-{% if item.chromosome and item.chromosome != "nan" and item.start and item.start != "nan"%}
-<div class="d-flex justify-content-center pt-2 text">
-    <div class="col-3 text-right">
-        <strong class="">IGV</strong>
-    </div>
-    <div class="col-custom p-0"></div>
-    <div class="col-6 "><a target="_blank" href="http://localhost:60151/goto?locus={{ item.chromosome }}:{{ item.start }}">Link to IGV</a></div>
-</div>
-{% endif %}
-{% if item.chromosome and item.chromosome != "nan" and item.start and item.start != "nan" and item.end and item.end != "nan"%}
-<div class="d-flex justify-content-center pt-2 text">
-    <div class="col-3 text-right">
-        <strong class="">UCSC</strong>
-    </div>
-    <div class="col-custom p-0"></div>
-    <div class="col-6 "><a target="_blank" href="http://https://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&position={{ item.chromosome }}:{{ item.start }}-{{ item.end }}">Link to UCSC</a></div>
-</div>
-{% endif %}
-<div class="d-flex justify-content-center pt-2 text">
-    <div class="col-3 text-right">
-        <strong class="">HGMD</strong>
-    </div>
-    <div class="col-custom p-0"></div>
-    <div class="col-6 "><a target="_blank" href="https://portal.biobase-international.com/hgmd/pro/gene.php?gene={{ item.gene.name }}">Link to HGMD</a></div>
-</div>
-{% if item.consequence and item.consequence != "nan" %}
-<div class="d-flex justify-content-center pt-2 text">
-    <div class="col-3 text-right">
-        <strong class="">consequence</strong>
-    </div>
-    <div class="col-custom p-0"></div>
-    <div class="col-6 ">{{ item.consequence }}</div>
-</div>
-{% endif %}
-<div class="d-flex justify-content-center pt-2 text">
-    <div class="col-3 text-right">
-        <strong class="">Gene</strong>
-    </div>
-    <div class="col-custom p-0"></div>
-    <div class="col-6 ">{{ item.gene }}</div>
-</div>
-{% if item.gene.content %}
-<div class="d-flex justify-content-center pt-2 text">
-    <div class="col-3 text-right">
-        <strong class="">Gene Report</strong>
-    </div>
-    <div class="col-custom p-0"></div>
-    <div class="col-6 ">{{ item.gene.content }}</div>
-</div>
-{% endif %}
-{% if item.content %}
-<div class="d-flex justify-content-center pt-2 text">
-    <div class="col-3 text-right">
-        <strong class="">Variant Report</strong>
-    </div>
-    <div class="col-custom p-0"></div>
-    <div class="col-6 ">{{ item.content }}</div>
-</div>
-{% endif %}
-{% if item.gene.germline_content %}
-<div class="d-flex justify-content-center pt-2 text">
-    <div class="col-3 text-right">
-        <strong class="">Gene Germline Report</strong>
-    </div>
-    <div class="col-custom p-0"></div>
-    <div class="col-6 ">{{ item.gene.germline_content }}</div>
-</div>
-{% endif %}
-{% if item.germline_content %}
-<div class="d-flex justify-content-center pt-2 text">
-    <div class="col-3 text-right">
-        <strong class="">Variant Germline Report</strong>
-    </div>
-    <div class="col-custom p-0"></div>
-    <div class="col-6 ">{{ item.germline_content }}</div>
-</div>
-{% endif %}
-<div class="d-flex justify-content-center pt-2 text">
-    <div class="col-3 text-right">
-        <strong class="">Cancer Hotspot</strong>
-    </div>
-    <div class="col-custom p-0"></div>
-    <div id="hotspot" class="col-6">
-        <svg width="500" height="20"></svg>
-    </div>
-</div>
-
 
 <script src="https://code.jquery.com/jquery-latest.min.js"></script>
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script>
-    var color = d3.scaleOrdinal(d3.schemeCategory10).domain(["*","A","C","D","E","F","G","H","I","K","L","M","N","P","Q","R","S","T","V","W","Y","sp"]);
-    var group = [{% for hotspot in item.hotspots.all %}"{{ hotspot.hotspot }}",{% endfor %}];
-    var data = [{ {% for hotspot in item.hotspots.all %}"{{ hotspot.hotspot }}": {{ hotspot.count }},{% endfor %} }];
-    var layers = d3.stack()
+    maxheight = 0;
+    tabs = jQuery('.tab-content .tab-pane');
+    jQuery.each(tabs, function () {
+        this.classList.add("active"); /* make all visible */
+        maxheight = (this.clientHeight > maxheight ? this.clientHeight : maxheight);
+        if (!jQuery(this).hasClass("show")) {
+            this.classList.remove("active"); /* hide again */
+        }
+    });
+    jQuery.each(tabs, function () {
+        jQuery(this).height(maxheight);
+    });
+
+    const color = d3.scaleOrdinal(d3.schemeCategory10).domain(["*", "A", "C", "D", "E", "F", "G", "H", "I", "K", "L", "M", "N", "P", "Q", "R", "S", "T", "V", "W", "Y", "sp"]);
+    const group = [{% for hotspot in item.hotspots.all %}"{{ hotspot.hotspot }}",{% endfor %}];
+    const data = [{ {% for hotspot in item.hotspots.all %}"{{ hotspot.hotspot }}" : {{ hotspot.count }},{% endfor %} }];
+    const layers = d3.stack()
         .keys(group)
         .offset(d3.stackOffsetDiverging)
         (data);
-    var tooltip = d3.select("body").append("div")
+    const tooltip = d3.select("body").append("div")
         .style("background", "rgba(0, 0, 0, 0.9)")
         .style("color", "white")
         .style("position", "absolute")
@@ -187,7 +419,7 @@
         .attr("width", self.width + 10)
         .attr("height", self.height + 20);
 
-    var svg = d3.select("svg");
+    const svg = d3.select("svg");
     margin = {
         top: 20,
         right: 30,
@@ -197,72 +429,72 @@
     width = +svg.attr("width");
     height = +svg.attr("height");
 
-    var x = d3.scaleLinear().rangeRound([margin.left, width - margin.right]);
+    const x = d3.scaleLinear().rangeRound([margin.left, width - margin.right]);
     x.domain([d3.min(layers, stackMin), d3.max(layers, stackMax)]);
 
-    var y = d3.scaleBand()
+    const y = d3.scaleBand()
         .rangeRound([height - margin.bottom, margin.top])
         .padding(0.1);
-    y.domain(data.map(function(d) {
+    y.domain(data.map(function () {
         return 1;
     }))
 
     function stackMin(layers) {
-        return d3.min(layers, function(d) {
+        return d3.min(layers, function (d) {
             return d[0];
         });
     }
 
     function stackMax(layers) {
-        return d3.max(layers, function(d) {
+        return d3.max(layers, function (d) {
             return d[1];
         });
     }
 
-    var main_g = svg.append("g")
+    const main_g = svg.append("g")
         .selectAll("g")
         .data(layers);
-    var g = main_g.enter().append("g")
-        .attr("fill", function(d) {
+    const g = main_g.enter().append("g")
+        .attr("fill", function (d) {
             return color(d.key);
         });
 
-    var rect = g.selectAll("rect")
-        .data(function(d) {
-            d.forEach(function(d1) {
+    const rect = g.selectAll("rect")
+        .data(function (d) {
+            d.forEach(function (d1) {
                 d1.key = d.key;
                 return d1;
             });
             return d;
         })
         .enter().append("rect")
-        .attr("data", function(d) {
-            var data = {};
+        .attr("data", function (d) {
+            const data = {};
             data["key"] = d.key;
             data["value"] = d.data[d.key];
-            var total = 0;
-            group.map(function(d1) {
+            let total = 0;
+            group.map(function (d1) {
                 total = total + d.data[d1]
             });
             data["total"] = total;
             return JSON.stringify(data);
         })
-        .attr("width", function(d) {
+        .attr("width", function (d) {
             return x(d[1]) - x(d[0]);
         })
-        .attr("x", function(d) {
+        .attr("x", function (d) {
             return x(d[0]);
         })
         .attr("height", y.bandwidth);
 
-    rect.on("mouseover", function(d){
-            tooltip.text(d.key + ": " + d.data[d.key]);
-            tooltip.style("visibility", "visible");
+    rect.on("mouseover", function (d) {
+        tooltip.text(d.key + ": " + d.data[d.key]);
+        tooltip.style("visibility", "visible");
+    })
+        .on("mousemove", function () {
+            return tooltip.style("top", (event.pageY - 10) + "px").style("left", (event.pageX + 10) + "px");
         })
-        .on("mousemove", function(){
-            return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
-        })
-        .on("mouseout", function(){
+        .on("mouseout", function () {
             tooltip.style("visibility", "hidden");
         });
 </script>

@@ -142,7 +142,6 @@ def upload(request):
                 exists_dict['no'].append(row)
             else:
                 exists_dict['yes'].append(row)
-    print(request.POST)
     if 'dict' in request.POST:
         return HttpResponseRedirect(reverse('index'))
     else:

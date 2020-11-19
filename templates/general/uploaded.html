@@ -94,7 +94,7 @@
         try {
             Array.prototype.forEach.call(document.getElementsByName('add_or_update'), function(element) {
                 if (element.checked && (element.parentElement.parentElement.children[3].innerText.includes('na') || element.parentElement.parentElement.children[9].innerText.includes('na'))) {
-                    alert("variant with missing Gene name and/or Protein.");
+                    alert("Variant with missing Gene name and/or Protein.");
                     throw BreakException;
                 }
             });
