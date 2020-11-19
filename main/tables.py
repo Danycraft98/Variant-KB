@@ -46,28 +46,13 @@ class VariantTable(tables.Table):
         model = Variant
         orderable = False
         sequence = ('edit', 'variant_detail', 'chr', 'cdna', 'protein', 'transcript')
-        exclude = ('id', 'genome_build', 'gene', 'consequence', 'existing', 'exonic_function', 'content',
+        exclude = ('id', 'genome_build', 'gene', 'consequence', 'exonic_function', 'content',
                    'germline_content', 'af', 'af_popmax', 'cosmic70', 'clinvar', 'insilicodamaging',
                    'insilicobenign', 'polyphen2_hdiv_pred', 'polyphen2_hvar_pred', 'sift_pred',
                    'mutationtaster_pred', 'mutationassessor_pred', 'provean_pred', 'lrt_pred', 'tcga',
                    'oncokb', 'oncokb_pmids', 'watson', 'watson_pmids', 'qci', 'qci_pmids', 'pmkb',
                    'pmkb_citations', 'civic', 'google', 'alamut')
         attrs = {"class": "dataTable nowrap table table-bordered table-hover"}
-
-    def class_type(self):
-        return "Variant"
-
-
-class UploadTable(tables.Table):
-    add_or_update = tables.CheckBoxColumn(accessor='pk', attrs={'th__input': {'class': 'selectAll'}})
-
-    class Meta:
-        model = Variant
-        orderable = False
-        sequence = ('add_or_update', 'chr', 'cdna', 'protein', 'transcript')
-        exclude = ('id', 'genome_build', 'gene', 'consequence', 'reported', 'existing')
-        attrs = {"class": "nowrap table table-bordered table-hover"}
-        row_attrs = {"style": "overflow: hidden; height: 14px; white-space: nowrap;" }
 
     def class_type(self):
         return "Variant"

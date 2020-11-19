@@ -97,7 +97,6 @@ class Migration(migrations.Migration):
                 ('reviewed_date', models.DateTimeField(null=True, verbose_name='reviewed date')),
                 ('approved_date', models.DateTimeField(null=True, verbose_name='approved date')),
                 ('approve_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='approved_variants', to=settings.AUTH_USER_MODEL)),
-                ('existing', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='variants', to='api.variant')),
                 ('gene', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='variants', to='api.gene')),
                 ('review_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='reviewed_variants', to=settings.AUTH_USER_MODEL)),
             ],

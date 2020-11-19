@@ -19,11 +19,10 @@
     </div>
     <div class="card-body container pt-5">
         {% include 'partials/_detail.html' %}
-        <br/>
 
         {% for disease in item.diseases.all %}
         <div class="card mb-3">
-            <div id="d{{ forloop.counter }}_collapse" class="card-header d-flex" data-toggle="collapse" data-target=".d{{ forloop.counter }}" onclick="collapse(this,1)">
+            <div id="d{{ forloop.counter }}_collapse" class="card-header d-flex collapser" data-toggle="collapse" data-target=".d{{ forloop.counter }}" onclick="collapse(this,1)">
                 <h6 class="panel-title"><strong>Disease - {{ disease.name }}</strong></h6>
                 <i id="d{{ forloop.counter }}_icon" class="fa fa-chevron-down ml-auto" aria-hidden="true"></i>
             </div>

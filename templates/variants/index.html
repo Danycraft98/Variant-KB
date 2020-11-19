@@ -24,8 +24,8 @@
             {% if item.class_type == "Gene" %}
             <h6><strong><u>Gene Detail</u></strong></h6>
             <p><strong>Gene Name:</strong> {{ item }}</p>
-            {% if item.content %}<p><strong>Gene Report:</strong>{{ item.content }}</p>{% endif %}
-            {% if item.germline_content %}<p><strong>Gene Germline Report:</strong>{{ item.germline_content }}</p>{% endif %}
+            {% if item.content %}<p><strong>Gene Report:</strong> {{ item.content }}</p>{% endif %}
+            {% if item.germline_content %}<p><strong>Gene Germline Report:</strong> {{ item.germline_content }}</p>{% endif %}
             <hr/>
             {% endif %}
             {% render_table table %}
@@ -62,6 +62,8 @@
 <script>
     $('#warningModal').modal('show')
     $(document).ready( function () {
+        $('input[type=search]').attr('class', 'form-control');
+
         $('.dataTable').DataTable(
         {% if table.class_type == "Variant" %}
         {"scrollX": true, "sScrollX": "100%", "sScrollXInner": "110%"}

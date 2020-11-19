@@ -61,7 +61,6 @@ class Variant(models.Model):
     google = models.CharField(max_length=100, null=True)
     alamut = models.CharField(max_length=70, null=True)
     gene = models.ForeignKey(Gene, related_name="variants", on_delete=models.CASCADE, null=True, blank=True)
-    existing = models.ForeignKey('self', related_name="variants", on_delete=models.CASCADE, null=True, blank=True)
     reviewed = models.CharField(choices=(
         ('n', "not reviewed"),
         ('r', "reviewed"),

@@ -161,7 +161,9 @@
         <strong class="">Cancer Hotspot</strong>
     </div>
     <div class="col-custom p-0"></div>
-    <div id="hotspot" class="col-6"><svg width="500" height="110"></svg></div>
+    <div id="hotspot" class="col-6">
+        <svg width="500" height="20"></svg>
+    </div>
 </div>
 
 
@@ -169,13 +171,21 @@
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script>
     var color = d3.scaleOrdinal(d3.schemeCategory10).domain(["*","A","C","D","E","F","G","H","I","K","L","M","N","P","Q","R","S","T","V","W","Y","sp"]);
-    console.log(color);
     var group = [{% for hotspot in item.hotspots.all %}"{{ hotspot.hotspot }}",{% endfor %}];
     var data = [{ {% for hotspot in item.hotspots.all %}"{{ hotspot.hotspot }}": {{ hotspot.count }},{% endfor %} }];
     var layers = d3.stack()
         .keys(group)
         .offset(d3.stackOffsetDiverging)
         (data);
+    var tooltip = d3.select("body").append("div")
+        .style("background", "rgba(0, 0, 0, 0.9)")
+        .style("color", "white")
+        .style("position", "absolute")
+        .style("z-index", "10")
+        .style("visibility", "hidden")
+        .style("fill", "#000000")
+        .attr("width", self.width + 10)
+        .attr("height", self.height + 20);
 
     var svg = d3.select("svg");
     margin = {
@@ -245,148 +255,16 @@
         })
         .attr("height", y.bandwidth);
 
-    rect.on("mouseover", function() {
-        var currentEl = d3.select(this);
-        var fadeInSpeed = 120;
-        d3.select("#recttooltip_hotspot")
-            .transition()
-            .duration(fadeInSpeed)
-            .style("opacity", function() {
-                return 1;
-            });
-        d3.select("#recttooltip_hotspot").attr("transform", function(d) {
-            var mouseCoords = d3.mouse(this.parentNode);
-            var xCo = 0;
-            if (mouseCoords[0] + 10 >= width * 0.80) {
-                xCo = mouseCoords[0] - parseFloat(d3.selectAll("#recttooltipRect_hotspot")
-                    .attr("width"));
-            } else {
-                xCo = mouseCoords[0] + 10;
-            }
-            var x = xCo;
-            var yCo = 0;
-            if (mouseCoords[0] + 10 >= width * 0.80) {
-                yCo = mouseCoords[1] + 10;
-            } else {
-                yCo = mouseCoords[1];
-            }
-            var x = xCo;
-            var y = yCo;
-            return "translate(" + x + "," + y + ")";
+    rect.on("mouseover", function(d){
+            tooltip.text(d.key + ": " + d.data[d.key]);
+            tooltip.style("visibility", "visible");
+        })
+        .on("mousemove", function(){
+            return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
+        })
+        .on("mouseout", function(){
+            tooltip.style("visibility", "hidden");
         });
-        //CBT:calculate tooltips text
-        var tooltipData = JSON.parse(currentEl.attr("data"));
-        var tooltipsText = "";
-        d3.selectAll("#recttooltipText_hotspot").text("");
-        var yPos = 0;
-        d3.selectAll("#recttooltipText_hotspot").append("tspan").attr("x", 0).attr("y", yPos * 10).attr("dy", "1.9em").text(tooltipData.key + ":  " + tooltipData.value);
-        yPos = yPos + 1;
-        d3.selectAll("#recttooltipText_hotspot").append("tspan").attr("x", 0).attr("y", yPos * 10).attr("dy", "1.9em").text("Total" + ":  " + tooltipData.total);
-                //CBT:calculate width of the text based on characters
-        var dims = helpers.getDimensions("recttooltipText_hotspot");
-        d3.selectAll("#recttooltipText_hotspot" + " tspan")
-            .attr("x", dims.w + 4);
-
-        d3.selectAll("#recttooltipRect_hotspot")
-            .attr("width", dims.w + 10)
-            .attr("height", dims.h + 20);
-
-    });
-
-    rect.on("mousemove", function() {
-        var currentEl = d3.select(this);
-        currentEl.attr("r", 7);
-        d3.selectAll("#recttooltip_hotspot")
-            .attr("transform", function(d) {
-                var mouseCoords = d3.mouse(this.parentNode);
-                var xCo = 0;
-                if (mouseCoords[0] + 10 >= width * 0.80) {
-                    xCo = mouseCoords[0] - parseFloat(d3.selectAll("#recttooltipRect_hotspot")
-                        .attr("width"));
-                } else {
-                    xCo = mouseCoords[0] + 10;
-                }
-                var x = xCo;
-                var yCo = 0;
-                if (mouseCoords[0] + 10 >= width * 0.80) {
-                    yCo = mouseCoords[1] + 10;
-                } else {
-                    yCo = mouseCoords[1];
-                }
-                var x = xCo;
-                var y = yCo;
-                return "translate(" + x + "," + y + ")";
-            });
-    });
-
-    rect.on("mouseout", function() {
-        var currentEl = d3.select(this);
-        d3.select("#recttooltip_hotspot")
-            .style("opacity", function() {
-                return 0;
-            })
-            .attr("transform", function(d, i) {
-                // klutzy, but it accounts for tooltip padding which could push it onscreen
-                var x = -500;
-                var y = -500;
-                    return "translate(" + x + "," + y + ")";
-            });
-    });
-
-    var rectTooltipg = svg.append("g")
-        .attr("font-family", "sans-serif")
-        .attr("font-size", 10)
-        .attr("text-anchor", "end")
-        .attr("id", "recttooltip_hotspot")
-        .attr("style", "opacity:0")
-        .attr("transform", "translate(-500,-500)");
-
-    rectTooltipg.append("rect")
-        .attr("id", "recttooltipRect_hotspot")
-        .attr("x", 0)
-        .attr("width", 120)
-        .attr("height", 80)
-        .attr("opacity", 0.71)
-        .style("fill", "#000000");
-
-    rectTooltipg
-        .append("text")
-        .attr("id", "recttooltipText_hotspot")
-        .attr("x", 30)
-        .attr("y", 15)
-        .attr("fill", function() {
-            return "#fff"
-        })
-        .style("font-size", function(d) {
-            return 10;
-        })
-        .style("font-family", function(d) {
-            return "arial";
-        })
-        .text(function(d, i) {
-            return "";
-        });
-
-    var helpers = {
-        getDimensions: function(id) {
-            var el = document.getElementById(id);
-            var w = 0,
-                h = 0;
-            if (el) {
-                var dimensions = el.getBBox();
-                w = dimensions.width;
-                h = dimensions.height;
-            } else {
-                console.log("error: getDimensions() " + id + " not found.");
-            }
-            return {
-                w: w,
-                h: h
-            };
-        }
-    };
 </script>
-
-
 
 <hr class="mt-5 mb-5"/>

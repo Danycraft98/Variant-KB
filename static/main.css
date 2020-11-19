@@ -1,3 +1,7 @@
+.collapser {
+    cursor: pointer;
+}
+
 hr {
     border-top: 1px solid rgb(201, 205, 209);
 }
