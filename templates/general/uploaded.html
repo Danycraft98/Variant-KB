@@ -78,10 +78,10 @@
                 } else {
                     check.setAttribute("id", "exist");
                 }
-                if (element.innerText == "") {
+                if (element.innerText === "") {
                     check.setAttribute("onclick", "toggle(this)")
                 } else {
-                    check.setAttribute("value", element.parentElement.children[7].innerText);
+                    check.setAttribute("value", element.parentElement.children[3].innerText);
                     check.setAttribute("name", "add_or_update");
                 }
                 element.innerText = "";

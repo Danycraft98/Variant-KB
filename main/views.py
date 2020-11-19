@@ -59,7 +59,7 @@ def account_request(request):
 @login_required
 def variants(request):
     if request.GET:
-        variant_list = VariantTable(Variant.objects.filter(chr__contains=request.GET.get('chromosome',''), protein__contains=request.GET.get('protein',''), cdna__contains=request.GET.get('cdna',''), ref__contains=request.GET.get('ref', ''), alt__contains=request.GET.get('alt', '')))
+        variant_list = VariantTable(Variant.objects.filter(chr__contains=request.GET.get('chromosome', ''), protein__contains=request.GET.get('protein', ''), cdna__contains=request.GET.get('cdna',''), ref__contains=request.GET.get('ref', ''), alt__contains=request.GET.get('alt', '')))
     else:
         variant_list = VariantTable(Variant.objects.all())
     return render(request, 'variants/index.html', {'table': variant_list, 'title': 'List of Variants'})
@@ -163,12 +163,12 @@ def upload(request):
 def save(request, gene_name, variant_p):
     try:
         review_val = request.POST.getlist('review', ['n'])[-1]
-        filter = Variant.objects.filter(gene__name=gene_name, protein=variant_p)
+        filter_val = Variant.objects.filter(gene__name=gene_name, protein=variant_p)
         if review_val == 'r':
-            filter.update(reviewed_date=datetime.datetime.now(), review_user=request.user)
+            filter_val.update(reviewed_date=datetime.datetime.now(), review_user=request.user)
         elif review_val == 'a':
-            filter.update(approved_date=datetime.datetime.now(), approve_user=request.user)
-        filter.update(content=request.POST.get('variant_report', ''), germline_content=request.POST.get('variant_germline_report', ''), reviewed=review_val)
+            filter_val.update(approved_date=datetime.datetime.now(), approve_user=request.user)
+        filter_val.update(content=request.POST.get('variant_report', ''), germline_content=request.POST.get('variant_germline_report', ''), reviewed=review_val)
 
         Gene.objects.filter(name=gene_name).update(content=request.POST.get('gene_report', ''), germline_content=request.POST.get('gene_germline_report', ''))
         item = Variant.objects.get(gene__name=gene_name, protein=variant_p)
@@ -181,7 +181,6 @@ def save(request, gene_name, variant_p):
                 Disease.objects.filter(pk=request.POST.get('d' + str(i) + '_id')).update(name=request.POST.get('d' + str(i) + '_disease'), report=request.POST.get('d' + str(i) + '_desc'), others=request.POST.get('d' + str(i) + '_others'))
                 dx_id = Disease.objects.get(pk=request.POST.get('d' + str(i) + '_id'))
 
-            print(request.POST.get('d' + str(i) + '_type'))
             if request.POST.get('d' + str(i) + '_type') == 'gp':
                 for element in ITEMS.keys():
                     item_id = PathItem.objects.get(key=element)

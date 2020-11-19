@@ -1,5 +1,5 @@
 function collapse(element, index) {
-    var arrow = document.getElementById(element.id.split("_").slice(0,index).join("_") + "_icon");
+    let arrow = document.getElementById(element.id.split("_").slice(0,index).join("_") + "_icon");
     if (arrow.className.includes("down")) {
         arrow.className = arrow.className.replace("down", "up");
         if (element.innerText.includes("Expand")) {
@@ -53,7 +53,7 @@ function add_disease(dtype) {
     }
     cln = document.getElementById(disease_id).cloneNode(true);
     cln.querySelectorAll("[id^='" + disease_id + "']").forEach(function(element) {
-        if (element.tagName != 'SELECT' && element.type != 'checkbox' && !element.id.includes('score') && !element.id.includes('type') && !element.id.includes('r_name')) {
+        if (element.tagName !== 'SELECT' && element.type !== 'checkbox' && !element.id.includes('score') && !element.id.includes('type') && !element.id.includes('r_name') && !element.id.includes('disease')) {
             element.value = '';
         }
         if (element.id.includes("disease")) {
