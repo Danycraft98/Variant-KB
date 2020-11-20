@@ -386,12 +386,12 @@
                     </div>
                     <div class='col-1'></div>
                     <div class='custom-control custom-control-inline form-check'>
-                        <input type='checkbox' class='form-check-input' id='meta_review' name='review' value='m' {% if user.is_specialist == False or item.reviewed != 'n' %}disabled{% endif %} {% if item.reviewed != 'n' %} checked {% endif %}>
+                        <input type='checkbox' class='form-check-input' id='meta_review' name='review' value='m' {% if user.is_counselor == False or item.reviewed != 'r' %}disabled{% endif %} {% if item.reviewed == 'm' or item.reviewed == 'a' %} checked {% endif %}>
                         <label class='form-check-label' for='meta_review'>Meta-Reviewed</label>
                     </div>
                     <div class='col-1'></div>
                     <div class='custom-control custom-control-inline form-check'>
-                        <input type='checkbox' class='form-check-input' id='approve' name='review' value='a' {% if user.is_scientist == False or item.reviewed != 'r' %}disabled{% endif %} {% if item.reviewed == 'a' %} checked {% endif %}>
+                        <input type='checkbox' class='form-check-input' id='approve' name='review' value='a' {% if user.is_scientist == False or item.reviewed != 'm' %}disabled{% endif %} {% if item.reviewed == 'a' %} checked {% endif %}>
                         <label class='form-check-label' for='approve'>Approved</label>
                     </div>
                 </div>

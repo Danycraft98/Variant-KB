@@ -65,10 +65,13 @@ class Variant(models.Model):
     reviewed = models.CharField(choices=(
         ('n', "not reviewed"),
         ('r', "reviewed"),
+        ('m', "meta-reviewed"),
         ('a', "approved"),
     ), max_length=1, default='n')
     reviewed_date = models.DateTimeField('reviewed date', null=True)
     review_user = models.ForeignKey(User, related_name="reviewed_variants", on_delete=models.CASCADE, null=True, blank=True)
+    meta_reviewed_date = models.DateTimeField('meta-reviewed date', null=True)
+    meta_review_user = models.ForeignKey(User, related_name="meta_reviewed_variants", on_delete=models.CASCADE, null=True, blank=True)
     approved_date = models.DateTimeField('approved date', null=True)
     approve_user = models.ForeignKey(User, related_name="approved_variants", on_delete=models.CASCADE, null=True, blank=True)
 

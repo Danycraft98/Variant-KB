@@ -155,7 +155,7 @@ def upload(request):
             exist = exist[['Chr', 'cDNA', 'Protein', 'Transcript', 'Start', 'End', 'Ref', 'Alt', default_header[5]] + default_header[9:]].rename(columns={"Chr": "Chromosome", "cDNA": "C.", 'Protein': 'P.'})
 
         exist_html = exist.to_html(classes='exist table table-bordered table-hover', justify='left')
-        new_html = new.to_html(classes='exist table table-bordered table-hover', justify='left')
+        new_html = new.to_html(classes='new table table-bordered table-hover', justify='left')
         return render(request, 'general/uploaded.html', {'tables': (new_html, exist_html), 'is_empty': (new.empty, exist.empty), 'dict': raw_data.to_json(), 'title': 'Uploads'})
 
 
@@ -166,6 +166,8 @@ def save(request, gene_name, variant_p):
         filter_val = Variant.objects.filter(gene__name=gene_name, protein=variant_p)
         if review_val == 'r':
             filter_val.update(reviewed_date=datetime.datetime.now(), review_user=request.user)
+        elif review_val == 'm':
+            filter_val.update(meta_reviewed_date=datetime.datetime.now(), meta_review_user=request.user)
         elif review_val == 'a':
             filter_val.update(approved_date=datetime.datetime.now(), approve_user=request.user)
         filter_val.update(content=request.POST.get('variant_report', ''), germline_content=request.POST.get('variant_germline_report', ''), reviewed=review_val)

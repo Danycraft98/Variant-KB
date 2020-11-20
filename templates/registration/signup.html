@@ -2,13 +2,6 @@
 {% load static %}
 
 {% block content %}
-    <style>
-        .bg-image {
-            background: url({% static 'variant_logo.jpg' %}) center;
-            background-size: cover;
-        }
-    </style>
-
     <div class="container">
         <div class="card o-hidden border-0 shadow-lg my-5">
             <div class="card-body p-0">
@@ -40,7 +33,7 @@
                             </form>
                             <hr>
                             <div class="text-center">
-                                <a class="small" href="{% url login %}">Already have an account? Login!</a>
+                                <a class="small" href="{% url 'login' %}">Already have an account? Login!</a>
                             </div>
                         </div>
                     </div>

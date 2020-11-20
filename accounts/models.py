@@ -42,7 +42,21 @@ class UserManager(BaseUserManager):
         )
         user.staff = True
         user.specialist = True
-        user.admin = True
+        user.save(using=self._db)
+        return user
+
+    def create_counselor(self, username, email, password):
+        """
+        Creates and saves a superuser with the given email and password.
+        """
+        user = self.create_user(
+            username,
+            password,
+            email=email
+        )
+        user.staff = True
+        user.specialist = True
+        user.counselor = True
         user.save(using=self._db)
         return user
 
@@ -57,6 +71,7 @@ class UserManager(BaseUserManager):
         )
         user.staff = True
         user.specialist = True
+        user.counselor = True
         user.scientist = True
         user.save(using=self._db)
         return user
@@ -72,6 +87,7 @@ class UserManager(BaseUserManager):
         )
         user.staff = True
         user.specialist = True
+        user.counselor = True
         user.scientist = True
         user.admin = True
         user.save(using=self._db)
@@ -84,6 +100,7 @@ class User(AbstractBaseUser):
     active = models.BooleanField(default=True)
     staff = models.BooleanField(default=False)
     specialist = models.BooleanField(default=False)
+    counselor = models.BooleanField(default=False)
     scientist = models.BooleanField(default=False)
     admin = models.BooleanField(default=False)  # a superuser
     objects = UserManager()
@@ -112,6 +129,11 @@ class User(AbstractBaseUser):
     def is_scientist(self):
         """Is the user a member of staff?"""
         return self.scientist
+
+    @property
+    def is_counselor(self):
+        """Is the user a member of staff?"""
+        return self.counselor
 
     @property
     def is_specialist(self):

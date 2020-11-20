@@ -62,8 +62,6 @@
 <script>
     $('#warningModal').modal('show')
     $(document).ready( function () {
-        $('input[type=search]').attr('class', 'form-control');
-
         $('.dataTable').DataTable(
         {% if table.class_type == "Variant" %}
         {"scrollX": true, "sScrollX": "100%", "sScrollXInner": "110%"}

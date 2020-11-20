@@ -2,13 +2,6 @@
 {% load static %}
 
 {% block content %}
-    <style>
-        .bg-image {
-            background: url({% static 'variant_logo.jpg' %}) center;
-            background-size: cover;
-        }
-    </style>
-
     <div class="container">
         <!-- Outer Row -->
         <div class="row justify-content-center">
@@ -39,16 +32,16 @@
                                         {% csrf_token %}
                                         <div class="input-group">
                                             <div class="input-group-append">
-                                                <span class="input-group-text" style="width:40px"><label for="username"><span class="fa fa-user"></span></label></span>
+                                                <span class="input-group-text" style="width:40px"><span class="fa fa-user"></span></span>
                                             </div>
-                                            <input type="text" class="form-control" name="username" id="username" placeholder="Username">
+                                            <label for="username"></label><input type="text" class="form-control" name="username" id="username" placeholder="Username">
                                         </div>
                                         <br/>
                                         <div class="input-group">
                                             <div class="input-group-append">
-                                                <span class="input-group-text" style="width:40px"><label for="password"><span class="fa fa-key"></span></label></span>
+                                                <span class="input-group-text" style="width:40px"><span class="fa fa-key"></span></span>
                                             </div>
-                                            <input type="password" class="form-control" name="password" id="password" placeholder="Password">
+                                            <label for="password"></label><input type="password" class="form-control" name="password" id="password" placeholder="Password">
                                         </div>
                                         <hr/>
                                         <button class="btn btn-lg btn-primary btn-block" type="submit"><i class="fa fa-sign-in"></i> Login</button>

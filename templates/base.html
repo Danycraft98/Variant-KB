@@ -11,6 +11,13 @@
     <link rel="shortcut icon" href="{% static 'favicon.ico' %}"/>
     <link type="text/css" rel="stylesheet" href="{% static 'main.css' %}">
 
+    <style>
+        .bg-image {
+            background: url({% static 'variant_logo.jpg' %}) center;
+            background-size: cover;
+        }
+    </style>
+
     <title>Variant DB {% block title %}{% endblock %}</title>
 </head>
 <body>
