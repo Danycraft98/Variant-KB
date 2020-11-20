@@ -1,5 +1,4 @@
 from django import template
-from api.models import Disease
 
 register = template.Library()
 

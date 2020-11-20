@@ -27,7 +27,7 @@
                         <i id="d{{ forloop.counter }}_icon" class="fa fa-chevron-down ml-auto" aria-hidden="true"></i>
                     </div>
                     <div class="d{{ forloop.counter }} card-body ml-3 collapse">
-                        {% if disease.score.first %}
+                        {% if "GP" in disease.name %}
                             <div class="row form-group">
                                 <div class="col-2"><strong>Disease Name</strong></div>
                                 <div class="col-10">{{ disease.name }}</div>
@@ -40,91 +40,95 @@
                                 <div class="col-2"><strong>Disease Report</strong></div>
                                 <div class="col-10">{{ disease.report }}</div>
                             </div>
-                        </div>
-                    </div>
+                            </div>
+                            </div>
 
-                    <div class="d{{ forloop.counter }} collapse card mb-3">
-                        <div class="card-header">2015 ACMG Score Result</div>
-                            <div class="card-body ml-3">
-                                <div class="row form-group">
-                                    <div class="col-3 offset-md-1">Evidence FOR Pathogenicity</div>
-                                    <div class="col-5"><input class="form-control" id="for_score" value="{{ disease.score.first.for_score }}" readonly></div>
-                                </div>
-                                <div class="row form-group">
-                                    <div class="col-3 offset-md-1">Evidence AGAINST Pathogenicity</div>
-                                    <div class="col-5"><input class="form-control" id="against_score" value="{{ disease.score.first.against_score }}" readonly></div>
+                            <div class="d{{ forloop.counter }} collapse card mb-3">
+                                <div class="card-header">2015 ACMG Score Result</div>
+                                <div class="card-body ml-3">
+                                    <div class="row form-group">
+                                        <div class="col-3 offset-md-1"><label for="for_score">Evidence FOR Pathogenicity</label></div>
+                                        <div class="col-5"><input class="form-control" id="for_score" value="{{ disease.score.first.for_score }}" readonly></div>
+                                    </div>
+                                    <div class="row form-group">
+                                        <div class="col-3 offset-md-1"><label for="against_score">Evidence AGAINST Pathogenicity</label></div>
+                                        <div class="col-5"><input class="form-control" id="against_score" value="{{ disease.score.first.against_score }}" readonly></div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        {% regroup disease.evidences.all by item as dict_items %}
+                            {% regroup disease.evidences.all by item as dict_items %}
 
-                        <div class="d{{ forloop.counter }} collapse card mb-3">
+                            <div class="d{{ forloop.counter }} collapse card mb-3">
                             <div class="card-header">Evidence FOR Pathogenicity</div>
                             <div class="card-body ml-3">
                                 {% for set in dict_items %}
                                     {% if 'P' in set.grouper.key and 'B' not in set.grouper.key %}
                                         <div class="row">
-                                            <div class="col-1">
-                                                <strong>{{ set.grouper }}</strong>
-                                            </div>
+                                        <div class="col-1">
+                                            <strong>{{ set.grouper }}</strong>
+                                        </div>
                                         {% for evidence in set.list %}
-                                        {% if forloop.counter > 1 %}
-                                        <div class="row">
-                                            <div class="col-1"></div>
-                                        {% endif %}
-                                            <div class="col-3"><strong>Source Type</strong></div>
-                                            <div class="col-2">{{ evidence.get_source_type_display }}</div>
+                                            {% if forloop.counter > 1 %}
+                                                <div class="row">
+                                                <div class="col-1"></div>
+                                            {% endif %}
+                                        <div class="col-3"><strong>Source Type</strong></div>
+                                        <div class="col-2">{{ evidence.get_source_type_display }}</div>
                                         </div>
-                                        <div class="row">
-                                            <div class="offset-md-1 col-3"><strong>Source ID</strong></div>
-                                            <div class="col-2">{{ evidence.source_id }}</div>
-                                        </div>
-                                        <div class="row mb-4">
-                                            <div class="offset-md-1 col-3"><strong>Evidence Statement</strong></div>
-                                            <div class="col-6">{{ evidence.statement }}</div>
-                                            <div class="col-2">{{ evidence.histories.last }}</div>
-                                        </div>
+                                            <div class="row">
+                                                <div class="offset-md-1 col-3"><strong>Source ID</strong></div>
+                                                <div class="col-2">{{ evidence.source_id }}</div>
+                                            </div>
+                                            <div class="row mb-4">
+                                                <div class="offset-md-1 col-3"><strong>Evidence Statement</strong></div>
+                                                <div class="col-6">{{ evidence.statement }}</div>
+                                                <div class="col-2">{{ evidence.histories.last }}</div>
+                                            </div>
                                         {% endfor %}
                                         <hr/>
-                                        {% endif %}
+                                    {% endif %}
                                 {% endfor %}
-                                        </div>
+                                </div>
                             </div>
 
                             <div class="d{{ forloop.counter }} collapse card mb-3">
-                                <div class="card-header">Evidence AGAINST Pathogenicity</div>
-                                <div class="card-body ml-3">
+                            <div class="card-header">Evidence AGAINST Pathogenicity</div>
+                            <div class="card-body ml-3">
                                 {% for set in dict_items %}
                                     {% if 'B' in set.grouper.key %}
                                         <div class="row">
-                                            <div class="col-1">
-                                                <strong>{{ set.grouper }}</strong>
+                                        <div class="col-1">
+                                            <strong>{{ set.grouper }}</strong>
+                                        </div>
+                                        {% for evidence in set.list %}
+                                            {% if forloop.counter > 1 %}
+                                                <div class="row">
+                                                <div class="col-1"></div>
+                                            {% endif %}
+                                        <div class="col-3"><strong>Source Type</strong></div>
+                                        <div class="col-2">{{ evidence.get_source_type_display }}</div>
+                                        </div>
+                                            <div class="row">
+                                                <div class="offset-md-1 col-3"><strong>Source ID</strong></div>
+                                                <div class="col-2">{{ evidence.source_id }}</div>
                                             </div>
-                                    {% for evidence in set.list %}
-                                        {% if forloop.counter > 1 %}
-                                        <div class="row">
-                                            <div class="col-1"></div>
-                                        {% endif %}
-                                            <div class="col-3"><strong>Source Type</strong></div>
-                                            <div class="col-2">{{ evidence.get_source_type_display }}</div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="offset-md-1 col-3"><strong>Source ID</strong></div>
-                                            <div class="col-2">{{ evidence.source_id }}</div>
-                                        </div>
-                                        <div class="row mb-4">
-                                            <div class="offset-md-1 col-3"><strong>Evidence Statement</strong></div>
-                                            <div class="col-6">{{ evidence.statement }}</div>
-                                            <div class="col-2">{{ evidence.histories.last }}</div>
-                                        </div>
-                                    {% endfor %}
-                                    <hr/>
+                                            <div class="row mb-4">
+                                                <div class="offset-md-1 col-3"><strong>Evidence Statement</strong></div>
+                                                <div class="col-6">{{ evidence.statement }}</div>
+                                                <div class="col-2">{{ evidence.histories.last }}</div>
+                                            </div>
+                                        {% endfor %}
+                                        <hr/>
                                     {% endif %}
                                 {% endfor %}
 
                                 {% else %}
-
+                                <div class="row form-group">
+                                    <div class="col-3"><strong>Disease Name</strong></div>
+                                    <div class="col-3">{{ disease.name }}</div>
+                                </div>
+                                <hr/>
                                 {% for set in disease.functionals.all %}
                                     {% if forloop.counter == 1 %}
                                         <div class="row form-group">
@@ -226,8 +230,8 @@
                                 </div>
                             {% endfor %}
                         {% endif %}
-                    </div>
-                </div>
+                        </div>
+                        </div>
                 <br/>
             {% endfor %}
             </div>

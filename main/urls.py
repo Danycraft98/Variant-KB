@@ -1,4 +1,4 @@
-from django.urls import include, path
+from django.urls import path
 from . import views
 
 urlpatterns = [
@@ -16,4 +16,3 @@ urlpatterns = [
     path('gene/<str:gene_name>/variant/<str:variant_p>/exported', views.exported, name="exported"),
     path('gene/<str:gene_name>/variant/<str:variant_p>/history', views.history, name="history"),
 ]
-

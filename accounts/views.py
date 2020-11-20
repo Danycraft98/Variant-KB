@@ -9,7 +9,7 @@ def signup(request):
                                  password=request.POST.get('password1', ''),
                                  email=request.POST.get('email', ''))
         return redirect('/accounts/login')
-    return render(request,'registration/signup.html')
+    return render(request, 'registration/signup.html')
 
 
 @login_required

@@ -1,7 +1,5 @@
 from rest_framework import viewsets, generics
 
-
-
 from .serializers import *
 from .models import Gene, Variant
 

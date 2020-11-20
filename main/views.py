@@ -11,7 +11,7 @@ from django.urls import reverse
 import datetime
 import json
 import pandas
-import urllib
+from urllib import parse
 from weasyprint import HTML, CSS
 from api.models import *
 from .tables import GeneTable, VariantTable, DiseaseTable, HistoryTable, add_evidence
@@ -37,7 +37,7 @@ def search(request):
         else:
             search_query = {key: value for key, value in search_query.items() if value != ''}
             search_query.pop('csrfmiddlewaretoken')
-            return redirect('/variants?' + urllib.parse.urlencode(search_query))
+            return redirect('/variants?' + parse.urlencode(search_query))
         return render(request, 'general/search.html', {'title': 'List of Genes'})
     return render(request, 'general/search.html', {'title': 'List of Genes'})
 
@@ -59,7 +59,7 @@ def account_request(request):
 @login_required
 def variants(request):
     if request.GET:
-        variant_list = VariantTable(Variant.objects.filter(chr__contains=request.GET.get('chromosome', ''), protein__contains=request.GET.get('protein', ''), cdna__contains=request.GET.get('cdna',''), ref__contains=request.GET.get('ref', ''), alt__contains=request.GET.get('alt', '')))
+        variant_list = VariantTable(Variant.objects.filter(chr__contains=request.GET.get('chromosome', ''), protein__contains=request.GET.get('protein', ''), cdna__contains=request.GET.get('cdna', ''), ref__contains=request.GET.get('ref', ''), alt__contains=request.GET.get('alt', '')))
     else:
         variant_list = VariantTable(Variant.objects.all())
     return render(request, 'variants/index.html', {'table': variant_list, 'title': 'List of Variants'})
@@ -181,7 +181,7 @@ def save(request, gene_name, variant_p):
                 Disease.objects.filter(pk=request.POST.get('d' + str(i) + '_id')).update(name=request.POST.get('d' + str(i) + '_disease'), report=request.POST.get('d' + str(i) + '_desc'), others=request.POST.get('d' + str(i) + '_others'))
                 dx_id = Disease.objects.get(pk=request.POST.get('d' + str(i) + '_id'))
 
-            if request.POST.get('d' + str(i) + '_type') == 'gp':
+            if 'GP' in request.POST.get('d' + str(i) + '_disease'):
                 for element in ITEMS.keys():
                     item_id = PathItem.objects.get(key=element)
                     add_evidence(request, 'd' + str(i) + '_' + element, dx_id, item, item_id)

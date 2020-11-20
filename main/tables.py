@@ -20,9 +20,11 @@ def add_evidence(request, prefix, dx_id, variant, item=None):
 
         if request.POST.getlist(prefix + "_sig"):
             if evidence.subevidences.count() > 0:
-                evidence.subevidences.update(level=request.POST.getlist(prefix + "_level")[i], evid_sig=request.POST.getlist(prefix + "_sig")[i], evid_dir=request.POST.getlist(prefix + "_dir")[i], clin_sig=request.POST.getlist(prefix + "_clin_sig")[i], drug_class=request.POST.getlist(prefix + "_drug")[i], evid_rating=request.POST.getlist(prefix + "_rating")[i], evidence=evidence)
+                evidence.subevidences.update(level=request.POST.getlist(prefix + "_level")[i], evid_sig=request.POST.getlist(prefix + "_sig")[i], evid_dir=request.POST.getlist(prefix + "_dir")[i], clin_sig=request.POST.getlist(prefix + "_clin_sig")[i],
+                                             drug_class=request.POST.getlist(prefix + "_drug")[i], evid_rating=request.POST.getlist(prefix + "_rating")[i], evidence=evidence)
             else:
-                SubEvidence.objects.create(level=request.POST.getlist(prefix + "_level")[i], evid_sig=request.POST.getlist(prefix + "_sig")[i], evid_dir=request.POST.getlist(prefix + "_dir")[i], clin_sig=request.POST.getlist(prefix + "_clin_sig")[i], drug_class=request.POST.getlist(prefix + "_drug")[i], evid_rating=request.POST.getlist(prefix + "_rating")[i], evidence=evidence)
+                SubEvidence.objects.create(level=request.POST.getlist(prefix + "_level")[i], evid_sig=request.POST.getlist(prefix + "_sig")[i], evid_dir=request.POST.getlist(prefix + "_dir")[i], clin_sig=request.POST.getlist(prefix + "_clin_sig")[i],
+                                           drug_class=request.POST.getlist(prefix + "_drug")[i], evid_rating=request.POST.getlist(prefix + "_rating")[i], evidence=evidence)
         History.objects.create(content=statement, object=evidence, user=request.user, timestamp=datetime.datetime.now(), variant=variant)
 
 
@@ -54,7 +56,8 @@ class VariantTable(tables.Table):
                    'pmkb_citations', 'civic', 'google', 'alamut')
         attrs = {"class": "dataTable nowrap table table-bordered table-hover"}
 
-    def class_type(self):
+    @staticmethod
+    def class_type():
         return "Variant"
 
 

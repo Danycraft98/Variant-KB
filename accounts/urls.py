@@ -14,4 +14,3 @@ urlpatterns = [
     path('signup/', views.signup, name='signup'),
     path('profile/<int:user_id>', views.user_profile, name='profile'),
 ]
-

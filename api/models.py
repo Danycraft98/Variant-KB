@@ -16,7 +16,8 @@ class Gene(models.Model):
     def __str__(self):
         return self.name
 
-    def class_type(self):
+    @staticmethod
+    def class_type():
         return "Gene"
 
 

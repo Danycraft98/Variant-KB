@@ -19,9 +19,9 @@ function select_evidence(element) {
             calculate_score(element);
             return;
         }
-        if (element.checked == true) {
+        if (element.checked === true) {
             item.removeAttribute('disabled');
-        } else if (item.id != element.id && item.id.includes("field") == false) {
+        } else if (item.id !== element.id && item.id.includes("field") === false) {
             item.setAttribute('disabled','true');
         }
     });
@@ -29,15 +29,16 @@ function select_evidence(element) {
 }
 
 function add_disease(dtype) {
-    if (!dtype) {
-        var dtype = $("input[type='radio'][name='dtype']:checked").val();
+    console.log(dtype == null)
+    if (dtype == null) {
+        dtype = $("input[type='radio'][name='dtype']:checked").val();
     }
 
-    var container = document.getElementById("diseases")
-    var index = (container.children.length + 1) / 2
+    const container = document.getElementById("diseases")
+    const index = (container.children.length + 1) / 2
 
-    var cln = document.getElementById("add").cloneNode(true);
-    cln.querySelectorAll("[id^='d0']").forEach(function(element, test) {
+    let cln = document.getElementById("add").cloneNode(true);
+    cln.querySelectorAll("[id^='d0']").forEach(function(element) {
         element.id = element.id.replace(/^d\d/gi, 'd' + index)
     })
     cln.children[0].children[0].setAttribute("data-target", "#d" + index);
@@ -46,7 +47,8 @@ function add_disease(dtype) {
     container.appendChild(cln);
 
     // Copy the element and its child nodes
-    if (dtype == "gp") {
+    let disease_id;
+    if (dtype === "gp") {
         disease_id = "d0";
     } else {
         disease_id = "d1";
@@ -75,19 +77,19 @@ function add_disease(dtype) {
 }
 
 function add_evidence(element) {
-    var sub_id = element.id.slice(0, -3)
-    var id = sub_id + "field"
-    var container = document.getElementById(id + "s")
+    const sub_id = element.id.slice(0, -3)
+    const id = sub_id + "field"
+    const container = document.getElementById(id + "s")
 
     // Copy the element and its child nodes
-    var cln = document.getElementById(id).cloneNode(true);
+    const cln = document.getElementById(id).cloneNode(true);
     cln.children[0].children[0].remove();
     cln.children[0].children[0].setAttribute('class', 'col-1 offset-md-1');
     cln.children[0].children[2].remove();
 
-    var index = container.children.length + 1
-    cln.querySelectorAll("[id^='" + sub_id + "']").forEach(function(element, test) {
-        if (element.tagName != 'SELECT') {
+    const index = container.children.length + 1
+    cln.querySelectorAll("[id^='" + sub_id + "']").forEach(function(element) {
+        if (element.tagName !== 'SELECT') {
             element.value = '';
         }
         element.id = element.id.slice(0,-1) + index;
@@ -96,14 +98,14 @@ function add_evidence(element) {
 }
 
 function add_f_class(element) {
-    var disease_num = element.id.split("_")[0];
+    const disease_num = element.id.split("_")[0];
     // Get the container
-    var container = document.getElementById(disease_num + "_f_classes");
-    var fc_num = container.children.length/2
+    const container = document.getElementById(disease_num + "_f_classes");
+    const fc_num = container.children.length/2
 
     // Copy the element and its child nodes
-    var cln = document.getElementById(disease_num + "_fc0_collapse").cloneNode(true);
-    cln.querySelectorAll("[id^='" + disease_num + "_fc']").forEach(function(element, test) {
+    let cln = document.getElementById(disease_num + "_fc0_collapse").cloneNode(true);
+    cln.querySelectorAll("[id^='" + disease_num + "_fc']").forEach(function(element) {
         element.id = element.id.replace(/fc\d/gi, 'fc' + fc_num)
         if (element.name)
             element.name = element.name.replace(/fc\d/gi, 'fc' + fc_num)
@@ -113,8 +115,8 @@ function add_f_class(element) {
     cln.removeAttribute('hidden')
     container.appendChild(cln);
 
-    var cln = document.getElementById(disease_num + "_fc0").cloneNode(true);
-    cln.querySelectorAll("[id^='" + disease_num + "_fc']").forEach(function(element, test) {
+    cln = document.getElementById(disease_num + "_fc0").cloneNode(true);
+    cln.querySelectorAll("[id^='" + disease_num + "_fc']").forEach(function(element) {
         element.id = element.id.replace(/fc\d/gi, 'fc' + fc_num)
         element.name = element.name.replace(/fc\d/gi, 'fc' + fc_num)
         if (element.id.includes("add") && fc_num > 1) {
@@ -132,15 +134,15 @@ function add_f_class(element) {
 
 function add_evidence_type1(element) {
     //get functional class number
-    var fc_num = element.id.split("_").slice(0, 2).join("_");
+    const fc_num = element.id.split("_").slice(0, 2).join("_");
 
     // Get the container
-    var container = document.getElementById(fc_num + "_evidences1");
+    const container = document.getElementById(fc_num + "_evidences1");
 
     // Copy the element and its child nodes
-    var cln = document.getElementById(fc_num + "_etype1_1").cloneNode(true);
-    cln.querySelectorAll("[id^='" + fc_num + "_etype1_']").forEach(function(element, test) {
-        if (element.tagName != 'SELECT') {
+    const cln = document.getElementById(fc_num + "_etype1_1").cloneNode(true);
+    cln.querySelectorAll("[id^='" + fc_num + "_etype1_']").forEach(function(element) {
+        if (element.tagName !== 'SELECT') {
             element.value = '';
         }
         element.id = element.id.slice(0,-1) + (container.children.length+1);
@@ -152,14 +154,14 @@ function add_evidence_type1(element) {
 }
 
 function add_evidence_type2(element) {
-    var disease_num = element.id.split("_")[0];
+    const disease_num = element.id.split("_")[0];
     // Get the container
-    var container = document.getElementById(disease_num + "_evidences2");
+    const container = document.getElementById(disease_num + "_evidences2");
 
     // Copy the element and its child nodes
-    var cln = document.getElementById(disease_num + "_etype2_1").cloneNode(true);
-    cln.querySelectorAll("[id^='" + disease_num + "_etype2_']").forEach(function(element, test) {
-        if (element.tagName != 'SELECT') {
+    const cln = document.getElementById(disease_num + "_etype2_1").cloneNode(true);
+    cln.querySelectorAll("[id^='" + disease_num + "_etype2_']").forEach(function(element) {
+        if (element.tagName !== 'SELECT') {
             element.value = '';
         }
         element.id = element.id.slice(0,-1) + (container.children.length+1);
@@ -171,22 +173,22 @@ function add_evidence_type2(element) {
 }
 
 function getElementsByValue(value, tag, id) {
-    var search = document.getElementsByTagName(tag);
-    var pat = new RegExp(value, "i");
-    for (var i=0; i < search.length; i++) {
+    const search = document.getElementsByTagName(tag);
+    const pat = new RegExp(value, "i");
+    for (let i=0; i < search.length; i++) {
         if (pat.test(search[i].value)  && search[i].id.includes(id))
             return [document.getElementById(search[i].id.slice(0,-5)), document.getElementById(search[i].id.slice(0,-5) + '_id')]
     }
 }
 
 function calculate_score(element) {
-    var disease_num = element.id.slice(0, 2)
-    var checkboxes = document.getElementsByName(disease_num);
+    const disease_num = element.id.slice(0, 2)
+    const checkboxes = document.getElementsByName(disease_num);
 
-    var path = l_path = false;
-    var benign = l_benign = false;
-    var dict = {};
-    for (var i=0; i<checkboxes.length; i++) {
+    let l_path, path, l_benign, benign = false;
+    const dict = {};
+    let check_id;
+    for (let i = 0; i < checkboxes.length; i++) {
         if (checkboxes[i].checked) {
             check_id = checkboxes[i].id.split('_')[1].replace(/\d/g, '');
             if (dict[check_id]) {
@@ -219,13 +221,13 @@ function calculate_score(element) {
         } else if (dict["PM"]) {
             if (dict["PM"] >= 3) {
                 path = true;
-            } else if (dict["PM"] == 2) {
+            } else if (dict["PM"] === 2) {
                 if (dict["PP"] >= 2) {
                     path = true;
                 } else {
                     l_path = true
                 }
-            } else if (dict["PM"] == 1) {
+            } else if (dict["PM"] === 1) {
                 if (dict["PP"] >= 4) {
                     path = true;
                 } else {
@@ -240,17 +242,18 @@ function calculate_score(element) {
     } else if (dict["PM"]) {
         if (dict["PM"] >= 3) {
             l_path = true;
-        } else if (dict["PM"] == 2) {
+        } else if (dict["PM"] === 2) {
             if (dict["PP"] >= 2) {
                 l_path = true;
             }
-        } else if (dict["PM"] == 1) {
+        } else if (dict["PM"] === 1) {
             if (dict["PP"] >= 4) {
                 l_path = true;
             }
         }
     }
 
+    let forScore;
     if (path) {
         forScore = "Pathogenic"
     } else if (l_path) {
@@ -274,6 +277,7 @@ function calculate_score(element) {
         }
     }
 
+    let againstScore;
     if (benign) {
         againstScore = "Benign"
     } else if (l_benign) {
