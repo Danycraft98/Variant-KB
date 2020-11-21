@@ -98,6 +98,7 @@ class User(AbstractBaseUser):
     username = models.CharField(max_length=150, unique=True)
     email = models.EmailField(verbose_name='email address', max_length=255, null=True)
     active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True)
     staff = models.BooleanField(default=False)
     specialist = models.BooleanField(default=False)
     counselor = models.BooleanField(default=False)
@@ -122,30 +123,20 @@ class User(AbstractBaseUser):
 
     @property
     def is_staff(self):
-        """Is the user a member of staff?"""
         return self.staff
 
     @property
     def is_scientist(self):
-        """Is the user a member of staff?"""
         return self.scientist
 
     @property
     def is_counselor(self):
-        """Is the user a member of staff?"""
         return self.counselor
 
     @property
     def is_specialist(self):
-        """Is the user a member of staff?"""
         return self.specialist
 
     @property
     def is_admin(self):
-        """Is the user a admin member?"""
         return self.admin
-
-    @property
-    def is_active(self):
-        """Is the user active?"""
-        return self.active

@@ -53,14 +53,13 @@ MIDDLEWARE = [
 ]
 
 AUTH_USER_MODEL = 'accounts.User'
+SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.gmail.com"
-EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.sendgrid.net'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = ""
-EMAIL_HOST_PASSWORD = ""
-DISABLE_EMAILS = False
+EMAIL_HOST_USER = 'A6yg2dAsQpC4yk7KM0802A'
+EMAIL_HOST_PASSWORD = SENDGRID_API_KEY
+EMAIL_USE_TLS = True
 
 ROOT_URLCONF = 'variant_db.urls'
 
