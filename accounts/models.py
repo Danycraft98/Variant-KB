@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import (
-    BaseUserManager, AbstractBaseUser
+    BaseUserManager, AbstractBaseUser, PermissionsMixin
 )
 
 
@@ -90,11 +90,12 @@ class UserManager(BaseUserManager):
         user.counselor = True
         user.scientist = True
         user.admin = True
+        user.is_superuser = True
         user.save(using=self._db)
         return user
 
 
-class User(AbstractBaseUser):
+class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=150, unique=True)
     email = models.EmailField(verbose_name='email address', max_length=255, null=True)
     active = models.BooleanField(default=True)
