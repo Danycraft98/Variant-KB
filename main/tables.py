@@ -52,8 +52,8 @@ class VariantTable(tables.Table):
                    'germline_content', 'af', 'af_popmax', 'cosmic70', 'clinvar', 'insilicodamaging',
                    'insilicobenign', 'polyphen2_hdiv_pred', 'polyphen2_hvar_pred', 'sift_pred',
                    'mutationtaster_pred', 'mutationassessor_pred', 'provean_pred', 'lrt_pred', 'tcga',
-                   'oncokb', 'oncokb_pmids', 'watson', 'watson_pmids', 'qci', 'qci_pmids', 'pmkb',
-                   'pmkb_citations', 'civic', 'google', 'alamut')
+                   'oncokb', 'oncokb_pmids', 'watson', 'watson_pmids', 'qci', 'qci_pmids', 'jaxckb',
+                   'jaxckb_pmids', 'pmkb', 'pmkb_citations', 'civic', 'google', 'alamut')
         attrs = {"class": "dataTable nowrap table table-bordered table-hover"}
 
     @staticmethod
