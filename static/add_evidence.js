@@ -55,7 +55,7 @@ function add_disease(dtype) {
     }
     cln = document.getElementById(disease_id).cloneNode(true);
     cln.querySelectorAll("[id^='" + disease_id + "']").forEach(function(element) {
-        if (element.tagName !== 'SELECT' && element.type !== 'checkbox' && !element.id.includes('score') && !element.id.includes('type') && !element.id.includes('r_name') && !element.id.includes('disease')) {
+        if (element.tagName !== 'SELECT' && element.type !== 'checkbox' && !element.id.includes('score') && !element.id.includes('type') && !element.id.includes('r_name') && !element.id.includes('disease') && !element.id.includes('branch')) {
             element.value = '';
         }
         if (element.id.includes("disease")) {

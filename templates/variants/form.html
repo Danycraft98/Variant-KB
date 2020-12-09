@@ -21,6 +21,7 @@
                     </div>
                     <fieldset id='d0' class='my-auto collapse' hidden>
                         <label for='d0_id' class="h6">Germline Pathogenecity</label><input id='d0_id' name='d0_id' hidden>
+                        <label for='d0_branch' hidden></label><input id='d0_branch' name='d0_branch' value='gp' hidden>
                         <div class='row'>
                             <div class='col-6 form-group'>
                                 <label for='d0_disease'>Interpretation</label>
@@ -132,10 +133,30 @@
                                 {% endfor %}
                             </div>
                         </div>
+                        <fieldset id='auth_only'>
+                            <legend class='h6'>For Annotation Specialist and Scientist Use Only</legend>
+                            <div class='row form-group'>
+                                <div class='custom-control custom-control-inline offset-md-1 form-check'>
+                                    <input type='checkbox' class='form-check-input' id='d0_review' name='d0_review' value='r' disabled>
+                                    <label class='form-check-label' for='d0_review'>Reviewed</label>
+                                </div>
+                                <div class='col-1'></div>
+                                <div class='custom-control custom-control-inline form-check'>
+                                    <input type='checkbox' class='form-check-input' id='d0_meta_review' name='d0_review' value='m' disabled>
+                                    <label class='form-check-label' for='d0_meta_review'>Meta-Reviewed</label>
+                                </div>
+                                <div class='col-1'></div>
+                                <div class='custom-control custom-control-inline form-check'>
+                                    <input type='checkbox' class='form-check-input' id='d0_approve' name='d0_review' value='a' disabled>
+                                    <label class='form-check-label' for='d0_approve'>Approved</label>
+                                </div>
+                            </div>
+                        </fieldset>
                     </fieldset>
 
                     <fieldset class='collapse' id='d1' hidden>
                         <label for='d1_id' class="h6">Somatic Oncogenecity</label><input id='d1_id' name='d1_id' hidden>
+                        <label for='d1_branch' hidden></label><input id='d1_branch' name='d1_branch' value='so' hidden>
                         <div class='row form-group mt-2'>
                             <div class='col-6'>
                                 <label for='d1_disease'>Disease</label>
@@ -374,28 +395,29 @@
                                 <textarea class='form-control' id='vgir' name='variant_germline_report' onchange='copyReport(this)'></textarea>
                             </div>
                         </div>
+                        <fieldset id='auth_only'>
+                            <legend class='h6'>For Annotation Specialist and Scientist Use Only</legend>
+                            <div class='row form-group'>
+                                <div class='custom-control custom-control-inline offset-md-1 form-check'>
+                                    <input type='checkbox' class='form-check-input' id='d1_review' name='d1_review' value='r' disabled>
+                                    <label class='form-check-label' for='d1_review'>Reviewed</label>
+                                </div>
+                                <div class='col-1'></div>
+                                <div class='custom-control custom-control-inline form-check'>
+                                    <input type='checkbox' class='form-check-input' id='d1_meta_review' name='d1_review' value='m' disabled>
+                                    <label class='form-check-label' for='d1_meta_review'>Meta-Reviewed</label>
+                                </div>
+                                <div class='col-1'></div>
+                                <div class='custom-control custom-control-inline form-check'>
+                                    <input type='checkbox' class='form-check-input' id='d1_approve' name='d1_review' value='a' disabled>
+                                    <label class='form-check-label' for='d1_approve'>Approved</label>
+                                </div>
+                            </div>
+                        </fieldset>
                     </fieldset>
                 </fieldset>
             </div>
-            <fieldset id='auth_only'>
-                <legend class='h6'>For Annotation Specialist and Scientist Use Only</legend>
-                <div class='row form-group'>
-                    <div class='custom-control custom-control-inline offset-md-1 form-check'>
-                        <input type='checkbox' class='form-check-input' id='review' name='review' value='r' {% if user.is_specialist == False or item.reviewed != 'n' %}disabled{% endif %} {% if item.reviewed != 'n' %} checked {% endif %}>
-                        <label class='form-check-label' for='review'>Reviewed</label>
-                    </div>
-                    <div class='col-1'></div>
-                    <div class='custom-control custom-control-inline form-check'>
-                        <input type='checkbox' class='form-check-input' id='meta_review' name='review' value='m' {% if user.is_counselor == False or item.reviewed != 'r' %}disabled{% endif %} {% if item.reviewed == 'm' or item.reviewed == 'a' %} checked {% endif %}>
-                        <label class='form-check-label' for='meta_review'>Meta-Reviewed</label>
-                    </div>
-                    <div class='col-1'></div>
-                    <div class='custom-control custom-control-inline form-check'>
-                        <input type='checkbox' class='form-check-input' id='approve' name='review' value='a' {% if user.is_scientist == False or item.reviewed != 'm' %}disabled{% endif %} {% if item.reviewed == 'a' %} checked {% endif %}>
-                        <label class='form-check-label' for='approve'>Approved</label>
-                    </div>
-                </div>
-            </fieldset>
+
             <div class='card-footer'>
                 <div class='container'>
                     <div class='row form-group'>
@@ -430,12 +452,12 @@
                     <div class='container'>
                         <div class='row form-group'>
                             <div class='col-6 form-check'>
-                                <input type='radio' class='form-check-input' name='dtype' id='gp' value='gp' checked>
-                                <label class='form-check-label' for='gp'>Germline Pathogenecity</label>
+                                <input type='radio' class='form-check-input' name='dtype' id='so' value='so' checked>
+                                <label class='form-check-label' for='so'>Somatic Oncogenecity</label>
                             </div>
                             <div class='col-6 form-check'>
-                                <input type='radio' class='form-check-input' name='dtype' id='so' value='so'>
-                                <label class='form-check-label' for='so'>Somatic Oncogenecity</label>
+                                <input type='radio' class='form-check-input' name='dtype' id='gp' value='gp'>
+                                <label class='form-check-label' for='gp'>Germline Pathogenecity</label>
                             </div>
                         </div>
                     </div>
@@ -488,11 +510,17 @@
         }
 
         $(document).ready(function () {
+            if ('{{ user.specialist }}'.localeCompare('True') === 0) {
+                console.log('sdfds')
+                document.getElementById('d0_review').removeAttribute('disabled')
+                document.getElementById('d1_review').removeAttribute('disabled')
+            }
+
             let element, func_class, disease, index, field_partname, i, j;
             {% for disease in item.diseases.all %}
                 i = {{ forloop.counter }} +1;
+                disease = add_disease('{{ disease.branch }}');
                 {% if disease.score.first %}
-                    add_disease('gp');
                     field_partname = 'd' + i.toString();
                     document.getElementById(field_partname + '_id').value = '{{ disease.id }}';
                     document.getElementById(field_partname + '_disease').value = '{{ disease.name }}';
@@ -517,7 +545,6 @@
                     calculate_score(document.getElementById(field_partname + '_id'));
 
                 {% else %}
-                    disease = add_disease('so');
                     document.getElementById(disease.id + '_id').value = '{{ disease.id }}';
                     document.getElementById(disease.id + '_disease').value = '{{ disease.name }}';
                     {% if disease.functionals.count == 0 %}
@@ -572,6 +599,36 @@
                     {% endfor %}
 
                 {% endif %}
+
+                {% with review_val=disease.reviewed %}
+                    {% if review_val == 'r' and user.counselor %}
+                        document.getElementById(disease.id + '_review').setAttribute('checked', '');
+                        document.getElementById(disease.id + '_review').setAttribute('disabled', '');
+                        document.getElementById(disease.id + '_meta_review').removeAttribute('disabled');
+                        document.getElementById(disease.id + '_approve').setAttribute('disabled', '');
+                    {% elif review_val == 'm' and user.scientist %}
+                        document.getElementById(disease.id + '_review').setAttribute('checked', '');
+                        document.getElementById(disease.id + '_review').setAttribute('disabled', '');
+                        document.getElementById(disease.id + '_meta_review').setAttribute('checked', '');
+                        document.getElementById(disease.id + '_meta_review').setAttribute('disabled', '');
+                        document.getElementById(disease.id + '_approve').removeAttribute('disabled');
+                    {% elif review_val == 'a' %}
+                        document.getElementById(disease.id + '_review').setAttribute('checked', '');
+                        document.getElementById(disease.id + '_review').setAttribute('disabled', '');
+                        document.getElementById(disease.id + '_meta_review').setAttribute('checked', '');
+                        document.getElementById(disease.id + '_meta_review').setAttribute('disabled', '');
+                        document.getElementById(disease.id + '_approve').setAttribute('checked', '');
+                        document.getElementById(disease.id + '_approve').setAttribute('disabled', '');
+                    {% elif user.specialist %}
+                        document.getElementById(disease.id + '_review').removeAttribute('disabled');
+                        document.getElementById(disease.id + '_meta_review').setAttribute('disabled', '');
+                        document.getElementById(disease.id + '_approve').setAttribute('disabled', '');
+                    {% else %}
+                        document.getElementById(disease.id + '_review').setAttribute('disabled', '');
+                        document.getElementById(disease.id + '_meta_review').setAttribute('disabled', '');
+                        document.getElementById(disease.id + '_approve').setAttribute('disabled', '');
+                    {% endif %}
+                {% endwith %}
             {% endfor %}
         });
 
