@@ -30,7 +30,7 @@ def add_evidence(request, prefix, dx_id, variant, item=None):
 
 class GeneTable(tables.Table):
     name = tables.LinkColumn('gene', args=[A('name')], text=lambda record: record.name, empty_values=())
-    variants = tables.TemplateColumn("{{ record.variants.count }} variant(s)", verbose_name="Variants")
+    variants = tables.TemplateColumn('{{ record.variants.count }} variant(s)', verbose_name="Variants")
 
     class Meta:
         model = Gene
@@ -42,19 +42,24 @@ class GeneTable(tables.Table):
 
 class VariantTable(tables.Table):
     edit = tables.LinkColumn('variant', args=[A('gene__name'), A('protein')], text="edit", empty_values=())
-    variant_detail = tables.LinkColumn('variant_text', args=[A('gene.name'), A('protein')], text="detail", empty_values=())
+    variant_detail = tables.LinkColumn('variant_text', args=[A('gene.name'), A('protein')], text='detail', empty_values=())
+    diseases = tables.TemplateColumn('{{ record.diseases.count }} disease(s)', verbose_name='Diseases')
 
     class Meta:
         model = Variant
         orderable = False
-        sequence = ('edit', 'variant_detail', 'chr', 'cdna', 'protein', 'transcript')
-        exclude = ('id', 'genome_build', 'gene', 'consequence', 'exonic_function', 'content',
+        sequence = ('edit', 'variant_detail', 'gene', 'chr', 'cdna', 'protein', 'transcript')
+        exclude = ('id', 'genome_build', 'consequence', 'exonic_function', 'content',
                    'germline_content', 'af', 'af_popmax', 'cosmic70', 'clinvar', 'insilicodamaging',
                    'insilicobenign', 'polyphen2_hdiv_pred', 'polyphen2_hvar_pred', 'sift_pred',
                    'mutationtaster_pred', 'mutationassessor_pred', 'provean_pred', 'lrt_pred', 'tcga',
                    'oncokb', 'oncokb_pmids', 'watson', 'watson_pmids', 'qci', 'qci_pmids', 'jaxckb',
                    'jaxckb_pmids', 'pmkb', 'pmkb_citations', 'civic', 'google', 'alamut')
         attrs = {"class": "dataTable nowrap table table-bordered table-hover"}
+        row_attrs = {
+            "title": lambda record: '\n'.join([disease.name + ': [' + disease.get_reviewed_display() + ', ' + disease.get_branch_display() + ']' for disease in record.diseases.all()])
+            if record.diseases.count() > 0 else 'No Disease'
+        }
 
     @staticmethod
     def class_type():

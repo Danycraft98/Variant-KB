@@ -97,18 +97,6 @@ class Variant(models.Model):
     google = models.CharField(max_length=100, null=True)
     alamut = models.CharField(max_length=70, null=True)
     gene = models.ForeignKey(Gene, related_name='variants', on_delete=models.CASCADE, null=True, blank=True)
-    reviewed = models.CharField(choices=(
-        ('n', 'not reviewed'),
-        ('r', 'reviewed'),
-        ('m', 'meta-reviewed'),
-        ('a', 'approved'),
-    ), max_length=1, default='n')
-    reviewed_date = models.DateTimeField('reviewed date', null=True)
-    review_user = models.ForeignKey(User, related_name='reviewed_variants', on_delete=models.CASCADE, null=True, blank=True)
-    meta_reviewed_date = models.DateTimeField('meta-reviewed date', null=True)
-    meta_review_user = models.ForeignKey(User, related_name='meta_reviewed_variants', on_delete=models.CASCADE, null=True, blank=True)
-    approved_date = models.DateTimeField('approved date', null=True)
-    approve_user = models.ForeignKey(User, related_name='approved_variants', on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return self.protein
@@ -130,9 +118,25 @@ class PathItem(models.Model):
 
 class Disease(models.Model):
     name = models.CharField(max_length=20, null=True)
+    branch = models.CharField(choices=(
+        ('so', 'Somatic Oncogenecity'),
+        ('gp', 'Germline Pathogenecity')
+    ), max_length=2, default='so')
     others = models.CharField(max_length=20, null=True)
     report = models.CharField(max_length=20, null=True)
     variant = models.ForeignKey(Variant, related_name='diseases', on_delete=models.CASCADE, null=True, blank=True)
+    reviewed = models.CharField(choices=(
+        ('n', 'Not Reviewed'),
+        ('r', 'Reviewed'),
+        ('m', 'Meta-reviewed'),
+        ('a', 'Approved'),
+    ), max_length=1, default='n')
+    reviewed_date = models.DateTimeField('reviewed date', null=True)
+    review_user = models.ForeignKey(User, related_name='reviewed_variants', on_delete=models.CASCADE, null=True, blank=True)
+    meta_reviewed_date = models.DateTimeField('meta-reviewed date', null=True)
+    meta_review_user = models.ForeignKey(User, related_name='meta_reviewed_variants', on_delete=models.CASCADE, null=True, blank=True)
+    approved_date = models.DateTimeField('approved date', null=True)
+    approve_user = models.ForeignKey(User, related_name='approved_variants', on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return self.name

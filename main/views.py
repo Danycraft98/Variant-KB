@@ -162,28 +162,20 @@ def upload(request):
 @login_required
 def save(request, gene_name, variant_p):
     try:
-        review_val = request.POST.getlist('review', ['n'])[-1]
-        filter_val = Variant.objects.filter(gene__name=gene_name, protein=variant_p)
-        if review_val == 'r':
-            filter_val.update(reviewed_date=datetime.datetime.now(), review_user=request.user)
-        elif review_val == 'm':
-            filter_val.update(meta_reviewed_date=datetime.datetime.now(), meta_review_user=request.user)
-        elif review_val == 'a':
-            filter_val.update(approved_date=datetime.datetime.now(), approve_user=request.user)
-        filter_val.update(content=request.POST.get('variant_report', ''), germline_content=request.POST.get('variant_germline_report', ''), reviewed=review_val)
-
+        Variant.objects.filter(gene__name=gene_name).filter(protein=variant_p).update(content=request.POST.get('variant_report', ''), germline_content=request.POST.get('variant_germline_report', ''))
         Gene.objects.filter(name=gene_name).update(content=request.POST.get('gene_report', ''), germline_content=request.POST.get('gene_germline_report', ''))
         item = Variant.objects.get(gene__name=gene_name, protein=variant_p)
 
         i = 2
         while request.POST.get('d' + str(i) + '_disease'):
+            branch = request.POST.get('d' + str(i) + '_branch')
             if not request.POST.get('d' + str(i) + '_id').isdigit():
-                dx_id = Disease.objects.create(name=request.POST.get('d' + str(i) + '_disease'), report=request.POST.get('d' + str(i) + '_desc'), others=request.POST.get('d' + str(i) + '_others'), variant=item)
+                dx_id = Disease.objects.create(name=request.POST.get('d' + str(i) + '_disease'), report=request.POST.get('d' + str(i) + '_desc'), others=request.POST.get('d' + str(i) + '_others'), variant=item, branch=branch)
             else:
                 Disease.objects.filter(pk=request.POST.get('d' + str(i) + '_id')).update(name=request.POST.get('d' + str(i) + '_disease'), report=request.POST.get('d' + str(i) + '_desc'), others=request.POST.get('d' + str(i) + '_others'))
                 dx_id = Disease.objects.get(pk=request.POST.get('d' + str(i) + '_id'))
 
-            if 'GP' in request.POST.get('d' + str(i) + '_disease'):
+            if branch == 'gp':
                 for element in ITEMS.keys():
                     item_id = PathItem.objects.get(key=element)
                     add_evidence(request, 'd' + str(i) + '_' + element, dx_id, item, item_id)
@@ -206,12 +198,23 @@ def save(request, gene_name, variant_p):
                     add_evidence(request, 'd' + str(i) + '_fc' + str(j) + '_etype1', dx_id, item, func_id)
                     j += 1
                 add_evidence(request, 'd' + str(i) + '_etype2', dx_id, item)
+
             for report_id, report, field_name in zip(request.POST.getlist('d' + str(i) + '_report_id'), request.POST.getlist('d' + str(i) + '_report'), request.POST.getlist('d' + str(i) + '_report_name')):
                 if len(report) > 0:
                     if not report_id.isdigit():
                         Report.objects.create(name=field_name, content=report, gene=item.gene, variant=item, disease=dx_id)
                     else:
                         Report.objects.filter(pk=report_id).update(name=field_name, content=report)
+
+            review_val = request.POST.getlist('d' + str(i) + '_review', ['n'])[-1]
+            filter_val = Disease.objects.filter(pk=dx_id.id)
+            if review_val == 'r':
+                filter_val.update(reviewed_date=datetime.datetime.now(), review_user=request.user)
+            elif review_val == 'm':
+                filter_val.update(meta_reviewed_date=datetime.datetime.now(), meta_review_user=request.user)
+            elif review_val == 'a':
+                filter_val.update(approved_date=datetime.datetime.now(), approve_user=request.user)
+            filter_val.update(reviewed=review_val)
             i += 1
     except Variant.DoesNotExist:
         raise Http404('Variant does not exist')
