@@ -44,10 +44,12 @@ class VariantTable(tables.Table):
     edit = tables.LinkColumn('variant', args=[A('gene__name'), A('protein')], text="edit", empty_values=())
     variant_detail = tables.LinkColumn('variant_text', args=[A('gene.name'), A('protein')], text='detail', empty_values=())
     diseases = tables.TemplateColumn('{{ record.diseases.count }} disease(s)', verbose_name='Diseases')
+    history = tables.TemplateColumn('{{ record.history.first.timestamp }}', verbose_name='Upload Date', attrs={'th': {'hidden': ''}, 'td': {'hidden': ''}})
 
     class Meta:
         model = Variant
-        orderable = False
+        orderable = True
+        order_by = '-history'
         sequence = ('edit', 'variant_detail', 'gene', 'chr', 'cdna', 'protein', 'transcript')
         exclude = ('id', 'genome_build', 'consequence', 'exonic_function', 'content',
                    'germline_content', 'af', 'af_popmax', 'cosmic70', 'clinvar', 'insilicodamaging',
@@ -57,7 +59,7 @@ class VariantTable(tables.Table):
                    'jaxckb_pmids', 'pmkb', 'pmkb_citations', 'civic', 'google', 'alamut')
         attrs = {"class": "dataTable nowrap table table-bordered table-hover"}
         row_attrs = {
-            "title": lambda record: '\n'.join([disease.name + ': [' + disease.get_reviewed_display() + ', ' + disease.get_branch_display() + ']' for disease in record.diseases.all()])
+            "title": lambda record: '\n'.join([disease.name + ': [' + disease.get_reviewed_display() + ', ' + disease.branch.upper() + ']' for disease in record.diseases.all()])
             if record.diseases.count() > 0 else 'No Disease'
         }
 
@@ -76,7 +78,14 @@ class DiseaseTable(tables.Table):
         orderable = False
         sequence = ('disease', 'name', 'functionals', 'evidences')
         exclude = ('id', 'report', 'variant')
-        attrs = {"class": "nowrap table table-bordered table-hover"}
+        attrs = {
+            "class": "nowrap table table-bordered table-hover",
+            "style": "display: block; overflow: auto;"
+        }
+
+    @staticmethod
+    def class_type():
+        return "Disease"
 
 
 class HistoryTable(tables.Table):

@@ -252,7 +252,7 @@ def exported(request, gene_name, variant_p):
     fs = FileSystemStorage('/tmp')
     with fs.open('report.pdf') as pdf:
         response = HttpResponse(pdf, content_type='application/pdf')
-        response['Content-Disposition'] = "attachment; filename='report.pdf'"
+        response['Content-Disposition'] = "attachment; filename=report.pdf"
         return response
 
 

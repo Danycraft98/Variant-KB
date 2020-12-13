@@ -228,6 +228,24 @@
                 <div id='sift_pred' class='col-6'>{{ item.get_sift_pred_display }}</div>
             </div>
         {% endif %}
+        {% if item.mutationtaster_pred and item.mutationtaster_pred != 'na' %}
+            <div class='d-flex justify-content-center pt-2 text'>
+                <div class='col-3 text-right'>
+                    <strong>MutationTaster_pred</strong>
+                </div>
+                <div class='col-custom p-0'></div>
+                <div id='mutationtaster_pred' class='col-6'>{{ item.get_mutationtaster_pred_display }}</div>
+            </div>
+        {% endif %}
+        {% if item.mutationassessor_pred and item.mutationassessor_pred != 'na' %}
+            <div class='d-flex justify-content-center pt-2 text'>
+                <div class='col-3 text-right'>
+                    <strong>MutationAssessor_pred</strong>
+                </div>
+                <div class='col-custom p-0'></div>
+                <div id='mutationassessor_pred' class='col-6'>{{ item.get_mutationassessor_pred_display }}</div>
+            </div>
+        {% endif %}
         {% if item.provean_pred and item.provean_pred != 'na' %}
             <div class='d-flex justify-content-center pt-2 text'>
                 <div class='col-3 text-right'>
