@@ -44,7 +44,8 @@ class VariantTable(tables.Table):
     edit = tables.LinkColumn('variant', args=[A('gene__name'), A('protein')], text="edit", empty_values=())
     variant_detail = tables.LinkColumn('variant_text', args=[A('gene.name'), A('protein')], text='detail', empty_values=())
     diseases = tables.TemplateColumn('{{ record.diseases.count }} disease(s)', verbose_name='Diseases')
-    history = tables.TemplateColumn('{{ record.history.first.timestamp }}', verbose_name='Upload Date', attrs={'th': {'hidden': ''}, 'td': {'hidden': ''}})
+    history = tables.TemplateColumn('{{ record.history.first.timestamp }}', verbose_name='Upload Date')
+    recent = tables.TemplateColumn('{{ record.history.last.timestamp }}', verbose_name='Last Modified Date')
 
     class Meta:
         model = Variant
