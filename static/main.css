@@ -19,6 +19,10 @@ fieldset.box_fieldset {
             box-shadow:  0 0 #000;
 }
 
+fieldset.box_fieldset legend a{
+    text-decoration: none
+}
+
 fieldset#level {
     border: 1px groove #ffffff !important;
     width: 100%;
