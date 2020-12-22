@@ -18,10 +18,10 @@ class DiseaseSerializer(serializers.HyperlinkedModelSerializer):
 
     @staticmethod
     def get_gdr(obj):
-        report = obj.reports.filter(name="Gene-Disease Report").first()
+        report = obj.reports.filter(name='Gene-Disease Report').first()
         if report:
             return report.content
-        return ""
+        return ''
 
     class Meta:
         model = Disease
