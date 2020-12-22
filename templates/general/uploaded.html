@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% load render_table from django_tables2 %}
 {% load custom_tags %}
 
@@ -16,23 +16,23 @@
         }
     </style>
 
-    <div class="card shadow my-5">
+    <div class='card shadow my-5'>
         <!-- Page Heading -->
-        <form method="post" action="{% url 'upload' %}" onsubmit="return naCheck();">
+        <form method='post' action='{% url 'upload' %}' onsubmit='return naCheck();'>
             {% csrf_token %}
             <label>
-                <input name="dict" value="{{ dict }}" hidden>
+                <input name='dict' value='{{ dict }}' hidden>
             </label>
 
-            <div class="card-header d-flex flex-row align-items-center justify-content-between">
-                <h5 class="text-primary">{{ title }}</h5>
-                <div class="align-items-right">
-                    <button class="btn btn-primary" type="submit">Commit</button>
+            <div class='card-header d-flex flex-row align-items-center justify-content-between'>
+                <h5 class='text-primary'>{{ title }}</h5>
+                <div class='align-items-right'>
+                    <button class='btn btn-primary' type='submit'>Commit</button>
                 </div>
             </div>
 
             <!-- Page Body -->
-            <div class="card-body">
+            <div class='card-body'>
                 {% if not is_empty.0 %}
                     <h5>New Variants</h5>
                     {{ tables.0 | safe }}
@@ -52,12 +52,12 @@
         </form>
     </div>
 
-    <link rel="stylesheet" href="//cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+    <link rel='stylesheet' href='//cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css'>
 {% endblock %}
 
 {% block script %}
     <script>
-        $(".selectAll").click(function () {
+        $('.selectAll').click(function () {
             $('input:checkbox').not(this).prop('checked', this.checked);
         });
 
@@ -70,24 +70,24 @@
         }
 
         $(document).ready(function () {
-            Array.prototype.forEach.call(document.getElementsByTagName("th"), function (element) {
+            Array.prototype.forEach.call(document.getElementsByTagName('th'), function (element) {
                 if (!isNaN(element.innerText)) {
-                    element.setAttribute("style", "min-width:40px");
-                    let check = document.createElement("INPUT");
-                    check.setAttribute("type", "checkbox");
-                    if (element.parentElement.parentElement.parentElement.className.includes("new")) {
-                        check.setAttribute("id", "new");
+                    element.setAttribute('style', 'min-width:40px');
+                    let check = document.createElement('INPUT');
+                    check.setAttribute('type', 'checkbox');
+                    if (element.parentElement.parentElement.parentElement.className.includes('new')) {
+                        check.setAttribute('id', 'new');
                     } else {
-                        check.setAttribute("id", "exist");
+                        check.setAttribute('id', 'exist');
                     }
 
-                    if (element.innerText === "") {
-                        check.setAttribute("onclick", "toggle(this)")
+                    if (element.innerText === '') {
+                        check.setAttribute('onclick', 'toggle(this)')
                     } else {
-                        check.setAttribute("value", element.parentElement.children[3].innerText);
-                        check.setAttribute("name", "add_or_update");
+                        check.setAttribute('value', element.parentElement.children[3].innerText);
+                        check.setAttribute('name', 'add_or_update');
                     }
-                    element.innerText = "";
+                    element.innerText = '';
                     element.appendChild(check);
                 }
             });
@@ -98,7 +98,7 @@
             try {
                 Array.prototype.forEach.call(document.getElementsByName('add_or_update'), function (element) {
                     if (element.checked && (element.parentElement.parentElement.children[3].innerText.includes('na') || element.parentElement.parentElement.children[9].innerText.includes('na'))) {
-                        alert("Variant with missing Gene name and/or Protein.");
+                        alert('Variant with missing Gene name and/or Protein.');
                         throw BreakException;
                     }
                 });

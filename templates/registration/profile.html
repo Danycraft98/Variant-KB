@@ -1,24 +1,24 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container">
-    <div class="card o-hidden border-0 shadow-lg my-5">
-        <div class="card-header">
-            <h5 class="">Profile Page</h5>
+<div class='container'>
+    <div class='card o-hidden border-0 shadow-lg my-5'>
+        <div class='card-header'>
+            <h5 class=''>Profile Page</h5>
         </div>
-        <div class="card-body p-3">
-            <dl class="d-flex justify-content-center row">
-                <dt class="col-2">Username</dt>
-                <dd class="col-10">{{ user.username }}</dd>
+        <div class='card-body p-3'>
+            <dl class='d-flex justify-content-center row'>
+                <dt class='col-2'>Username</dt>
+                <dd class='col-10'>{{ user.username }}</dd>
 
-                <dt class="col-2">User Group</dt>
-                <dd class="col-10">{{ user.groups.first }}</dd>
+                <dt class='col-2'>User Group</dt>
+                <dd class='col-10'>{{ user.groups.first }}</dd>
 
-                <dt class="col-2">Email</dt>
-                <dd class="col-10">{{ user.email }}</dd>
+                <dt class='col-2'>Email</dt>
+                <dd class='col-10'>{{ user.email }}</dd>
 
-                <dt class="col-2">Registered On</dt>
-                <dd class="col-10">{{ user.date_joined }}</dd>
+                <dt class='col-2'>Registered On</dt>
+                <dd class='col-10'>{{ user.date_joined }}</dd>
             </dl>
         </div>
     </div>

@@ -16,4 +16,4 @@ def signup(request):
 @login_required
 def user_profile(request, user_id):
     user = User.objects.get(id=user_id)
-    return render(request, 'registration/profile.html', {"user": user})
+    return render(request, 'registration/profile.html', {'user': user})

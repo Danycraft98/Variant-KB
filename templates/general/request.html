@@ -1,55 +1,55 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
 {% block content %}
-    <div class="card shadow mx-auto my-5" style="width:60%">
-        <div class="card-header">
-            <h5 class="m-0 text-primary">Request Account Level</h5>
+    <div class='card shadow mx-auto my-5' style='width:60%'>
+        <div class='card-header'>
+            <h5 class='m-0 text-primary'>Request Account Level</h5>
         </div>
-        <form method="post" action="{% url 'request' %}">
-            <div class="card-body mx-5 px-1">
+        <form method='post' action='{% url 'request' %}'>
+            <div class='card-body mx-5 px-1'>
                 {% csrf_token %}
-                <div class="form-group form-row">
-                    <div class="col-8 input-group">
-                        <div class="input-group-append">
-                            <span class="input-group-text text-sm" style="width:125px"><label for="name">Name</label></span>
+                <div class='form-group form-row'>
+                    <div class='col-8 input-group'>
+                        <div class='input-group-append'>
+                            <span class='input-group-text text-sm' style='width:125px'><label for='name'>Name</label></span>
                         </div>
-                        <input id="name" type="text" name="name" class="form-control text-sm">
+                        <input id='name' type='text' name='name' class='form-control text-sm'>
                     </div>
                 </div>
-                <div class="form-group form-row">
-                    <div class="col-8 input-group">
-                        <div class="input-group-append">
-                            <span class="input-group-text text-sm" style="width:125px"><label for="email">Email</label></span>
+                <div class='form-group form-row'>
+                    <div class='col-8 input-group'>
+                        <div class='input-group-append'>
+                            <span class='input-group-text text-sm' style='width:125px'><label for='email'>Email</label></span>
                         </div>
-                        <input id="email" type="email" name="email" class="form-control text-sm">
+                        <input id='email' type='email' name='email' class='form-control text-sm'>
                     </div>
                 </div>
-                <div class="form-row">
-                    <fieldset id="level">
-                        <legend class="h6">User Level</legend>
-                        <div class="offset-md-1 form-check form-check-inline">
-                            <input type="radio" class="form-check-input" id="staff" name="level" value="staff">
-                            <label class="form-check-label" for="staff">Staff</label>
+                <div class='form-row'>
+                    <fieldset id='level'>
+                        <legend class='h6'>User Level</legend>
+                        <div class='offset-md-1 form-check form-check-inline'>
+                            <input type='radio' class='form-check-input' id='staff' name='level' value='staff'>
+                            <label class='form-check-label' for='staff'>Staff</label>
                         </div>
-                        <div class="form-check form-check-inline">
-                            <input type="radio" class="form-check-input" id="specialist" name="level" value="staff">
-                            <label class="form-check-label" for="specialist">Specialist</label>
+                        <div class='form-check form-check-inline'>
+                            <input type='radio' class='form-check-input' id='specialist' name='level' value='staff'>
+                            <label class='form-check-label' for='specialist'>Specialist</label>
                         </div>
-                        <div class="form-check form-check-inline">
-                            <input type="radio" class="form-check-input" id="scientist" name="level" value="staff">
-                            <label class="form-check-label" for="scientist">Scientist</label>
+                        <div class='form-check form-check-inline'>
+                            <input type='radio' class='form-check-input' id='scientist' name='level' value='staff'>
+                            <label class='form-check-label' for='scientist'>Scientist</label>
                         </div>
                     </fieldset>
                 </div>
             </div>
-            <div class="card-footer">
-                <div class="container">
-                    <div class="row form-group">
-                        <div class="col-4 offset-md-2">
-                            <button class="btn btn-primary btn-block" type="submit">Send</button>
+            <div class='card-footer'>
+                <div class='container'>
+                    <div class='row form-group'>
+                        <div class='col-4 offset-md-2'>
+                            <button class='btn btn-primary btn-block' type='submit'>Send</button>
                         </div>
-                        <div class="col-4">
-                            <button class="btn btn-outline-primary btn-block" type="button" onclick="history.back();">Cancel</button>
+                        <div class='col-4'>
+                            <button class='btn btn-outline-primary btn-block' type='button' onclick='history.back();'>Cancel</button>
                         </div>
                     </div>
                 </div>
@@ -62,13 +62,13 @@
     <!-- Page level custom scripts -->
     <script>
         function set_search_type(id1, id2) {
-            const element = document.getElementById(id1 + "_btn");
+            const element = document.getElementById(id1 + '_btn');
             if (element.disabled === false) {
                 element.disabled = true;
-                document.getElementById(id2 + "_btn").disabled = false;
+                document.getElementById(id2 + '_btn').disabled = false;
 
-                document.getElementById(id1 + "_search").hidden = false;
-                document.getElementById(id2 + "_search").hidden = true;
+                document.getElementById(id1 + '_search').hidden = false;
+                document.getElementById(id2 + '_search').hidden = true;
             }
         }
     </script>

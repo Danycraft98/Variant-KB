@@ -4,7 +4,7 @@
 {% block content %}
     <div class='card mt-4'>
         <div class='card-header'>
-            <h5><strong>Edit</strong></h5>
+            <h5 class="mr-auto my-auto"><strong>Edit</strong></h5>
         </div>
         <form action='{% url 'save_variant' item.gene.name item.protein %}' method='post'>
             <div class="card-body">

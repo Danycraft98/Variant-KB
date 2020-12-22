@@ -324,7 +324,7 @@
                     <strong>oncoKB PMIDs</strong>
                 </div>
                 <div class='col-custom p-0'></div>
-                <div id='oncokb_pmids' class='col-6'>{% with links=item.oncokb_pmids|url_links:";" %}{{ links | safe }}{% endwith %}</div>
+                <div id='oncokb_pmids' class='col-6'>{% with links=item.oncokb_pmids|url_links:';' %}{{ links | safe }}{% endwith %}</div>
             </div>
         {% endif %}
         {% if item.watson and item.watson != 'na' %}
@@ -342,7 +342,7 @@
                     <strong>Watson PMIDs</strong>
                 </div>
                 <div class='col-custom p-0'></div>
-                <div id='watson_pmids' class='col-6'>{% with links=item.watson_pmids|url_links:";" %}{{ links | safe }}{% endwith %}</div>
+                <div id='watson_pmids' class='col-6'>{% with links=item.watson_pmids|url_links:';' %}{{ links | safe }}{% endwith %}</div>
             </div>
         {% endif %}
         {% if item.qci and item.qci != 'na' %}
@@ -360,7 +360,7 @@
                     <strong>QCI PMIDs</strong>
                 </div>
                 <div class='col-custom p-0'></div>
-                <div id='qci_pmids' class='col-6'>{% with links=item.qci_pmids|url_links:";" %}{{ links | safe }}{% endwith %}</div>
+                <div id='qci_pmids' class='col-6'>{% with links=item.qci_pmids|url_links:';' %}{{ links | safe }}{% endwith %}</div>
             </div>
         {% endif %}
         {% if item.pmkb and item.pmkb != 'na' %}
