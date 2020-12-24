@@ -7,7 +7,7 @@
         <a class='nav-link' data-toggle='tab' href='#detail' role='tab' aria-controls='detail' aria-selected='false'>Outside Databases</a>
     </li>
     <li class='nav-item'>
-        <a class='nav-link' data-toggle='tab' href='#score' role='tab' aria-controls='score' aria-selected='false'>Outside Cancer Knowledgebases</a>
+        <a class='nav-link' data-toggle='tab' href='#score' role='tab' aria-controls='score' aria-selected='false'>Outside Cancer Knowledge-bases</a>
     </li>
     <li class='nav-item'>
         <a class='nav-link' data-toggle='tab' href='#report' role='tab' aria-controls='report' aria-selected='false'>Reports</a>
@@ -141,7 +141,7 @@
         {% if item.exonic_function and item.exonic_function != 'na' %}
             <div class='d-flex justify-content-center pt-2 text'>
                 <div class='col-3 text-right'>
-                    <strong>Exonic Funtion</strong>
+                    <strong>Exonic Function</strong>
                 </div>
                 <div class='col-custom p-0'></div>
                 <div id='af' class='col-6'>{{ item.exonic_function }}</div>
@@ -525,17 +525,17 @@
 <script src='https://code.jquery.com/jquery-latest.min.js'></script>
 <script src='https://d3js.org/d3.v4.min.js'></script>
 <script>
-    let maxheight = 0;
+    let max_height = 0;
     tabs = jQuery('.tab-content .tab-pane');
     jQuery.each(tabs, function () {
         this.classList.add('active'); /* make all visible */
-        maxheight = (this.clientHeight > maxheight ? this.clientHeight : maxheight);
+        max_height = (this.clientHeight > max_height ? this.clientHeight : max_height);
         if (!jQuery(this).hasClass('show')) {
             this.classList.remove('active'); /* hide again */
         }
     });
     jQuery.each(tabs, function () {
-        jQuery(this).height(maxheight);
+        jQuery(this).height(max_height);
     });
 
     {% if item.hotspots.count > 0 %}

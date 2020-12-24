@@ -3,7 +3,7 @@ from rest_framework import serializers
 from .models import Disease, Variant, Gene
 
 
-class DiseaseSerializer(serializers.HyperlinkedModelSerializer):
+class DiseaseSerializer(serializers.ModelSerializer):
     gene = serializers.SerializerMethodField()
     variant = serializers.SerializerMethodField()
     gdr = serializers.SerializerMethodField()
@@ -28,7 +28,7 @@ class DiseaseSerializer(serializers.HyperlinkedModelSerializer):
         fields = '__all__'
 
 
-class VariantSerializer(serializers.HyperlinkedModelSerializer):
+class VariantSerializer(serializers.ModelSerializer):
     diseases = DiseaseSerializer(required=False, many=True)
 
     class Meta:
@@ -36,7 +36,7 @@ class VariantSerializer(serializers.HyperlinkedModelSerializer):
         fields = '__all__'
 
 
-class GeneSerializer(serializers.HyperlinkedModelSerializer):
+class GeneSerializer(serializers.ModelSerializer):
     variants = VariantSerializer(required=False, many=True)
 
     class Meta:

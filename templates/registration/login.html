@@ -1,6 +1,15 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block style %}
+    <style>
+        .bg-image {
+            background: url({% static 'variant_logo.jpg' %}) center;
+            background-size: cover;
+        }
+    </style>
+{% endblock %}
+
 {% block content %}
     <div class='container'>
         <!-- Outer Row -->

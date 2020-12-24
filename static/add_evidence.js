@@ -1,5 +1,4 @@
 function collapse(element, index) {
-    console.log(element.id.split("_").slice(0,index).join("_") + "_icon")
     let arrow = document.getElementById(element.id.split("_").slice(0,index).join("_") + "_icon");
     if (arrow.className.includes("down")) {
         arrow.className = arrow.className.replace("down", 'up');

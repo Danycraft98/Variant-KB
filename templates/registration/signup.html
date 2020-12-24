@@ -1,6 +1,15 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block style %}
+    <style>
+        .bg-image {
+            background: url({% static 'variant_logo.jpg' %}) center;
+            background-size: cover;
+        }
+    </style>
+{% endblock %}
+
 {% block content %}
     <div class='container'>
         <div class='card o-hidden border-0 shadow-lg my-5'>
@@ -50,7 +59,7 @@
 
         function validatePassword() {
             if (password.value !== confirm_password.value) {
-                confirm_password.setCustomValidity('Passwords Don't Match');
+                confirm_password.setCustomValidity("Passwords Don't Match");
             } else {
                 confirm_password.setCustomValidity('');
             }

@@ -19,7 +19,7 @@
                         </div>
                         <div id='d0' class='card my-5' hidden>
                             <div class="card-header">
-                                <label for='d0_id' class='h6'>Germline Pathogenecity</label><input id='d0_id' name='d0_id' hidden>
+                                <label for='d0_id' class='h6'>Germline Pathogenicity</label><input id='d0_id' name='d0_id' hidden>
                                 <label for='d0_branch' hidden></label><input id='d0_branch' name='d0_branch' value='gp' hidden>
                             </div>
                             <div class="card-body">
@@ -163,7 +163,7 @@
 
                         <div id='d1' class='card my-4' hidden>
                             <div class="card-header">
-                                <label for='d1_id' class='h6'>Somatic Oncogenecity</label><input id='d1_id' name='d1_id' hidden>
+                                <label for='d1_id' class='h6'>Somatic Oncogenicity</label><input id='d1_id' name='d1_id' hidden>
                                 <label for='d1_branch' hidden></label><input id='d1_branch' name='d1_branch' value='so' hidden>
                             </div>
                             <div class="card-body">
@@ -206,7 +206,7 @@
                                                     <option>GOF</option>
                                                     <option>LOF</option>
                                                     <option>TP53 functional</option>
-                                                    <option>TP53 nonfuntional</option>
+                                                    <option>TP53 non-functional</option>
                                                     <option>BRAF Class I</option>
                                                     <option>BRAF Class II</option>
                                                     <option>BRAF Class III</option>
@@ -467,11 +467,11 @@
                         <div class='row form-group'>
                             <div class='col-6 form-check'>
                                 <input type='radio' class='form-check-input' name='dtype' id='so' value='so' checked>
-                                <label class='form-check-label' for='so'>Somatic Oncogenecity</label>
+                                <label class='form-check-label' for='so'>Somatic Oncogenicity</label>
                             </div>
                             <div class='col-6 form-check'>
                                 <input type='radio' class='form-check-input' name='dtype' id='gp' value='gp'>
-                                <label class='form-check-label' for='gp'>Germline Pathogenecity</label>
+                                <label class='form-check-label' for='gp'>Germline Pathogenicity</label>
                             </div>
                         </div>
                     </div>
@@ -500,20 +500,19 @@
             const disease_id = element.id.split('_')[0];
             const disease_name = element.value;
 
-            var xhttp = new XMLHttpRequest();
+            const xhttp = new XMLHttpRequest();
             xhttp.onreadystatechange = function () {
                 if (this.readyState === 4 && this.status === 200) {
-                    const diseases = JSON.parse(this.responseText);
-                    for (let key in diseases) {
-                        let obj = diseases[key];
-                        if (obj.gene === {{ item.gene.pk }} && obj.variant !== {{ item.pk }}) {
-                            document.getElementById(disease_id + '_gdr').value = obj.gdr;
+                    const disease = JSON.parse(this.responseText)[0];
+                    if (typeof disease !== 'undefined'){ // && disease !== null) {
+                        if (disease.hasOwnProperty('gene') && disease['gene'] === {{ item.gene.pk }}) {
+                            document.getElementById(disease_id + '_gdr').value = disease['gdr'];
                         }
-                        if (obj.variant === {{ item.pk }}) {
-                            document.getElementById(disease_id + '_vdr').value = obj.vdr;
+
+                        if (disease.hasOwnProperty('variant') && disease['variant'] === {{ item.pk }}) {
+                            document.getElementById(disease_id + '_vdr').value = disease['vdr'];
                         }
-                    }
-                    if (Object.keys(diseases).length < 1) {
+                    } else {
                         document.getElementById(disease_id + '_gdr').value = '';
                     }
                 }
@@ -574,10 +573,10 @@
                             {% if forloop.counter > 1 %}
                                 add_evidence_type1(btn);
                             {% endif %}
-                            document.getElementById(func_class.id + '_etype1_id{{forloop.counter}}').value = '{{ evidence.id }}';
-                            document.getElementById(func_class.id + '_etype1_st{{forloop.counter}}').value = '{{ evidence.source_type }}';
-                            document.getElementById(func_class.id + '_etype1_s{{forloop.counter}}').value = '{{ evidence.source_id }}';
-                            document.getElementById(func_class.id + '_etype1_e{{forloop.counter}}').value = '{{ evidence.statement }}';
+                            document.getElementById(func_class.id + '_etype1_id{{ forloop.counter }}').value = '{{ evidence.id }}';
+                            document.getElementById(func_class.id + '_etype1_st{{ forloop.counter }}').value = '{{ evidence.source_type }}';
+                            document.getElementById(func_class.id + '_etype1_s{{ forloop.counter }}').value = '{{ evidence.source_id }}';
+                            document.getElementById(func_class.id + '_etype1_e{{ forloop.counter }}').value = '{{ evidence.statement }}';
                         {% endfor %}
                     {% endfor %}
 

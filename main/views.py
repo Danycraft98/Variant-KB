@@ -62,7 +62,7 @@ def variants(request):
         variant_list = VariantTable(Variant.objects.filter(chr__contains=request.GET.get('chromosome', ''), protein__contains=request.GET.get('protein', ''), cdna__contains=request.GET.get('cdna', ''), ref__contains=request.GET.get('ref', ''), alt__contains=request.GET.get('alt', '')))
     else:
         variant_list = VariantTable(Variant.objects.all())
-    variant_list.order_by = ('-history',)
+    # variant_list.order_by = ('-history',)
     return render(request, 'variants/index.html', {'table': variant_list, 'title': 'List of Variants'})
 
 
