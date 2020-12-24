@@ -1,7 +1,8 @@
 function collapse(element, index) {
+    console.log(element.id.split("_").slice(0,index).join("_") + "_icon")
     let arrow = document.getElementById(element.id.split("_").slice(0,index).join("_") + "_icon");
     if (arrow.className.includes("down")) {
-        arrow.className = arrow.className.replace("down", "up");
+        arrow.className = arrow.className.replace("down", 'up');
         if (element.innerText.includes("Expand")) {
             element.innerHTML = element.innerHTML.replace('Expand', 'Collapse');
         }
@@ -62,7 +63,7 @@ function add_disease(dtype) {
     })
     cln.id = "d" + index
     cln.removeAttribute('hidden');
-    cln.setAttribute('class', 'my-auto pb-4');
+    cln.setAttribute('class', 'card my-5 pb-4');
 
     container.appendChild(cln);
     return cln;
@@ -102,11 +103,12 @@ function add_f_class(element) {
             element.name = element.name.replace(/fc\d/gi, 'fc' + fc_num);
         }
         if (element.id.includes("add") && fc_num > 1) {
-            element.setAttribute("hidden", "")
+            element.setAttribute("hidden", "");
         }
     })
     cln.id = disease_num + "_fc" + fc_num;
-    cln.removeAttribute('hidden')
+    cln.removeAttribute('hidden');
+    cln.setAttribute('class', 'box_fieldset mt-4 mb-0')
 
     // Append the cloned <li> element to <ul> with id="myList1"
     container.appendChild(cln);

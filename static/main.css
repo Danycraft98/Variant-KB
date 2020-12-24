@@ -6,20 +6,32 @@ hr {
     border-top: 1px solid rgb(201, 205, 209);
 }
 
+.double-hr {
+    border-top: 3px double rgb(201, 205, 209);
+}
+
 .col-custom {
     flex: 0 0 5%;
     max-width: 5%;
+}
+
+.col-custom-2 {
+    -ms-flex: 0 0 20.833333%;
+    flex: 0 0 20.833333%;
+    max-width: 20.833333%;
+    padding-right: 15px;
+    padding-left: 15px;
 }
 
 fieldset.box_fieldset {
     border: 1px groove #ffffff !important;
     padding: 0.7em 1.4em !important;
     margin: 1.5em;
-    -webkit-box-shadow:  0 0 #000;
-            box-shadow:  0 0 #000;
+    -webkit-box-shadow: 0 0 #000;
+    box-shadow: 0 0 #000;
 }
 
-fieldset.box_fieldset legend a{
+fieldset.box_fieldset legend a {
     text-decoration: none
 }
 
@@ -31,7 +43,7 @@ fieldset#level {
 
 legend {
     text-align: left !important;
-    width:auto;
-    padding:0 10px;
-    border-bottom:none;
+    width: auto;
+    padding: 0 10px;
+    border-bottom: none;
 }

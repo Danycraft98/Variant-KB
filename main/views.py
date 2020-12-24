@@ -62,6 +62,7 @@ def variants(request):
         variant_list = VariantTable(Variant.objects.filter(chr__contains=request.GET.get('chromosome', ''), protein__contains=request.GET.get('protein', ''), cdna__contains=request.GET.get('cdna', ''), ref__contains=request.GET.get('ref', ''), alt__contains=request.GET.get('alt', '')))
     else:
         variant_list = VariantTable(Variant.objects.all())
+    variant_list.order_by = ('-history',)
     return render(request, 'variants/index.html', {'table': variant_list, 'title': 'List of Variants'})
 
 
@@ -92,7 +93,7 @@ def variant(request, gene_name, variant_p):
 def upload(request):
     exists_dict = {'yes': [], 'no': []}
     if 'dict' not in request.POST:
-        raw_data = pandas.read_excel(request.FILES.get('file'), dtype=str, header=20)
+        raw_data = pandas.read_excel(request.FILES.get('file'), dtype=str, header=20, engine='openpyxl')
         raw_data.fillna('na', inplace=True)
         default_header = list(raw_data.columns)
         [default_header.remove(key) for key in ['IGV', 'UCSC Genome Browser', 'HGMD']]
@@ -171,9 +172,11 @@ def save(request, gene_name, variant_p):
             branch = request.POST.get('d' + str(i) + '_branch')
             if not request.POST.get('d' + str(i) + '_id').isdigit():
                 dx_id = Disease.objects.create(name=request.POST.get('d' + str(i) + '_disease'), report=request.POST.get('d' + str(i) + '_desc'), others=request.POST.get('d' + str(i) + '_others'), variant=item, branch=branch)
+                History.objects.create(content='Added Disease: ' + str(dx_id), user=request.user, timestamp=datetime.datetime.now(), variant=item)
             else:
                 Disease.objects.filter(pk=request.POST.get('d' + str(i) + '_id')).update(name=request.POST.get('d' + str(i) + '_disease'), report=request.POST.get('d' + str(i) + '_desc'), others=request.POST.get('d' + str(i) + '_others'))
                 dx_id = Disease.objects.get(pk=request.POST.get('d' + str(i) + '_id'))
+                History.objects.create(content='Updated Disease: ' + str(dx_id), user=request.user, timestamp=datetime.datetime.now(), variant=item)
 
             if branch == 'gp':
                 for element in ITEMS.keys():
@@ -210,10 +213,13 @@ def save(request, gene_name, variant_p):
             filter_val = Disease.objects.filter(pk=dx_id.id)
             if review_val == 'r':
                 filter_val.update(reviewed_date=datetime.datetime.now(), review_user=request.user)
+                History.objects.create(content='Reviewed Disease: ' + str(filter_val.first()), user=request.user, timestamp=datetime.datetime.now(), variant=item)
             elif review_val == 'm':
                 filter_val.update(meta_reviewed_date=datetime.datetime.now(), meta_review_user=request.user)
+                History.objects.create(content='Secondly Reviewed Disease: ' + str(filter_val.first()), user=request.user, timestamp=datetime.datetime.now(), variant=item)
             elif review_val == 'a':
                 filter_val.update(approved_date=datetime.datetime.now(), approve_user=request.user)
+                History.objects.create(content='Approved Disease: ' + str(filter_val.first()), user=request.user, timestamp=datetime.datetime.now(), variant=item)
             filter_val.update(reviewed=review_val)
             i += 1
     except Variant.DoesNotExist:

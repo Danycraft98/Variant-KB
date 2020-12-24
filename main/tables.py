@@ -50,7 +50,7 @@ class VariantTable(tables.Table):
     class Meta:
         model = Variant
         orderable = True
-        order_by = '-history'
+        # order_by = ('-history',)
         sequence = ('edit', 'variant_detail', 'gene', 'chr', 'cdna', 'protein', 'transcript')
         exclude = ('id', 'genome_build', 'consequence', 'exonic_function', 'content',
                    'germline_content', 'af', 'af_popmax', 'cosmic70', 'clinvar', 'insilicodamaging',
