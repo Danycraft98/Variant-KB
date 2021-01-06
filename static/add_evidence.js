@@ -1,20 +1,13 @@
 function collapse(element, index) {
-    let arrow = document.getElementById(element.id.split("_").slice(0,index).join("_") + "_icon");
-    if (arrow.className.includes("down")) {
-        arrow.className = arrow.className.replace("down", 'up');
-        if (element.innerText.includes("Expand")) {
-            element.innerHTML = element.innerHTML.replace('Expand', 'Collapse');
-        }
+    if (element.innerText.includes("Expand")) {
+        element.innerHTML = element.innerHTML.replace('Expand', 'Collapse');
     } else {
-        arrow.className = arrow.className.replace("up", "down");
-        if (element.innerText.includes("Collapse")) {
-            element.innerHTML = element.innerHTML.replace('Collapse', 'Expand');
-        }
+        element.innerHTML = element.innerHTML.replace('Collapse', 'Expand');
     }
 }
 
 function select_evidence(element) {
-    document.querySelectorAll("[id^='" + element.id + "']").forEach(function(item, index) {
+    document.querySelectorAll("[id^='" + element.id + "']").forEach(function (item, index) {
         if (index > 7) {
             calculate_score(element);
             return;
@@ -22,7 +15,7 @@ function select_evidence(element) {
         if (element.checked === true) {
             item.removeAttribute('disabled');
         } else if (item.id !== element.id && item.id.includes("field") === false) {
-            item.setAttribute('disabled','true');
+            item.setAttribute('disabled', 'true');
         }
     });
     calculate_score(element);
@@ -31,6 +24,7 @@ function select_evidence(element) {
 function add_disease(dtype) {
     if (dtype == null) {
         dtype = $("input[type='radio'][name='dtype']:checked").val();
+        $("input[type='radio'][name='dtype']").filter('[value=so]').prop('checked', true);
     }
 
     const container = document.getElementById("diseases")
@@ -45,12 +39,12 @@ function add_disease(dtype) {
     }
 
     let cln = document.getElementById(disease_id).cloneNode(true);
-    cln.querySelectorAll("[id^='" + disease_id + "']").forEach(function(element) {
-        if (element.tagName !== 'SELECT' && element.type !== 'checkbox' && !element.id.includes('score') && !element.id.includes('type') && !element.id.includes('r_name') && !element.id.includes('disease') && !element.id.includes('branch')) {
+    cln.querySelectorAll("[id^='" + disease_id + "']").forEach(function (element) {
+        if (element.tagName !== 'SELECT' && element.type !== 'checkbox' && !element.id.includes('score') && !element.id.includes('type') && !element.id.includes('r_name') && !element.id.includes('es_name') && !element.id.includes('disease') && !element.id.includes('branch')) {
             element.value = '';
         }
         if (element.id.includes("disease")) {
-            element.setAttribute("required","");
+            element.setAttribute("required", "");
         }
         if (element.name) {
             element.name = element.name.replace(/^d\d/gi, 'd' + index);
@@ -80,11 +74,11 @@ function add_evidence(element) {
     cln.children[0].children[2].remove();
 
     const index = container.children.length + 1
-    cln.querySelectorAll("[id^='" + sub_id + "']").forEach(function(element) {
+    cln.querySelectorAll("[id^='" + sub_id + "']").forEach(function (element) {
         if (element.tagName !== 'SELECT') {
             element.value = '';
         }
-        element.id = element.id.slice(0,-1) + index;
+        element.id = element.id.slice(0, -1) + index;
     })
     container.appendChild(cln);
 }
@@ -92,11 +86,11 @@ function add_evidence(element) {
 function add_f_class(element) {
     const disease_num = element.id.split("_")[0];
     // Get the container
-    const container = document.getElementById(disease_num + "_f_classes");
-    const fc_num = container.children.length
+    const container = document.getElementById(disease_num + "_func_classes");
+    const fc_num = container.children.length - 1
 
     let cln = document.getElementById(disease_num + "_fc0").cloneNode(true);
-    cln.querySelectorAll("[id^='" + disease_num + "_fc']").forEach(function(element) {
+    cln.querySelectorAll("[id^='" + disease_num + "_fc']").forEach(function (element) {
         element.id = element.id.replace(/fc\d/gi, 'fc' + fc_num)
         if (element.name) {
             element.name = element.name.replace(/fc\d/gi, 'fc' + fc_num);
@@ -107,7 +101,7 @@ function add_f_class(element) {
     })
     cln.id = disease_num + "_fc" + fc_num;
     cln.removeAttribute('hidden');
-    cln.setAttribute('class', 'box_fieldset mt-4 mb-0')
+    cln.setAttribute('class', 'mt-4 mb-0')
 
     // Append the cloned <li> element to <ul> with id="myList1"
     container.appendChild(cln);
@@ -124,13 +118,13 @@ function add_evidence_type1(element) {
 
     // Copy the element and its child nodes
     const cln = document.getElementById(fc_num + "_etype1_1").cloneNode(true);
-    cln.querySelectorAll("[id^='" + fc_num + "_etype1_']").forEach(function(element) {
+    cln.querySelectorAll("[id^='" + fc_num + "_etype1_']").forEach(function (element) {
         if (element.tagName !== 'SELECT') {
             element.value = '';
         }
-        element.id = element.id.slice(0,-1) + (container.children.length+1);
+        element.id = element.id.slice(0, -1) + (container.children.length + 1);
     })
-    cln.id = fc_num + "_etype1_" + (container.children.length+1);
+    cln.id = fc_num + "_etype1_" + (container.children.length + 1);
 
     // Append the cloned element to container
     container.appendChild(cln);
@@ -143,24 +137,31 @@ function add_evidence_type2(element) {
 
     // Copy the element and its child nodes
     const cln = document.getElementById(disease_num + "_etype2_1").cloneNode(true);
-    cln.querySelectorAll("[id^='" + disease_num + "_etype2_']").forEach(function(element) {
+    cln.querySelectorAll("[id^='" + disease_num + "_etype2_']").forEach(function (element) {
         if (element.tagName !== 'SELECT') {
             element.value = '';
         }
-        element.id = element.id.slice(0,-1) + (container.children.length+1);
+        element.id = element.id.slice(0, -1) + (container.children.length + 1);
     })
-    cln.id = disease_num + "_etype2_" + (container.children.length+1);
+    cln.id = disease_num + "_etype2_" + (container.children.length + 1);
 
     // Append the cloned element to container
     container.appendChild(cln);
 }
 
 function getElementsByValue(value, tag, id) {
+    if (value === 'Curation Notes') {
+        value = id.toString() + '_notes'
+    }
     const search = document.getElementsByTagName(tag);
     const pat = new RegExp(value, "i");
-    for (let i=0; i < search.length; i++) {
-        if (pat.test(search[i].value)  && search[i].id.includes(id))
-            return [document.getElementById(search[i].id.slice(0,-5)), document.getElementById(search[i].id.slice(0,-5) + '_id')]
+    for (let i = 0; i < search.length; i++) {
+        if ((value.includes('notes') && search[i].id.includes(value))  ||(pat.test(search[i].value)&& search[i].id.includes(id))) {
+            const search_id = search[i].id.split('_').slice(0, 2).join('_');
+            console.log(search_id)
+            return [document.getElementById(search_id),
+                    document.getElementById(search_id + '_id')]
+        }
     }
 }
 

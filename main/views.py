@@ -209,6 +209,13 @@ def save(request, gene_name, variant_p):
                     else:
                         Report.objects.filter(pk=report_id).update(name=field_name, content=report)
 
+            notes_id = request.POST.get('d' + str(i) + '_notes_id', None)
+            content = request.POST.get('d' + str(i) + '_notes', '')
+            if notes_id.isdigit():
+                Report.objects.filter(pk=notes_id).update(content=content)
+            else:
+                Report.objects.create(name='Curation Notes', content=content, gene=item.gene, variant=item, disease=dx_id)
+
             review_val = request.POST.getlist('d' + str(i) + '_review', ['n'])[-1]
             filter_val = Disease.objects.filter(pk=dx_id.id)
             if review_val == 'r':

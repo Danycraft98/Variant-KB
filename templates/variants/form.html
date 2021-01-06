@@ -19,13 +19,13 @@
                         </div>
                         <div id='d0' class='card my-5' hidden>
                             <div class="card-header">
-                                <label for='d0_id' class='h6'>Germline Pathogenicity</label><input id='d0_id' name='d0_id' hidden>
+                                <label id='d0_label' for='d0_id' class='h6'>Germline Pathogenicity - [Disease]</label><input id='d0_id' name='d0_id' hidden>
                                 <label for='d0_branch' hidden></label><input id='d0_branch' name='d0_branch' value='gp' hidden>
                             </div>
                             <div class="card-body">
-                                <div class='row'>
+                                <div class='row mx-2'>
                                     <div class='col-6 form-group'>
-                                        <label for='d0_disease'>Interpretation</label>
+                                        <label for='d0_disease'>Disease</label>
                                         <input class='form-control' id='d0_disease' name='d0_disease'>
                                     </div>
                                     <div class='col-6 form-group'>
@@ -34,9 +34,9 @@
                                     </div>
                                 </div>
 
-                                <div class='row form-group'>
+                                <div class='row form-group mx-2'>
                                     <div class='col-12'>
-                                        <label for='d0_desc'>Germline Gene-Disease Report</label>
+                                        <label for='d0_desc'>Germline Gene-Disease</label>
                                         <textarea class='form-control' id='d0_desc' name='d0_desc'></textarea>
                                     </div>
                                 </div>
@@ -57,9 +57,7 @@
 
                                 <fieldset class='box_fieldset'>
                                     <legend class='h6'>
-                                        <a id='d0_for_collapse' class='collapsed' href='' data-toggle='collapse' data-target='#d0_for' onclick='collapse(this,2)'>
-                                            <i id='d0_for_icon' class='fa fa-chevron-down pr-2' aria-hidden='true'></i>Expand Evidence FOR Pathogenicity
-                                        </a>
+                                        <a id='d0_for_collapse' class='collapsed' href='' data-toggle='collapse' data-target='#d0_for' onclick='collapse(this,2)'>Expand Evidence FOR Pathogenicity</a>
                                     </legend>
 
                                     <div class='ml-3 collapse' id='d0_for'>
@@ -100,9 +98,7 @@
 
                                 <fieldset class='box_fieldset'>
                                     <legend class='h6'>
-                                        <a id='d0_against_collapse' class='collapsed' href='' data-toggle='collapse' data-target='#d0_against' onclick='collapse(this,2)'>
-                                            <i id='d0_icon' class='fa fa-chevron-down pr-2' aria-hidden='true'></i>Expand Evidence AGAINST Pathogenicity
-                                        </a>
+                                        <a id='d0_against_collapse' class='collapsed' href='' data-toggle='collapse' data-target='#d0_against' onclick='collapse(this,2)'>Expand Evidence AGAINST Pathogenicity</a>
                                     </legend>
                                     <div class='ml-3 collapse' id='d0_against'>
                                         {% for item in items %}
@@ -157,105 +153,111 @@
                                             <label class='form-check-label' for='d0_approve'>Approved</label>
                                         </div>
                                     </div>
+                                    <div class='row form-group'>
+                                        <input id='d0_notes_id' name='d0_notes_id' aria-label='d1_notes'>
+                                        <div class='custom-control-inline col-12'>
+                                            <input id='d0_notes_name' name='d0_notes_name' value='Curation Notes' aria-label='d1_notes'>
+                                            <label class='my-auto col-2' for='d0_notes'>Curation Notes</label>
+                                            <textarea class='form-control col-10' id='d0_notes' name='d1_notes'></textarea>
+                                        </div>
+                                    </div>
                                 </fieldset>
                             </div>
                         </div>
 
                         <div id='d1' class='card my-4' hidden>
                             <div class="card-header">
-                                <label for='d1_id' class='h6'>Somatic Oncogenicity</label><input id='d1_id' name='d1_id' hidden>
+                                <label id='d1_label' for='d1_id' class='h6'>Somatic Oncogenicity - [Disease]</label><input id='d1_id' name='d1_id' hidden>
                                 <label for='d1_branch' hidden></label><input id='d1_branch' name='d1_branch' value='so' hidden>
                             </div>
                             <div class="card-body">
-                                <div class='row form-group mt-2'>
-                                    <div class='col-5'>
+                                <div class='row form-group ml-2 mt-2'>
+                                    <div class='col-6'>
                                         <label for='d1_disease'>Disease</label>
                                         <input class='form-control' id='d1_disease' name='d1_disease' oninput='get_report(this)'>
                                     </div>
-
-                                    <div class='col-4 form-group'>
-                                        <label for='d1_func_sig'>Functional Significance</label>
-                                        <select class='form-control' id='d1_func_sig' name='d1_func_sig'>
-                                            <option disabled selected>Select</option>
-                                            <option>Established</option>
-                                            <option>Likely</option>
-                                            <option>Predicted</option>
-                                            <option>VUS</option>
-                                            <option>Benign</option>
-                                        </select>
-                                    </div>
-                                    <div class='col-3'>
-                                        <label style='visibility: hidden;'>HIDDEN LABEL HIDDEN LABEL</label>
-                                        <button type='button' class='btn btn-primary btn-sm' id='d1_fc0_add' name='d1_fc0_add' onclick='add_f_class(this)'>Add Functional Class</button>
-                                    </div>
                                 </div>
 
-                                <fieldset id='d1_f_classes'>
-                                    <fieldset class='box_fieldset my-0' id='d1_fc0' hidden>
-                                        <legend class='h6'>
-                                            <a id='d1_fc0_collapse' class='collapsed' data-toggle='collapse' data-target='#d1_fc_box0' onclick='collapse(this,2)' href=''>
-                                                <i id='d1_fc0_icon' class='fa fa-chevron-down pr-2' aria-hidden='true'></i>Expand Functional Class
-                                            </a>
-                                        </legend>
-                                        <fieldset id='d1_fc_box0' class='mb-3 collapse'>
-                                            <div class='row mb-2'>
-                                                <div class='col-6 form-group'>
-                                                    <label for='d1_fc0_id'>Functional Class</label><input id='d1_fc0_id' name='d1_fc0_id' hidden>
-                                                    <label for='d1_fc0_func_class'></label><select class='form-control' id='d1_fc0_func_class' name='d1_fc0'>
+                                <fieldset class='box_fieldset' id='d1_f_classes'>
+                                    <legend class='h6'>
+                                        <a id='d1_fc0_collapse' class='collapsed' data-toggle='collapse' data-target='#d1_func_classes' onclick='collapse(this,2)' href=''>Expand Functional Significance - [Functional Significance]</a>
+                                    </legend>
+                                    <div id="d1_func_classes" class='collapse'>
+                                        <div class='form-row'>
+                                            <div class='col-6 form-group pr-3'>
+                                                <label for='d1_func_sig'>Functional Significance</label>
+                                                <select class='form-control' id='d1_func_sig' name='d1_func_sig'>
                                                     <option disabled selected>Select</option>
-                                                    <option>GOF</option>
-                                                    <option>LOF</option>
-                                                    <option>TP53 functional</option>
-                                                    <option>TP53 non-functional</option>
-                                                    <option>BRAF Class I</option>
-                                                    <option>BRAF Class II</option>
-                                                    <option>BRAF Class III</option>
+                                                    <option>Established</option>
+                                                    <option>Likely</option>
+                                                    <option>Predicted</option>
+                                                    <option>VUS</option>
+                                                    <option>Benign</option>
                                                 </select>
-                                                </div>
                                             </div>
-                                            <hr class='double-hr'/>
+                                            <div class='d-flex justify-content-end offset-md-3 col-3 my-4'>
+                                                <button type='button' class='btn btn-primary btn-sm' id='d1_fc0_add' name='d1_fc0_add' onclick='add_f_class(this)'>Add Functional Category</button>
+                                            </div>
+                                        </div>
+                                        <fieldset class='my-0' id='d1_fc0' hidden>
+                                            <fieldset id='d1_fc_box0' class='mb-3'>
+                                                <div class='row mb-2'>
+                                                    <div class='col-6 form-group'>
+                                                        <label for='d1_fc0_id'>Functional Category</label><input id='d1_fc0_id' name='d1_fc0_id' hidden>
+                                                        <label for='d1_fc0_func_class'></label><select class='form-control' id='d1_fc0_func_class' name='d1_fc0'>
+                                                        <option disabled selected>Select</option>
+                                                        <option>GOF</option>
+                                                        <option>LOF</option>
+                                                        <option>TP53 functional</option>
+                                                        <option>TP53 non-functional</option>
+                                                        <option>BRAF Class I</option>
+                                                        <option>BRAF Class II</option>
+                                                        <option>BRAF Class III</option>
+                                                    </select>
+                                                    </div>
+                                                </div>
+                                                <hr class='double-hr'/>
 
-                                            <div class='d-flex'>
-                                                <div class='mr-auto h6'>Evidences</div>
-                                                <div class='ml-auto'>
-                                                    <button type='button' class='btn btn-primary btn-sm' id='d1_fc0_btn' onclick='add_evidence_type1(this)'>Add Evidence</button>
+                                                <div class='d-flex'>
+                                                    <div class='mr-auto h6'>Evidences</div>
+                                                    <div class='ml-auto'>
+                                                        <button type='button' class='btn btn-primary btn-sm' id='d1_fc0_btn' onclick='add_evidence_type1(this)'>Add Functional Evidence</button>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <fieldset id='d1_fc0_evidences1'>
-                                                <fieldset id='d1_fc0_etype1_1'>
-                                                    <div class='row form-group'>
-                                                        <div class='col-12'>
-                                                            <label for='d1_fc0_etype1_id1'>Source</label><input id='d1_fc0_etype1_id1' name='d1_fc0_etype1_id' hidden>
-                                                            <div class='input-group'>
-                                                                <div class='input-group-prepend' style='width: 30%'>
-                                                                    <label for='d1_fc0_etype1_st1'></label><select class='custom-select' id='d1_fc0_etype1_st1' name='d1_fc0_etype1_st'>
-                                                                    <option disabled selected>Source Type</option>
-                                                                    <option value='PM'>PMID</option>
-                                                                    <option value='O'>Others</option>
-                                                                </select>
+                                                <fieldset id='d1_fc0_evidences1'>
+                                                    <fieldset id='d1_fc0_etype1_1'>
+                                                        <div class='row form-group'>
+                                                            <div class='col-12'>
+                                                                <label for='d1_fc0_etype1_id1'>Source</label><input id='d1_fc0_etype1_id1' name='d1_fc0_etype1_id' hidden>
+                                                                <div class='input-group'>
+                                                                    <div class='input-group-prepend' style='width: 30%'>
+                                                                        <label for='d1_fc0_etype1_st1'></label><select class='custom-select' id='d1_fc0_etype1_st1' name='d1_fc0_etype1_st'>
+                                                                        <option disabled selected>Source Type</option>
+                                                                        <option value='PM'>PMID</option>
+                                                                        <option value='O'>Others</option>
+                                                                    </select>
+                                                                    </div>
+                                                                    <label for='d1_fc0_etype1_s1'></label><input class='form-control' id='d1_fc0_etype1_s1' name='d1_fc0_etype1_s' placeholder='Source ID'>
                                                                 </div>
-                                                                <label for='d1_fc0_etype1_s1'></label><input class='form-control' id='d1_fc0_etype1_s1' name='d1_fc0_etype1_s' placeholder='Source ID'>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                    <div class='row form-group'>
-                                                        <div class='col-12'>
-                                                            <label for='d1_fc0_etype1_e1'>Evidence Statement</label>
-                                                            <textarea class='form-control' id='d1_fc0_etype1_e1' name='d1_fc0_etype1_e'></textarea>
+                                                        <div class='row form-group'>
+                                                            <div class='col-12'>
+                                                                <label for='d1_fc0_etype1_e1'>Evidence Statement</label>
+                                                                <textarea class='form-control' id='d1_fc0_etype1_e1' name='d1_fc0_etype1_e'></textarea>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <br/>
+                                                        <br/>
+                                                    </fieldset>
                                                 </fieldset>
                                             </fieldset>
                                         </fieldset>
-                                    </fieldset>
+                                    </div>
                                 </fieldset>
 
                                 <fieldset class='box_fieldset'>
                                     <legend class='h6'>
-                                        <a id='d1_tier_collapse' class='collapsed' data-toggle='collapse' data-target='#d1_tier' onclick='collapse(this,2)' href=''>
-                                            <i id='d1_tier_icon' class='fa fa-chevron-down pr-2' aria-hidden='true'></i>Expand Tier
-                                        </a>
+                                        <a id='d1_tier_collapse' class='collapsed' data-toggle='collapse' data-target='#d1_tier' onclick='collapse(this,2)' href=''>Expand Actionability Tier - [AMP/ASCO Tier]</a>
                                     </legend>
                                     <fieldset id='d1_tier' class='collapse'>
                                         <div class='row mb-2'>
@@ -274,7 +276,7 @@
                                         <div class='d-flex'>
                                             <div class='mr-auto h6'>Evidences</div>
                                             <div class='ml-auto'>
-                                                <button type='button' class='btn btn-primary btn-sm' id='d1_etype2' onclick='add_evidence_type2(this)'>Add Evidence</button>
+                                                <button type='button' class='btn btn-primary btn-sm' id='d1_etype2' onclick='add_evidence_type2(this)'>Add Actionability Evidence</button>
                                             </div>
                                         </div>
                                         <fieldset id='d1_evidences2'>
@@ -345,7 +347,7 @@
 
                                                 <div class='row'>
                                                     <div class='col-6 form-group'>
-                                                        <label for='d1_etype2_drug1'>Drug / Class</label>
+                                                        <label for='d1_etype2_drug1'>Drug/Drug Class/Dx</label>
                                                         <input class='form-control' id='d1_etype2_drug1' name='d1_etype2_drug'>
                                                     </div>
                                                     <div class='col-6 form-group'>
@@ -368,45 +370,43 @@
 
                                 <fieldset class='box_fieldset'>
                                     <legend class='h6'>
-                                        <a class='collapsed' id='d1_report_collapse' href='' data-toggle='collapse' data-target='#d1_report' onclick='collapse(this,2)'>
-                                            <i id='d1_report_icon' class='fa fa-chevron-down pr-2' aria-hidden='true'></i>Expand Report
-                                        </a>
+                                        <a class='collapsed' id='d1_report_collapse' href='' data-toggle='collapse' data-target='#d1_report' onclick='collapse(this,2)'>Expand Report Text</a>
                                     </legend>
                                     <div id='d1_report' class='row form-group collapse'>
                                         <div class='col-12'>
-                                            <label for='gene_report'>Gene Report</label>
+                                            <label for='gene_report'>Gene-Descriptive</label>
                                             <textarea class='form-control' id='gene_report' name='gene_report' onchange='copyReport(this)'>{{ item.gene.content }}</textarea>
                                         </div>
                                     </div>
                                     <div id='d1_report' class='row form-group collapse'>
                                         <div class='col-12'>
-                                            <label for='variant_report'>Variant Report</label>
+                                            <label for='variant_report'>Variant-Descriptive</label>
                                             <textarea class='form-control' id='variant_report' name='variant_report' onchange='copyReport(this)'></textarea>
                                         </div>
                                     </div>
                                     <div id='d1_report' class='row form-group collapse'>
                                         <div class='col-12'>
-                                            <label for='d1_gdr_id'>Gene-Disease Report</label><input id='d1_gdr_id' name='d1_report_id' hidden>
-                                            <label for='d1_gdr_name'></label><input id='d1_gdr_name' name='d1_report_name' value='Gene-Disease Report' hidden>
+                                            <label for='d1_gdr_id'>Gene-Disease</label><input id='d1_gdr_id' name='d1_report_id' hidden>
+                                            <label for='d1_gdr_name'></label><input id='d1_gdr_name' name='d1_report_name' value='Gene-Disease' hidden>
                                             <label for='d1_gdr'></label><textarea class='form-control' id='d1_gdr' name='d1_report'></textarea>
                                         </div>
                                     </div>
                                     <div id='d1_report' class='row form-group collapse'>
                                         <div class='col-12'>
-                                            <label for='d1_vdr_id'>Variant-Disease Report</label><label for='d1_vdr_id'></label><input id='d1_vdr_id' name='d1_report_id' hidden>
-                                            <label for='d1_vdr_name'></label><input id='d1_vdr_name' name='d1_report_name' value='Variant-Disease Report' hidden>
+                                            <label for='d1_vdr_id'>Variant-Disease</label><label for='d1_vdr_id'></label><input id='d1_vdr_id' name='d1_report_id' hidden>
+                                            <label for='d1_vdr_name'></label><input id='d1_vdr_name' name='d1_report_name' value='Variant-Disease' hidden>
                                             <label for='d1_vdr'></label><textarea class='form-control' id='d1_vdr' name='d1_report'></textarea>
                                         </div>
                                     </div>
                                     <div id='d1_report' class='row form-group collapse'>
                                         <div class='col-12'>
-                                            <label for='ggir'>Gene Germline Implications Report</label>
+                                            <label for='ggir'>Gene-Germline Implications</label>
                                             <textarea class='form-control' id='ggir' name='gene_germline_report' onchange='copyReport(this)'>{{ item.gene.germline_content }}</textarea>
                                         </div>
                                     </div>
                                     <div id='d1_report' class='row form-group collapse'>
                                         <div class='col-12'>
-                                            <label for='vgir'>Variant Germline Implications Report</label>
+                                            <label for='vgir'>Variant-Germline Implications</label>
                                             <textarea class='form-control' id='vgir' name='variant_germline_report' onchange='copyReport(this)'></textarea>
                                         </div>
                                     </div>
@@ -423,6 +423,14 @@
                                         <div class='custom-control custom-control-inline form-check'>
                                             <input type='checkbox' class='form-check-input' id='d1_meta_review' name='d1_review' value='a' disabled>
                                             <label class='form-check-label' for='d1_meta_review'>Approved</label>
+                                        </div>
+                                    </div>
+                                    <div class='row form-group'>
+                                        <input id='d1_notes_id' name='d1_notes_id' aria-label='d1_notes' hidden>
+                                        <div class='custom-control-inline col-12'>
+                                            <input id='d1_notes_name' name='d1_notes_name' value='d1_notes' aria-label='d1_notes' hidden>
+                                            <label class='my-auto col-2' for='d1_notes'>Curation Notes</label>
+                                            <textarea class='form-control col-10' id='d1_notes' name='d1_notes'></textarea>
                                         </div>
                                     </div>
                                 </fieldset>
@@ -504,7 +512,7 @@
             xhttp.onreadystatechange = function () {
                 if (this.readyState === 4 && this.status === 200) {
                     const disease = JSON.parse(this.responseText)[0];
-                    if (typeof disease !== 'undefined'){ // && disease !== null) {
+                    if (typeof disease !== 'undefined') { // && disease !== null) {
                         if (disease.hasOwnProperty('gene') && disease['gene'] === {{ item.gene.pk }}) {
                             document.getElementById(disease_id + '_gdr').value = disease['gdr'];
                         }
@@ -531,6 +539,8 @@
             {% for disease in item.diseases.all %}
                 i = {{ forloop.counter }} +1;
                 disease = add_disease('{{ disease.branch }}');
+                const dx_label = document.getElementById(disease.id + '_label');
+                dx_label.innerText = dx_label.innerText.replace('[Disease]', '{{ disease.name }}');
                 {% if disease.score.first %}
                     field_partname = 'd' + i.toString();
                     document.getElementById(field_partname + '_id').value = '{{ disease.id }}';
@@ -560,6 +570,9 @@
                     document.getElementById(disease.id + '_disease').value = '{{ disease.name }}';
                     {% if disease.functionals.count == 0 %}
                         add_f_class(disease);
+                    {% else %}
+                        const func_sig = document.getElementById(disease.id + '_fc0_collapse');
+                        func_sig.innerText = func_sig.innerText.replace('[Functional Significance]', '{{ disease.functionals.first.key }}');
                     {% endif %}
 
                     {% for func in disease.functionals.all %}
@@ -582,6 +595,9 @@
 
                     index = 0
                     {% for evidence in disease.evidences.all %}
+                        document.getElementById(disease.id + '_others').value = '{{ disease.others }}';
+                        const tier = document.getElementById(disease.id + '_tier_collapse');
+                        tier.innerText = tier.innerText.replace('[AMP/ASCO Tier]', '{{ disease.others }}');
                         {% if not evidence.functional %}
                             index += 1;
                             element = document.getElementById(disease.id + '_etype2_' + index.toString())
@@ -603,13 +619,12 @@
                             {% endwith %}
                         {% endif %}
                     {% endfor %}
-
-                    {% for report in disease.reports.all %}
-                        getElementsByValue('{{ report.name }}', 'input', disease.id)[0].value = '{{ report.content }}'
-                        getElementsByValue('{{ report.name }}', 'input', disease.id)[1].value = '{{ report.id }}'
-                    {% endfor %}
-
                 {% endif %}
+
+                {% for report in disease.reports.all %}
+                    getElementsByValue('{{ report.name }}', 'input', disease.id)[0].value = '{{ report.content }}'
+                    getElementsByValue('{{ report.name }}', 'input', disease.id)[1].value = '{{ report.id }}'
+                {% endfor %}
 
                 {% with review_val=disease.reviewed %}
                     {% if review_val == 'r' and user.counselor %}

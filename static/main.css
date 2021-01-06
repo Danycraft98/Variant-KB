@@ -16,9 +16,9 @@ hr {
 }
 
 .col-custom-2 {
-    -ms-flex: 0 0 20.833333%;
-    flex: 0 0 20.833333%;
-    max-width: 20.833333%;
+    -ms-flex: 0 0 22%;
+    flex: 0 0 22%;
+    max-width: 22%;
     padding-right: 15px;
     padding-left: 15px;
 }

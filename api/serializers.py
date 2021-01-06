@@ -18,7 +18,7 @@ class DiseaseSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_gdr(obj):
-        report = obj.reports.filter(name='Gene-Disease Report').first()
+        report = obj.reports.filter(name='Gene-Disease').first()
         if report:
             return report.content
         return ''
