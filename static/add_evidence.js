@@ -156,12 +156,52 @@ function getElementsByValue(value, tag, id) {
     const search = document.getElementsByTagName(tag);
     const pat = new RegExp(value, "i");
     for (let i = 0; i < search.length; i++) {
-        if ((value.includes('notes') && search[i].id.includes(value))  ||(pat.test(search[i].value)&& search[i].id.includes(id))) {
+        if ((value.includes('notes') && search[i].id.includes(value)) || (pat.test(search[i].value) && search[i].id.includes(id))) {
             const search_id = search[i].id.split('_').slice(0, 2).join('_');
-            console.log(search_id)
             return [document.getElementById(search_id),
-                    document.getElementById(search_id + '_id')]
+                document.getElementById(search_id + '_id')]
         }
+    }
+}
+
+function selectChange(element, type) {
+    const selected = element.options[element.selectedIndex].value.substring(0, 5);
+    let select_id = element.id.split('_').slice(0, 2).join('_') + type + element.id.split(type.slice(-1)).slice(-1)
+    const selectElement = document.getElementById(select_id);
+    let found = false;
+    Object.values(selectElement.children).forEach(function (element) {
+        if (!element.innerText.includes(selected)) {
+            element.setAttribute('disabled', '');
+            element.setAttribute('hidden', '');
+        } else {
+            if (!found) {
+                selectElement.value = element.value;
+            }
+            element.removeAttribute('disabled');
+            element.removeAttribute('hidden');
+            found = true;
+        }
+    });
+}
+
+function tierChange(element, options, result) {
+    const selected = element.options[element.selectedIndex].value;
+    let select_id = element.id.split('_').slice(0, 1).join('_') + '_others';
+    const selectElement = document.getElementById(select_id);
+    const tier = document.getElementById(element.id.split('_').slice(0, 1).join('_') + '_tier_collapse');
+    if (selected === options[0] || selected === options[1]) {
+        selectElement.value = result;
+        selectElement.setAttribute('disabled', '');
+        tier.innerText = tier.innerText.split('- ')[0] + '- ' + result;
+    } else {
+        selectElement.removeAttribute('disabled');
+    }
+
+    const btn = document.getElementById(element.id.split('_').slice(0, 1).join('_') + '_etype2');
+    if (result === 'Tier IV') {
+        btn.setAttribute('disabled', '');
+    } else {
+        btn.removeAttribute('disabled');
     }
 }
 

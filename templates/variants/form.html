@@ -186,7 +186,7 @@
                                         <div class='form-row'>
                                             <div class='col-6 form-group pr-3'>
                                                 <label for='d1_func_sig'>Functional Significance</label>
-                                                <select class='form-control' id='d1_func_sig' name='d1_func_sig'>
+                                                <select class='form-control' id='d1_func_sig' name='d1_func_sig' onchange='tierChange(this, ["Benign", "None"], "Tier IV")'>
                                                     <option disabled selected>Select</option>
                                                     <option>Established</option>
                                                     <option>Likely</option>
@@ -263,11 +263,11 @@
                                         <div class='row mb-2'>
                                             <div class='col-12 form-group'>
                                                 <label for='d1_others'>AMP/ASCO Tier</label>
-                                                <select class='form-control' id='d1_others' name='d1_others'>
+                                                <select class='form-control' id='d1_others' name='d1_others' disabled>
                                                     <option>Tier I</option>
                                                     <option>Tier II</option>
                                                     <option>Tier III</option>
-                                                    <option>Tier VI</option>
+                                                    <option>Tier IV</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -305,7 +305,7 @@
                                                 <div class='row'>
                                                     <div class='col-6 form-group'>
                                                         <label for='d1_etype2_sig1'>Evidence Significance</label>
-                                                        <select class='form-control' id='d1_etype2_sig1' name='d1_etype2_sig'>
+                                                        <select class='form-control' id='d1_etype2_sig1' name='d1_etype2_sig' onchange='selectChange(this, "_clin_sig")'>
                                                             <option value='Pred'>Predictive</option>
                                                             <option value='Prog'>Prognostic</option>
                                                             <option value='Diag'>Diagnostic</option>
@@ -313,7 +313,7 @@
                                                     </div>
                                                     <div class='col-6 form-group'>
                                                         <label for='d1_etype2_level1'>Evidence Level</label>
-                                                        <select class='form-control' id='d1_etype2_level1' name='d1_etype2_level'>
+                                                        <select class='form-control' id='d1_etype2_level1' name='d1_etype2_level' onchange='tierChange(this, ["A", "B"], "Tier I")'>
                                                             <option>A</option>
                                                             <option>B</option>
                                                             <option>C</option>
@@ -337,10 +337,10 @@
                                                             <option>Pred: Resistance</option>
                                                             <option>Pred: Adverse Response</option>
                                                             <option>Pred: Reduced Sensitivity</option>
-                                                            <option>Prog: Better Outcome</option>
-                                                            <option>Prog: Poorer Outcome</option>
-                                                            <option>Dx: Positive Diagnosis</option>
-                                                            <option>Dx: Negative Diagnosis</option>
+                                                            <option disabled hidden>Prog: Better Outcome</option>
+                                                            <option disabled hidden>Prog: Poorer Outcome</option>
+                                                            <option disabled hidden>Dx: Positive Diagnosis</option>
+                                                            <option disabled hidden>Dx: Negative Diagnosis</option>
                                                         </select>
                                                     </div>
                                                 </div>
