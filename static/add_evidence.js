@@ -10,11 +10,12 @@ function select_evidence(element) {
     document.querySelectorAll("[id^='" + element.id + "']").forEach(function (item, index) {
         if (index > 7) {
             calculate_score(element);
-            return;
         }
+
+        console.log(item, index);
         if (element.checked === true) {
             item.removeAttribute('disabled');
-        } else if (item.id !== element.id && item.id.includes("field") === false) {
+        } else if (item.getAttribute('class') && !item.getAttribute('class').includes("check")) {
             item.setAttribute('disabled', 'true');
         }
     });
