@@ -189,19 +189,20 @@ function tierChange(element, options, result) {
     let select_id = element.id.split('_').slice(0, 1).join('_') + '_others';
     const selectElement = document.getElementById(select_id);
     const tier = document.getElementById(element.id.split('_').slice(0, 1).join('_') + '_tier_collapse');
-    if (selected === options[0] || selected === options[1]) {
+    const selectedTrue = (selected === options[0] || selected === options[1]);
+    if (selectedTrue) {
         selectElement.value = result;
-        selectElement.setAttribute('disabled', '');
+        selectElement.setAttribute('readonly', '');
         tier.innerText = tier.innerText.split('- ')[0] + '- ' + result;
     } else {
-        selectElement.removeAttribute('disabled');
+        selectElement.removeAttribute('readonly');
     }
 
     const btn = document.getElementById(element.id.split('_').slice(0, 1).join('_') + '_etype2');
-    if (result === 'Tier IV') {
-        btn.setAttribute('disabled', '');
+    if (result === 'Tier IV' && selectedTrue) {
+        btn.setAttribute('readonly', '');
     } else {
-        btn.removeAttribute('disabled');
+        btn.removeAttribute('readonly');
     }
 }
 

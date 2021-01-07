@@ -57,10 +57,10 @@
 
                                 <fieldset class='box_fieldset'>
                                     <legend class='h6'>
-                                        <a id='d0_for_collapse' class='collapsed' href='' data-toggle='collapse' data-target='#d0_for' onclick='collapse(this,2)'>Expand Evidence FOR Pathogenicity</a>
+                                        <a id='d0_for_collapse' class='collapsed' href='' data-toggle='collapse' data-target='#d0_for' onclick='collapse(this,2)'>Collapse Evidence FOR Pathogenicity</a>
                                     </legend>
 
-                                    <div class='ml-3 collapse' id='d0_for'>
+                                    <div class='ml-3 collapse show' id='d0_for'>
                                         {% for item in items %}
                                             {% if 'P' in item.key and 'B' not in item.key %}
                                                 <fieldset id='d0_{{ item }}_fields'>
@@ -98,9 +98,9 @@
 
                                 <fieldset class='box_fieldset'>
                                     <legend class='h6'>
-                                        <a id='d0_against_collapse' class='collapsed' href='' data-toggle='collapse' data-target='#d0_against' onclick='collapse(this,2)'>Expand Evidence AGAINST Pathogenicity</a>
+                                        <a id='d0_against_collapse' class='collapsed' href='' data-toggle='collapse' data-target='#d0_against' onclick='collapse(this,2)'>Collapse Evidence AGAINST Pathogenicity</a>
                                     </legend>
-                                    <div class='ml-3 collapse' id='d0_against'>
+                                    <div class='ml-3 collapse show' id='d0_against'>
                                         {% for item in items %}
                                             {% if 'B' in item.key %}
                                                 <fieldset id='d0_{{ item }}_fields'>
@@ -153,12 +153,14 @@
                                             <label class='form-check-label' for='d0_approve'>Approved</label>
                                         </div>
                                     </div>
+
+                                    <hr class='double-hr'/>
                                     <div class='row form-group'>
-                                        <input id='d0_notes_id' name='d0_notes_id' aria-label='d1_notes'>
-                                        <div class='custom-control-inline col-12'>
-                                            <input id='d0_notes_name' name='d0_notes_name' value='Curation Notes' aria-label='d1_notes'>
-                                            <label class='my-auto col-2' for='d0_notes'>Curation Notes</label>
-                                            <textarea class='form-control col-10' id='d0_notes' name='d1_notes'></textarea>
+                                        <div class='col-12'>
+                                            <input id='d0_notes_id' name='d0_notes_id' aria-label='d0_notes' hidden>
+                                            <input id='d0_notes_name' name='d0_notes_name' value='d0_notes' aria-label='d0_notes' hidden>
+                                            <label for='d0_notes'>Curation Notes</label>
+                                            <textarea class='form-control' id='d0_notes' name='d0_notes'></textarea>
                                         </div>
                                     </div>
                                 </fieldset>
@@ -180,9 +182,9 @@
 
                                 <fieldset class='box_fieldset' id='d1_f_classes'>
                                     <legend class='h6'>
-                                        <a id='d1_fc0_collapse' class='collapsed' data-toggle='collapse' data-target='#d1_func_classes' onclick='collapse(this,2)' href=''>Expand Functional Significance - [Functional Significance]</a>
+                                        <a id='d1_fc0_collapse' class='collapsed' data-toggle='collapse' data-target='#d1_func_classes' onclick='collapse(this,2)' href=''>Collapse Functional Significance - [Functional Significance]</a>
                                     </legend>
-                                    <div id="d1_func_classes" class='collapse'>
+                                    <div id="d1_func_classes" class='collapse show'>
                                         <div class='form-row'>
                                             <div class='col-6 form-group pr-3'>
                                                 <label for='d1_func_sig'>Functional Significance</label>
@@ -257,14 +259,14 @@
 
                                 <fieldset class='box_fieldset'>
                                     <legend class='h6'>
-                                        <a id='d1_tier_collapse' class='collapsed' data-toggle='collapse' data-target='#d1_tier' onclick='collapse(this,2)' href=''>Expand Actionability Tier - [AMP/ASCO Tier]</a>
+                                        <a id='d1_tier_collapse' class='collapsed' data-toggle='collapse' data-target='#d1_tier' onclick='collapse(this,2)' href=''>Collapse Actionability Tier - [AMP/ASCO Tier]</a>
                                     </legend>
-                                    <fieldset id='d1_tier' class='collapse'>
+                                    <fieldset id='d1_tier' class='collapse show'>
                                         <div class='row mb-2'>
                                             <div class='col-12 form-group'>
                                                 <label for='d1_others'>AMP/ASCO Tier</label>
-                                                <select class='form-control' id='d1_others' name='d1_others' disabled>
-                                                    <option>Tier I</option>
+                                                <select class='form-control' id='d1_others' name='d1_others' readonly>
+                                                    <option selected>Tier I</option>
                                                     <option>Tier II</option>
                                                     <option>Tier III</option>
                                                     <option>Tier IV</option>
@@ -370,41 +372,41 @@
 
                                 <fieldset class='box_fieldset'>
                                     <legend class='h6'>
-                                        <a class='collapsed' id='d1_report_collapse' href='' data-toggle='collapse' data-target='#d1_report' onclick='collapse(this,2)'>Expand Report Text</a>
+                                        <a class='collapsed' id='d1_report_collapse' href='' data-toggle='collapse' data-target='#d1_report' onclick='collapse(this,2)'>Collapse Report Text</a>
                                     </legend>
-                                    <div id='d1_report' class='row form-group collapse'>
+                                    <div id='d1_report' class='row form-group collapse show'>
                                         <div class='col-12'>
                                             <label for='gene_report'>Gene-Descriptive</label>
                                             <textarea class='form-control' id='gene_report' name='gene_report' onchange='copyReport(this)'>{{ item.gene.content }}</textarea>
                                         </div>
                                     </div>
-                                    <div id='d1_report' class='row form-group collapse'>
+                                    <div id='d1_report' class='row form-group collapse show'>
                                         <div class='col-12'>
                                             <label for='variant_report'>Variant-Descriptive</label>
                                             <textarea class='form-control' id='variant_report' name='variant_report' onchange='copyReport(this)'></textarea>
                                         </div>
                                     </div>
-                                    <div id='d1_report' class='row form-group collapse'>
+                                    <div id='d1_report' class='row form-group collapse show'>
                                         <div class='col-12'>
                                             <label for='d1_gdr_id'>Gene-Disease</label><input id='d1_gdr_id' name='d1_report_id' hidden>
                                             <label for='d1_gdr_name'></label><input id='d1_gdr_name' name='d1_report_name' value='Gene-Disease' hidden>
                                             <label for='d1_gdr'></label><textarea class='form-control' id='d1_gdr' name='d1_report'></textarea>
                                         </div>
                                     </div>
-                                    <div id='d1_report' class='row form-group collapse'>
+                                    <div id='d1_report' class='row form-group collapse show'>
                                         <div class='col-12'>
                                             <label for='d1_vdr_id'>Variant-Disease</label><label for='d1_vdr_id'></label><input id='d1_vdr_id' name='d1_report_id' hidden>
                                             <label for='d1_vdr_name'></label><input id='d1_vdr_name' name='d1_report_name' value='Variant-Disease' hidden>
                                             <label for='d1_vdr'></label><textarea class='form-control' id='d1_vdr' name='d1_report'></textarea>
                                         </div>
                                     </div>
-                                    <div id='d1_report' class='row form-group collapse'>
+                                    <div id='d1_report' class='row form-group collapse show'>
                                         <div class='col-12'>
                                             <label for='ggir'>Gene-Germline Implications</label>
                                             <textarea class='form-control' id='ggir' name='gene_germline_report' onchange='copyReport(this)'>{{ item.gene.germline_content }}</textarea>
                                         </div>
                                     </div>
-                                    <div id='d1_report' class='row form-group collapse'>
+                                    <div id='d1_report' class='row form-group collapse show'>
                                         <div class='col-12'>
                                             <label for='vgir'>Variant-Germline Implications</label>
                                             <textarea class='form-control' id='vgir' name='variant_germline_report' onchange='copyReport(this)'></textarea>
@@ -425,12 +427,13 @@
                                             <label class='form-check-label' for='d1_meta_review'>Approved</label>
                                         </div>
                                     </div>
+                                    <hr class='double-hr'/>
                                     <div class='row form-group'>
-                                        <input id='d1_notes_id' name='d1_notes_id' aria-label='d1_notes' hidden>
-                                        <div class='custom-control-inline col-12'>
+                                        <div class='col-12'>
+                                            <input id='d1_notes_id' name='d1_notes_id' aria-label='d1_notes' hidden>
                                             <input id='d1_notes_name' name='d1_notes_name' value='d1_notes' aria-label='d1_notes' hidden>
-                                            <label class='my-auto col-2' for='d1_notes'>Curation Notes</label>
-                                            <textarea class='form-control col-10' id='d1_notes' name='d1_notes'></textarea>
+                                            <label for='d1_notes'>Curation Notes</label>
+                                            <textarea class='form-control' id='d1_notes' name='d1_notes'></textarea>
                                         </div>
                                     </div>
                                 </fieldset>
@@ -530,6 +533,7 @@
         }
 
         $(document).ready(function () {
+            let tier;
             if ('{{ user.specialist }}'.localeCompare('True') === 0) {
                 document.getElementById('d0_review').removeAttribute('disabled')
                 document.getElementById('d1_review').removeAttribute('disabled')
@@ -595,12 +599,15 @@
 
                     index = 0
                     {% for evidence in disease.evidences.all %}
+                        //<select class='form-control' id='d1_etype2_level1' name='d1_etype2_level' onchange=''>
                         document.getElementById(disease.id + '_others').value = '{{ disease.others }}';
-                        const tier = document.getElementById(disease.id + '_tier_collapse');
+                        tier = document.getElementById(disease.id + '_tier_collapse');
                         tier.innerText = tier.innerText.replace('[AMP/ASCO Tier]', '{{ disease.others }}');
                         {% if not evidence.functional %}
                             index += 1;
                             element = document.getElementById(disease.id + '_etype2_' + index.toString())
+                            tierChange(document.getElementById(disease.id + '_etype2_level' + index.toString()), ["A", "B"], "Tier I");
+                            tierChange(document.getElementById(disease.id + '_func_sig'), ["Benign", "None"], "Tier IV");
                             if (element == null) {
                                 add_evidence_type2(disease);
                             }

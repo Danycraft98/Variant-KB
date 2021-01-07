@@ -80,8 +80,7 @@
                                                 </div>
                                                 <div class='row mb-4'>
                                                     <div class='offset-md-1 col-custom-2'><strong>Evidence Statement</strong></div>
-                                                    <div class='col-6'>{{ evidence.statement }}</div>
-                                                    <div class='col-custom-2'>{{ evidence.histories.last }}</div>
+                                                    <div class='col-8'>{{ evidence.statement }}</div>
                                                 </div>
                                             {% endfor %}
                                             <hr/>
@@ -115,8 +114,7 @@
                                                 </div>
                                                 <div class='row mb-4'>
                                                     <div class='offset-md-1 col-custom-2'><strong>Evidence Statement</strong></div>
-                                                    <div class='col-6'>{{ evidence.statement }}</div>
-                                                    <div class='col-custom-2'>{{ evidence.histories.last }}</div>
+                                                    <div class='col-8'>{{ evidence.statement }}</div>
                                                 </div>
                                             {% endfor %}
                                             <hr/>
@@ -160,8 +158,7 @@
                                             </div>
                                             <div class='row form-group mb-4'>
                                                 <div class='col-custom-2'><strong>Evidence Statement</strong></div>
-                                                <div class='col-6'>{{ evidence.statement }}</div>
-                                                <div class='col-custom-2'>{{ evidence.histories.last }}</div>
+                                                <div class='col-8'>{{ evidence.statement }}</div>
                                             </div>
                                         {% endfor %}
                                         <hr/>
@@ -190,8 +187,7 @@
                                             </div>
                                             <div class='row form-group'>
                                                 <div class='col-3'><strong>Evidence Statement</strong></div>
-                                                <div class='col-7'>{{ evidence.statement }}</div>
-                                                <div class='col-2'>{{ evidence.histories.last }}</div>
+                                                <div class='col-9'>{{ evidence.statement }}</div>
                                             </div>
                                             {% with sub=evidence.subevidences.first %}
                                                 <div class='row form-group'>
@@ -231,10 +227,12 @@
                                 </legend>
                                 <div id='d{{ forloop.counter }}_report' class='collapse show ml-3'>
                                     {% for report in disease.reports.all %}
-                                        <div class='row form-group'>
-                                            <div class='col-3'><strong>{{ report.name }}</strong></div>
-                                            <div class='col-9'>{{ report.content }}</div>
-                                        </div>
+                                        {% if 'Notes' not in report.name %}
+                                            <div class='row form-group'>
+                                                <div class='col-3'><strong>{{ report.name }}</strong></div>
+                                                <div class='col-9'>{{ report.content }}</div>
+                                            </div>
+                                        {% endif %}
                                     {% endfor %}
                                 </div>
                             </fieldset>
@@ -245,38 +243,38 @@
                             </legend>
                             <div id='d{{ forloop.counter }}_review' class='collapse show ml-3'>
                                 {% if disease.reviewed == 'n' %}
-                                    <div class='row form-group'>
-                                        <div class='col-2'>No Reviews</div>
-                                    </div>
+                                    <dl class='row form-group'>
+                                        <dt class='col-3'>No Reviews</dt>
+                                    </dl>
                                 {% endif %}
                                 {% if disease.reviewed != 'n' %}
-                                    <div class='row form-group'>
-                                        <div class='col-2'><strong>Reviewed</strong></div>
-                                        <div class='col-10'>By {{ disease.review_user }} on {{ disease.reviewed_date }}</div>
-                                    </div>
+                                    <dl class='row form-group'>
+                                        <dt class='col-3'><strong>Reviewed</strong></dt>
+                                        <dd class='col-9'>By {{ disease.review_user }} on {{ disease.reviewed_date }}</dd>
+                                    </dl>
                                 {% endif %}
                                 {% if disease.reviewed != 'n' and disease.reviewed != 'r' and disease.meta_review_user %}
-                                    <div class='row form-group'>
-                                        <div class='col-2'><strong>Secondly Reviewed<!--Meta-Reviewed--></strong></div>
-                                        <div class='col-10'>By {{ disease.meta_review_user }} on {{ disease.meta_reviewed_date }}</div>
-                                    </div>
+                                    <dl class='row form-group'>
+                                        <dt class='col-3'><strong>Secondly Reviewed<!--Meta-Reviewed--></strong></dt>
+                                        <dd class='col-9'>By {{ disease.meta_review_user }} on {{ disease.meta_reviewed_date }}</dd>
+                                    </dl>
                                 {% endif %}
                                 {% if disease.reviewed == 'a' %}
-                                    <div class='row form-group'>
-                                        <div class='col-2'><strong>Approved</strong></div>
-                                        <div class='col-10'>By {{ disease.approve_user }} on {{ disease.approved_date }}</div>
-                                    </div>
+                                    <dl class='row form-group'>
+                                        <dt class='col-3'><strong>Approved</strong></dt>
+                                        <dd class='col-9'>By {{ disease.approve_user }} on {{ disease.approved_date }}</dd>
+                                    </dl>
                                 {% endif %}
                             </div>
                             <div id='d{{ forloop.counter }}_notes' class='collapse show ml-3'>
-                                <div class='row'>
+                                <dl class='row'>
                                     {% for report in disease.reports.all %}
                                         {% if 'Note' in report.name %}
-                                            <div class='col-2'>{{ report.name }}</div>
-                                            <div class='col-10'>{{ report.content }}</div>
+                                            <dt class='col-3'>{{ report.name }}</dt>
+                                            <dd class='col-9'>sdf{{ report.content }}</dd>
                                         {% endif %}
                                     {% endfor %}
-                                </div>
+                                </dl>
                             </div>
                         </fieldset>
                     </div>

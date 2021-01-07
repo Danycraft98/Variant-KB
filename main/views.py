@@ -170,6 +170,7 @@ def save(request, gene_name, variant_p):
         i = 2
         while request.POST.get('d' + str(i) + '_disease'):
             branch = request.POST.get('d' + str(i) + '_branch')
+            print(request.POST, 'd' + str(i) + '_others', request.POST.get('d' + str(i) + '_others'))
             if not request.POST.get('d' + str(i) + '_id').isdigit():
                 dx_id = Disease.objects.create(name=request.POST.get('d' + str(i) + '_disease'), report=request.POST.get('d' + str(i) + '_desc'), others=request.POST.get('d' + str(i) + '_others'), variant=item, branch=branch)
                 History.objects.create(content='Added Disease: ' + str(dx_id), user=request.user, timestamp=datetime.datetime.now(), variant=item)

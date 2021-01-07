@@ -19,12 +19,12 @@ def add_evidence(request, prefix, dx_id, variant, item=None):
             evidence = Evidence.objects.get(pk=sub_item.pk)
 
         if request.POST.getlist(prefix + "_sig"):
+            form_dict = {'level': request.POST.getlist(prefix + "_level")[i], 'evid_sig': request.POST.getlist(prefix + "_sig")[i], 'evid_dir': request.POST.getlist(prefix + "_dir")[i],  # clin_sig=request.POST.getlist(prefix + "_clin_sig")[i])
+                         'drug_class': request.POST.getlist(prefix + "_drug")[i], 'evid_rating': request.POST.getlist(prefix + "_rating")[i]}
             if evidence.subevidences.count() > 0:
-                evidence.subevidences.update(level=request.POST.getlist(prefix + "_level")[i], evid_sig=request.POST.getlist(prefix + "_sig")[i], evid_dir=request.POST.getlist(prefix + "_dir")[i], clin_sig=request.POST.getlist(prefix + "_clin_sig")[i],
-                                             drug_class=request.POST.getlist(prefix + "_drug")[i], evid_rating=request.POST.getlist(prefix + "_rating")[i], evidence=evidence)
+                evidence.subevidences.update(**form_dict, evidence=evidence)
             else:
-                SubEvidence.objects.create(level=request.POST.getlist(prefix + "_level")[i], evid_sig=request.POST.getlist(prefix + "_sig")[i], evid_dir=request.POST.getlist(prefix + "_dir")[i], clin_sig=request.POST.getlist(prefix + "_clin_sig")[i],
-                                           drug_class=request.POST.getlist(prefix + "_drug")[i], evid_rating=request.POST.getlist(prefix + "_rating")[i], evidence=evidence)
+                SubEvidence.objects.create(**form_dict, evidence=evidence)
         History.objects.create(content=statement, object=evidence, user=request.user, timestamp=datetime.datetime.now(), variant=variant)
 
 
