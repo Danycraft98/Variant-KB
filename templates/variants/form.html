@@ -1,13 +1,17 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block style %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+{% endblock %}
+
 {% block content %}
     <div class='card mt-4'>
         <div class='card-header'>
-            <h5 class="mr-auto my-auto"><strong>Edit</strong></h5>
+            <h5 class='mr-auto my-auto'><strong>Edit</strong></h5>
         </div>
         <form action='{% url 'save_variant' item.gene.name item.protein %}' method='post'>
-            <div class="card-body">
+            <div class='card-body'>
                 {% csrf_token %}
                 <fieldset class='card-body container pt-5'>
                     {% include 'partials/_detail.html' %}
@@ -18,11 +22,10 @@
                             </div>
                         </div>
                         <div id='d0' class='card my-5' hidden>
-                            <div class="card-header">
-                                <label id='d0_label' for='d0_id' class='h6'>Germline Pathogenicity - [Disease]</label><input id='d0_id' name='d0_id' hidden>
-                                <label for='d0_branch' hidden></label><input id='d0_branch' name='d0_branch' value='gp' hidden>
-                            </div>
-                            <div class="card-body">
+                            <div id='d0_label' class='card-header h6' href='#' data-toggle='collapse' data-target='#d0_dx'>Germline Pathogenicity - [Disease] [Status]</div>
+                            <div id='d0_dx' class='card-body collapse show'>
+                                <input id='d0_id' name='d0_id' aria-label='d0_id' hidden>
+                                <input id='d0_branch' name='d0_branch' value='gp' aria-label='d0_branch' hidden>
                                 <div class='row mx-2'>
                                     <div class='col-6 form-group'>
                                         <label for='d0_disease'>Disease</label>
@@ -30,34 +33,41 @@
                                     </div>
                                     <div class='col-6 form-group'>
                                         <label for='d0_others'>MIM#</label>
-                                        <input class='form-control' id='d0_others' name='d0_others'>
+                                        <select class='form-control selectpicker' id='d0_others' name='d0_others' data-live-search='true'>
+                                            <option>?</option>
+                                        </select>
                                     </div>
                                 </div>
 
                                 <div class='row form-group mx-2'>
                                     <div class='col-12'>
-                                        <label for='d0_desc'>Germline Gene-Disease</label>
+                                        <label for='d0_desc'>Germline Clinical Report</label>
                                         <textarea class='form-control' id='d0_desc' name='d0_desc'></textarea>
                                     </div>
                                 </div>
+
 
                                 <fieldset class='box_fieldset sticky-top bg-white'>
                                     <legend class='h6 bg-white'>2015 ACMG Classification</legend>
                                     <div class='ml-3'>
                                         <div class='row form-group'>
-                                            <div class='col-3 offset-md-1'><label for='d0_for_score'>Evidence FOR Pathogenicity</label></div>
+                                            <div class='col-4 offset-md-1'><label for='d0_for_score'>Evidence FOR Pathogenicity</label></div>
                                             <div class='col-5'><input class='form-control' id='d0_for_score' name='d0_for_score' readonly></div>
                                         </div>
                                         <div class='row form-group'>
-                                            <div class='col-3 offset-md-1'><label for='d0_against_score'>Evidence AGAINST Pathogenicity</label></div>
+                                            <div class='col-4 offset-md-1'><label for='d0_against_score'>Evidence AGAINST Pathogenicity</label></div>
                                             <div class='col-5'><input class='form-control' id='d0_against_score' name='d0_against_score' readonly></div>
+                                        </div>
+                                        <div class='row form-group'>
+                                            <div class='col-4 offset-md-1'><label for='d0_acmg'>ACMG Classification</label></div>
+                                            <div class='col-5'><input class='form-control' id='d0_acmg' name='d0_acmg'></div>
                                         </div>
                                     </div>
                                 </fieldset>
 
                                 <fieldset class='box_fieldset'>
                                     <legend class='h6'>
-                                        <a id='d0_for_collapse' class='collapsed' href='' data-toggle='collapse' data-target='#d0_for' onclick='collapse(this,2)'>Collapse Evidence FOR Pathogenicity</a>
+                                        <a id='d0_for_collapse' class='collapsed' href='' data-toggle='collapse' data-target='#d0_for' onclick='collapse(this)'>Collapse Evidence FOR Pathogenicity</a>
                                     </legend>
 
                                     <div class='ml-3 collapse show' id='d0_for'>
@@ -98,7 +108,7 @@
 
                                 <fieldset class='box_fieldset'>
                                     <legend class='h6'>
-                                        <a id='d0_against_collapse' class='collapsed' href='' data-toggle='collapse' data-target='#d0_against' onclick='collapse(this,2)'>Collapse Evidence AGAINST Pathogenicity</a>
+                                        <a id='d0_against_collapse' class='collapsed' href='' data-toggle='collapse' data-target='#d0_against' onclick='collapse(this)'>Collapse Evidence AGAINST Pathogenicity</a>
                                     </legend>
                                     <div class='ml-3 collapse show' id='d0_against'>
                                         {% for item in items %}
@@ -142,12 +152,12 @@
                                             <input type='checkbox' class='form-check-input' id='d0_review' name='d0_review' value='r' disabled>
                                             <label class='form-check-label' for='d0_review'>Reviewed</label>
                                         </div>
-                                        <div class='col-1'></div>
+                                        <div class='col-custom'></div>
                                         <div class='custom-control custom-control-inline form-check'>
                                             <input type='checkbox' class='form-check-input' id='d0_meta_review' name='d0_review' value='m' disabled>
                                             <label class='form-check-label' for='d0_meta_review'>Secondly Reviewed<!--Meta-Reviewed--></label>
                                         </div>
-                                        <div class='col-1'></div>
+                                        <div class='col-custom'></div>
                                         <div class='custom-control custom-control-inline form-check'>
                                             <input type='checkbox' class='form-check-input' id='d0_approve' name='d0_review' value='a' disabled>
                                             <label class='form-check-label' for='d0_approve'>Approved</label>
@@ -168,11 +178,10 @@
                         </div>
 
                         <div id='d1' class='card my-4' hidden>
-                            <div class="card-header">
-                                <label id='d1_label' for='d1_id' class='h6'>Somatic Oncogenicity - [Disease]</label><input id='d1_id' name='d1_id' hidden>
-                                <label for='d1_branch' hidden></label><input id='d1_branch' name='d1_branch' value='so' hidden>
-                            </div>
-                            <div class="card-body">
+                            <div id='d1_label' class='card-header h6' href='#' data-toggle='collapse' data-target='#d1_dx'>Somatic Oncogenicity - [Disease] [Status]</div>
+                            <div id='d1_dx' class='card-body collapse show'>
+                                <input id='d1_id' name='d1_id' aria-label='d1_id' hidden>
+                                <input id='d1_branch' name='d1_branch' value='so' aria-label='d1_branch' hidden>
                                 <div class='row form-group ml-2 mt-2'>
                                     <div class='col-6'>
                                         <label for='d1_disease'>Disease</label>
@@ -182,13 +191,13 @@
 
                                 <fieldset class='box_fieldset' id='d1_f_classes'>
                                     <legend class='h6'>
-                                        <a id='d1_fc0_collapse' class='collapsed' data-toggle='collapse' data-target='#d1_func_classes' onclick='collapse(this,2)' href=''>Collapse Functional Significance - [Functional Significance]</a>
+                                        <a id='d1_fc0_collapse' class='collapsed' data-toggle='collapse' data-target='#d1_func_classes' onclick='collapse(this)' href=''>Collapse Functional Significance - [Functional Significance]</a>
                                     </legend>
-                                    <div id="d1_func_classes" class='collapse show'>
+                                    <div id='d1_func_classes' class='collapse show'>
                                         <div class='form-row'>
                                             <div class='col-6 form-group pr-3'>
                                                 <label for='d1_func_sig'>Functional Significance</label>
-                                                <select class='form-control' id='d1_func_sig' name='d1_func_sig' onchange='tierChange(this, ["Benign", "None"], "Tier IV")'>
+                                                <select class='form-control' id='d1_func_sig' name='d1_func_sig' onchange="tierChange(this, ['Benign', 'None'], 'Tier IV')">
                                                     <option disabled selected>Select</option>
                                                     <option>Established</option>
                                                     <option>Likely</option>
@@ -259,7 +268,7 @@
 
                                 <fieldset class='box_fieldset'>
                                     <legend class='h6'>
-                                        <a id='d1_tier_collapse' class='collapsed' data-toggle='collapse' data-target='#d1_tier' onclick='collapse(this,2)' href=''>Collapse Actionability Tier - [AMP/ASCO Tier]</a>
+                                        <a id='d1_tier_collapse' class='collapsed' data-toggle='collapse' data-target='#d1_tier' onclick='collapse(this)' href=''>Collapse Actionability Tier - [AMP/ASCO Tier]</a>
                                     </legend>
                                     <fieldset id='d1_tier' class='collapse show'>
                                         <div class='row mb-2'>
@@ -307,7 +316,7 @@
                                                 <div class='row'>
                                                     <div class='col-6 form-group'>
                                                         <label for='d1_etype2_sig1'>Evidence Significance</label>
-                                                        <select class='form-control' id='d1_etype2_sig1' name='d1_etype2_sig' onchange='selectChange(this, "_clin_sig")'>
+                                                        <select class='form-control' id='d1_etype2_sig1' name='d1_etype2_sig' onchange="selectChange(this, '_clin_sig')">
                                                             <option value='Pred'>Predictive</option>
                                                             <option value='Prog'>Prognostic</option>
                                                             <option value='Diag'>Diagnostic</option>
@@ -315,7 +324,7 @@
                                                     </div>
                                                     <div class='col-6 form-group'>
                                                         <label for='d1_etype2_level1'>Evidence Level</label>
-                                                        <select class='form-control' id='d1_etype2_level1' name='d1_etype2_level' onchange='tierChange(this, ["A", "B"], "Tier I")'>
+                                                        <select class='form-control' id='d1_etype2_level1' name='d1_etype2_level' onchange="tierChange(this, ['A', 'B'], 'Tier I')">
                                                             <option>A</option>
                                                             <option>B</option>
                                                             <option>C</option>
@@ -372,7 +381,7 @@
 
                                 <fieldset class='box_fieldset'>
                                     <legend class='h6'>
-                                        <a class='collapsed' id='d1_report_collapse' href='' data-toggle='collapse' data-target='#d1_report' onclick='collapse(this,2)'>Collapse Report Text</a>
+                                        <a class='collapsed' id='d1_report_collapse' href='' data-toggle='collapse' data-target='#d1_report' onclick='collapse(this)'>Collapse Report Text</a>
                                     </legend>
                                     <div id='d1_report' class='row form-group collapse show'>
                                         <div class='col-12'>
@@ -505,6 +514,7 @@
 {% endblock %}
 
 {% block script %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
     <script src='{% static 'add_evidence.js' %}'></script>
     <script>
         function get_report(element) {
@@ -533,7 +543,7 @@
         }
 
         $(document).ready(function () {
-            let tier;
+            let tier, review, meta_review, approved;
             if ('{{ user.specialist }}'.localeCompare('True') === 0) {
                 document.getElementById('d0_review').removeAttribute('disabled')
                 document.getElementById('d1_review').removeAttribute('disabled')
@@ -545,10 +555,12 @@
                 disease = add_disease('{{ disease.branch }}');
                 const dx_label = document.getElementById(disease.id + '_label');
                 dx_label.innerText = dx_label.innerText.replace('[Disease]', '{{ disease.name }}');
+                dx_label.innerText = dx_label.innerText.replace('[Status]', "[{{ disease.get_reviewed_display }}{% if disease.reviewed != 'n' %}:{% endif %}{% if disease.reviewed != 'n' %}{{ disease.reviewed_date|date:'N j, Y' }}{% elif disease.reviewed != 'n' and disease.reviewed != 'r' and disease.meta_review_user %}{{ disease.meta_reviewed_date|date:'N j, Y' }}{% elif disease.reviewed == 'a' %} {{ disease.approved_date|date:'N j, Y' }}{% endif %}]");
                 {% if disease.score.first %}
                     field_partname = 'd' + i.toString();
                     document.getElementById(field_partname + '_id').value = '{{ disease.id }}';
                     document.getElementById(field_partname + '_disease').value = '{{ disease.name }}';
+
                     document.getElementById(field_partname + '_desc').value = '{{ disease.report|escapejs }}';
 
                     {% for evidence in disease.evidences.all %}
@@ -606,8 +618,12 @@
                         {% if not evidence.functional %}
                             index += 1;
                             element = document.getElementById(disease.id + '_etype2_' + index.toString())
-                            tierChange(document.getElementById(disease.id + '_etype2_level' + index.toString()), ["A", "B"], "Tier I");
-                            tierChange(document.getElementById(disease.id + '_func_sig'), ["Benign", "None"], "Tier IV");
+                            if (document.getElementById(disease.id + '_etype2_level' + index.toString()))
+                                tierChange(document.getElementById(disease.id + '_etype2_level' + index.toString()), ['A', 'B'], 'Tier I');
+
+                            if (document.getElementById(disease.id + '_func_sig'))
+                                tierChange(document.getElementById(disease.id + '_func_sig'), ['Benign', 'None'], 'Tier IV');
+
                             if (element == null) {
                                 add_evidence_type2(disease);
                             }
@@ -634,38 +650,47 @@
                 {% endfor %}
 
                 {% with review_val=disease.reviewed %}
+                    review = document.getElementById(disease.id + '_review');
+                    meta_review = document.getElementById(disease.id + '_meta_review');
+                    approved = document.getElementById(disease.id + '_approve')
                     {% if review_val == 'r' and user.counselor %}
-                        document.getElementById(disease.id + '_review').setAttribute('checked', '');
-                        document.getElementById(disease.id + '_review').setAttribute('disabled', '');
-                        document.getElementById(disease.id + '_meta_review').removeAttribute('disabled');
-                        if (document.getElementById(disease.id + '_approve'))
-                            document.getElementById(disease.id + '_approve').setAttribute('disabled', '');
+                        review.setAttribute('checked', '');
+                        review.nextElementSibling.innerHTML += ': {{ disease.reviewed_date|date:'N j, Y' }}'
+                        review.setAttribute('disabled', '');
+                        meta_review.removeAttribute('disabled');
+                        if (approved)
+                            approved.setAttribute('disabled', '');
                     {% elif review_val == 'm' and user.scientist %}
-                        document.getElementById(disease.id + '_review').setAttribute('checked', '');
-                        document.getElementById(disease.id + '_review').setAttribute('disabled', '');
-                        document.getElementById(disease.id + '_meta_review').setAttribute('checked', '');
-                        document.getElementById(disease.id + '_meta_review').setAttribute('disabled', '');
-                        if (document.getElementById(disease.id + '_approve'))
-                            document.getElementById(disease.id + '_approve').removeAttribute('disabled');
+                        review.setAttribute('checked', '');
+                        review.nextElementSibling.innerHTML += ": {{ disease.reviewed_date|date:'N j, Y' }}"
+                        review.setAttribute('disabled', '');
+                        meta_review.setAttribute('checked', '');
+                        meta_review.nextElementSibling.innerHTML += ": {{ disease.meta_reviewed_date|date:'N j, Y' }}"
+                        meta_review.setAttribute('disabled', '');
+                        if (approved)
+                            approved.removeAttribute('disabled');
                     {% elif review_val == 'a' %}
-                        document.getElementById(disease.id + '_review').setAttribute('checked', '');
-                        document.getElementById(disease.id + '_review').setAttribute('disabled', '');
-                        document.getElementById(disease.id + '_meta_review').setAttribute('checked', '');
-                        document.getElementById(disease.id + '_meta_review').setAttribute('disabled', '');
-                        if (document.getElementById(disease.id + '_approve')) {
-                            document.getElementById(disease.id + '_approve').setAttribute('checked', '');
-                            document.getElementById(disease.id + '_approve').setAttribute('disabled', '');
+                        review.setAttribute('checked', '');
+                        review.nextElementSibling.innerHTML += ": {{ disease.reviewed_date|date:'N j, Y' }}"
+                        review.setAttribute('disabled', '');
+                        meta_review.setAttribute('checked', '');
+                        meta_review.nextElementSibling.innerHTML += ": {{ disease.meta_reviewed_date|date:'N j, Y' }}"
+                        meta_review.setAttribute('disabled', '');
+                        if (approved) {
+                            approved.setAttribute('checked', '');
+                            approved.setAttribute('disabled', '');
+                            approved.nextElementSibling.innerHTML += ": {{ disease.approved_date|date:'N j, Y' }}"
                         }
                     {% elif user.specialist %}
-                        document.getElementById(disease.id + '_review').removeAttribute('disabled');
-                        document.getElementById(disease.id + '_meta_review').setAttribute('disabled', '');
-                        if (document.getElementById(disease.id + '_approve'))
-                            document.getElementById(disease.id + '_approve').setAttribute('disabled', '');
+                        review.removeAttribute('disabled');
+                        meta_review.setAttribute('disabled', '');
+                        if (approved)
+                            approved.setAttribute('disabled', '');
                     {% else %}
-                        document.getElementById(disease.id + '_review').setAttribute('disabled', '');
-                        document.getElementById(disease.id + '_meta_review').setAttribute('disabled', '');
-                        if (document.getElementById(disease.id + '_approve'))
-                            document.getElementById(disease.id + '_approve').setAttribute('disabled', '');
+                        review.setAttribute('disabled', '');
+                        meta_review.setAttribute('disabled', '');
+                        if (approved)
+                            approved.setAttribute('disabled', '');
                     {% endif %}
                 {% endwith %}
             {% endfor %}

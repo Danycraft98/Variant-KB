@@ -22,8 +22,11 @@
 
             {% for disease in item.diseases.all %}
                 <div class='card mb-5'>
-                    <div class='card-header h6'>{{ disease.branch | upper }} Interpretation - {{ disease.name }}</div>
-                    <div class='card-body'>
+                    <div class='card-header h6' href='#' data-toggle='collapse' data-target='#d{{ forloop.counter }}'>
+                        {{ disease.branch | upper }} Interpretation - {{ disease.name }} [{{ disease.get_reviewed_display }}{% if disease.reviewed != 'n' %}: {% endif %}{% if disease.reviewed != 'n' %}
+                        {{ disease.reviewed_date|date:'N j, Y' }}{% elif disease.reviewed != 'n' and disease.reviewed != 'r' and disease.meta_review_user %}{{ disease.meta_reviewed_date|date:'N j, Y' }}{% elif disease.reviewed == 'a' %} {{ disease.approved_date|date:'N j, Y' }}{% endif %}]
+                    </div>
+                    <div id='d{{ forloop.counter }}' class='card-body collapse show'>
                         {% if disease.branch == 'gp' %}
                             <div class='d{{ forloop.counter }} ml-3'>
                                 <div class='row form-group'>
@@ -57,7 +60,7 @@
                             {% regroup disease.evidences.all by item as dict_items %}
                             <fieldset class='mb-3 box_fieldset'>
                                 <legend class='h6'>
-                                    <a id='d{{ forloop.counter }}_for_collapse' class='collapsed' href='' data-toggle='collapse' data-target='#d{{ forloop.counter }}_for' onclick='collapse(this,2)'>Evidence FOR Pathogenicity</a>
+                                    <a id='d{{ forloop.counter }}_for_collapse' class='collapsed' href='' data-toggle='collapse' data-target='#d{{ forloop.counter }}_for' onclick='collapse(this)'>Evidence FOR Pathogenicity</a>
                                 </legend>
                                 <div id='d{{ forloop.counter }}_for' class='collapse show ml-3'>
                                     {% for set in dict_items %}
@@ -91,7 +94,7 @@
 
                             <fieldset class='mb-3 d{{ forloop.counter }} box_fieldset'>
                                 <legend class='h6'>
-                                    <a id='d{{ forloop.counter }}_against_collapse' class='collapsed' href='' data-toggle='collapse' data-target='#d{{ forloop.counter }}_against' onclick='collapse(this,2)'>Evidence AGAINST Pathogenicity</a>
+                                    <a id='d{{ forloop.counter }}_against_collapse' class='collapsed' href='' data-toggle='collapse' data-target='#d{{ forloop.counter }}_against' onclick='collapse(this)'>Evidence AGAINST Pathogenicity</a>
                                 </legend>
                                 <div id='d{{ forloop.counter }}_against' class='collapse show ml-3'>
                                     {% for set in dict_items %}
@@ -132,7 +135,7 @@
 
                             <fieldset class='mb-3 d{{ forloop.counter }} box_fieldset'>
                                 <legend class='h6'>
-                                    <a id='d{{ forloop.counter }}_func_collapse' class='collapsed' href='' data-toggle='collapse' data-target='#d{{ forloop.counter }}_func' onclick='collapse(this,2)'>Functional Significance</a>
+                                    <a id='d{{ forloop.counter }}_func_collapse' class='collapsed' href='' data-toggle='collapse' data-target='#d{{ forloop.counter }}_func' onclick='collapse(this)'>Functional Significance</a>
                                 </legend>
 
                                 <div id='d{{ forloop.counter }}_func' class='collapse show ml-3'>
@@ -168,7 +171,7 @@
 
                             <fieldset class='mb-3 d{{ forloop.counter }} box_fieldset'>
                                 <legend class='h6'>
-                                    <a id='d{{ forloop.counter }}_other_collapse' class='collapsed' href='' data-toggle='collapse' data-target='#d{{ forloop.counter }}_other' onclick='collapse(this,2)'>Other Evidences</a>
+                                    <a id='d{{ forloop.counter }}_other_collapse' class='collapsed' href='' data-toggle='collapse' data-target='#d{{ forloop.counter }}_other' onclick='collapse(this)'>Other Evidences</a>
                                 </legend>
                                 <div id='d{{ forloop.counter }}_other' class='collapse show ml-3'>
                                     <div class='row form-group'>
@@ -223,14 +226,22 @@
 
                             <fieldset class='mb-3 d{{ forloop.counter }} box_fieldset'>
                                 <legend class='h6'>
-                                    <a id='d{{ forloop.counter }}_report_collapse' class='collapsed' href='' data-toggle='collapse' data-target='#d{{ forloop.counter }}_report' onclick='collapse(this,2)'>Report Texts</a>
+                                    <a id='d{{ forloop.counter }}_report_collapse' class='collapsed' href='' data-toggle='collapse' data-target='#d{{ forloop.counter }}_report' onclick='collapse(this)'>Report Texts</a>
                                 </legend>
                                 <div id='d{{ forloop.counter }}_report' class='collapse show ml-3'>
                                     {% for report in disease.reports.all %}
                                         {% if 'Notes' not in report.name %}
                                             <div class='row form-group'>
                                                 <div class='col-3'><strong>{{ report.name }}</strong></div>
-                                                <div class='col-9'>{{ report.content }}</div>
+                                                <div class='col-6'>
+                                                    <textarea id='gene-desc' rows="1" readonly class='form-control bg-white' aria-label='{{ report.name }}'>{{ report.content }}</textarea>
+                                                </div>
+                                                <div class='col-custom-2 pl-5 btn-group' style='height:35px'>
+                                                    <button type='button' class='btn btn-outline-secondary btn-sm' onclick="expand('gene-desc',this)">Expand</button>
+                                                    <button type='button' class='btn btn-outline-secondary btn-sm' onclick='copy(this)'>
+                                                        <i class='fa fa-clipboard'></i> Copy
+                                                    </button>
+                                                </div>
                                             </div>
                                         {% endif %}
                                     {% endfor %}
@@ -239,7 +250,7 @@
                         {% endif %}
                         <fieldset class='mb-3 d{{ forloop.counter }} box_fieldset'>
                             <legend class='h6'>
-                                <a id='d{{ forloop.counter }}_review_collapse' class='collapsed' href='' data-toggle='collapse' data-target='#d{{ forloop.counter }}_review' onclick='collapse(this,2)'>Review Information</a>
+                                <a id='d{{ forloop.counter }}_review_collapse' class='collapsed' href='' data-toggle='collapse' data-target='#d{{ forloop.counter }}_review' onclick='collapse(this)'>Review Information</a>
                             </legend>
                             <div id='d{{ forloop.counter }}_review' class='collapse show ml-3'>
                                 {% if disease.reviewed == 'n' %}
@@ -250,19 +261,19 @@
                                 {% if disease.reviewed != 'n' %}
                                     <dl class='row form-group'>
                                         <dt class='col-3'><strong>Reviewed</strong></dt>
-                                        <dd class='col-9'>By {{ disease.review_user }} on {{ disease.reviewed_date }}</dd>
+                                        <dd class='col-9'>By {{ disease.review_user }} on {{ disease.reviewed_date|date:'N j, Y' }}</dd>
                                     </dl>
                                 {% endif %}
                                 {% if disease.reviewed != 'n' and disease.reviewed != 'r' and disease.meta_review_user %}
                                     <dl class='row form-group'>
                                         <dt class='col-3'><strong>Secondly Reviewed<!--Meta-Reviewed--></strong></dt>
-                                        <dd class='col-9'>By {{ disease.meta_review_user }} on {{ disease.meta_reviewed_date }}</dd>
+                                        <dd class='col-9'>By {{ disease.meta_review_user }} on {{ disease.meta_reviewed_date|date:'N j, Y' }}</dd>
                                     </dl>
                                 {% endif %}
                                 {% if disease.reviewed == 'a' %}
                                     <dl class='row form-group'>
                                         <dt class='col-3'><strong>Approved</strong></dt>
-                                        <dd class='col-9'>By {{ disease.approve_user }} on {{ disease.approved_date }}</dd>
+                                        <dd class='col-9'>By {{ disease.approve_user }} on {{ disease.approved_date|date:'N j, Y' }}</dd>
                                     </dl>
                                 {% endif %}
                             </div>

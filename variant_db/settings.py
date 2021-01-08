@@ -52,6 +52,9 @@ MIDDLEWARE = [
 	'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+DATE_FORMAT = 'N j, Y'
+DATETIME_FORMAT = 'N j, Y'
+
 AUTH_USER_MODEL = 'accounts.User'
 EMAIL_BACKEND = 'sendgrid_backend.SendgridBackend'
 SENDGRID_API_KEY = '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'  # os.getenv('SENDGRID_API_KEY')
@@ -90,10 +93,10 @@ DATABASES = {
 	'default': {
 		'ENGINE': 'django.db.backends.mysql',
 		'NAME': 'variant_db',
-		'USER': 'irene',
-		'PASSWORD': 'irene123',
-		'HOST': '10.0.2.2',
-		'PORT': '3306',
+		'USER': 'root',
+		'PASSWORD': 'password',
+		'HOST': 'localhost',
+		'PORT': '',
 	}
 }
 

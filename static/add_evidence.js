@@ -1,4 +1,4 @@
-function collapse(element, index) {
+function collapse(element) {
     if (element.innerText.includes("Expand")) {
         element.innerHTML = element.innerHTML.replace('Expand', 'Collapse');
     } else {
@@ -199,11 +199,30 @@ function tierChange(element, options, result) {
         selectElement.removeAttribute('readonly');
     }
 
-    const btn = document.getElementById(element.id.split('_').slice(0, 1).join('_') + '_etype2');
-    if (result === 'Tier IV' && selectedTrue) {
-        btn.setAttribute('readonly', '');
-    } else {
-        btn.removeAttribute('readonly');
+    let evid_id = element.id.split('_').slice(0, 1).join('_') + '_etype2'
+    const btn = document.getElementById(evid_id);
+    let index = 1, div = 'Test';
+    while (div) {
+        div = document.getElementById(evid_id + '_' + index.toString());
+        if (result === 'Tier IV' && selectedTrue) {
+            btn.setAttribute('disabled', '');
+            if (div) {
+                div.querySelectorAll("[id^='" + evid_id + "']").forEach(function(element) {
+                    if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA'){
+                        element.value = '';
+                    }
+                })
+                div.setAttribute('hidden', '');
+                div.setAttribute('disabled', '');
+            }
+        } else {
+            btn.removeAttribute('disabled');
+            if (div) {
+                div.removeAttribute('hidden');
+                div.removeAttribute('disabled');
+            }
+        }
+        index++;
     }
 }
 

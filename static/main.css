@@ -15,10 +15,32 @@ hr {
     max-width: 5%;
 }
 
+.col-custom-1 {
+    -ms-flex: 0 0 13.5%;
+    flex: 0 0 13.5%;
+    max-width: 13.5%;
+}
+
 .col-custom-2 {
     -ms-flex: 0 0 22%;
     flex: 0 0 22%;
     max-width: 22%;
+    padding-right: 15px;
+    padding-left: 15px;
+}
+
+.col-custom-1-5 {
+    -ms-flex: 0 0 18%;
+    flex: 0 0 20%;
+    max-width: 19%;
+    padding-right: 15px;
+    padding-left: 15px;
+}
+
+.col-custom-4 {
+    -ms-flex: 0 0 32%;
+    flex: 0 0 32%;
+    max-width: 32%;
     padding-right: 15px;
     padding-left: 15px;
 }
@@ -46,4 +68,19 @@ legend {
     width: auto;
     padding: 0 10px;
     border-bottom: none;
+}
+
+textarea:read-only {
+    box-sizing: border-box;
+    min-height: 31px;
+    overflow-x: hidden;
+}
+
+textarea:read-only {
+    border: 0;
+    padding: 0;
+    height: 2.25rem;
+    min-height: 2.25rem;
+    resize: none;
+    overflow-y: hidden;
 }

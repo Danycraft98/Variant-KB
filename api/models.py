@@ -128,7 +128,7 @@ class Disease(models.Model):
     reviewed = models.CharField(choices=(
         ('n', 'Not Reviewed'),
         ('r', 'Reviewed'),
-        ('m', 'Meta-reviewed'),
+        ('m', 'Secondly Reviewed'),
         ('a', 'Approved'),
     ), max_length=1, default='n')
     reviewed_date = models.DateTimeField('reviewed date', null=True)

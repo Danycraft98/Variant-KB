@@ -1,4 +1,5 @@
-{% load custom_tags %}
+{% load static custom_tags %}
+
 <ul class='nav nav-tabs' id='myTab' role='tablist'>
     <li class='nav-item'>
         <a class='nav-link active' data-toggle='tab' href='#main' role='tab' aria-controls='main' aria-selected='true'>Variant Description</a>
@@ -418,10 +419,18 @@
         {% if item.gene.content %}
             <div class='d-flex justify-content-center pt-2 text'>
                 <div class='col-3 text-right'>
-                    <strong>Gene Report</strong>
+                    <strong>Gene-Descriptive</strong>
                 </div>
                 <div class='col-custom p-0'></div>
-                <div class='col-6 '>{{ item.gene.content }}</div>
+                <div class='col-custom-4'>
+                    <textarea id='gene-desc' rows="1" readonly class='form-control bg-white' aria-label='Gene-Descriptive'>{{ item.gene.content }}</textarea>
+                </div>
+                <div class='col-custom-1-5 pl-5 btn-group' style='height:35px'>
+                    <button type='button' class='btn btn-outline-secondary btn-sm' onclick="expand('gene-desc',this)">Expand</button>
+                    <button type='button' class='btn btn-outline-secondary btn-sm' onclick='copy(this)'>
+                        <i class='fa fa-clipboard'></i> Copy
+                    </button>
+                </div>
             </div>
         {% endif %}
         {% if item.content %}
@@ -430,7 +439,15 @@
                     <strong>Variant-Descriptive</strong>
                 </div>
                 <div class='col-custom p-0'></div>
-                <div class='col-6 '>{{ item.content }}</div>
+                <div class='col-custom-4'>
+                    <textarea id='variant-desc' readonly class='form-control bg-white' aria-label='Variant-Descriptive'>value='{{ item.content }}</textarea>
+                </div>
+                <div class='col-custom-1-5 pl-5 btn-group' style='height:35px'>
+                    <button type='button' class='btn btn-outline-secondary btn-sm' onclick="expand('variant-desc',this)">Expand</button>
+                    <button type='button' class='btn btn-outline-secondary btn-sm' onclick='copy(this)'>
+                        <i class='fa fa-clipboard'></i> Copy
+                    </button>
+                </div>
             </div>
         {% endif %}
         {% if item.gene.germline_content %}
@@ -439,7 +456,15 @@
                     <strong>Gene-Germline Implication</strong>
                 </div>
                 <div class='col-custom p-0'></div>
-                <div class='col-6 '>{{ item.gene.germline_content }}</div>
+                <div class='col-custom-4'>
+                    <textarea id='gene-germline' readonly class='form-control bg-white' aria-label='Variant-Germline Implication'>{{ item.gene.germline_content }}</textarea>
+                </div>
+                <div class='col-custom-1-5 pl-5 btn-group' style='height:35px'>
+                    <button type='button' class='btn btn-outline-secondary btn-sm' onclick="expand('gene-germline',this)">Expand</button>
+                    <button type='button' class='btn btn-outline-secondary btn-sm' onclick='copy(this)'>
+                        <i class='fa fa-clipboard'></i> Copy
+                    </button>
+                </div>
             </div>
         {% endif %}
         {% if item.germline_content %}
@@ -448,7 +473,15 @@
                     <strong>Variant-Germline Implication</strong>
                 </div>
                 <div class='col-custom p-0'></div>
-                <div class='col-6 '>{{ item.germline_content }}</div>
+                <div class='col-custom-4'>
+                    <textarea id='gene-germline' readonly class='form-control bg-white' aria-label='Variant-Germline Implication'>{{ item.germline_content }}</textarea>
+                </div>
+                <div class='col-custom-1-5 pl-5 btn-group' style='height:35px'>
+                    <button type='button' class='btn btn-outline-secondary btn-sm' onclick="expand('variant-germline',this)">Expand</button>
+                    <button type='button' class='btn btn-outline-secondary btn-sm' onclick='copy(this)'>
+                        <i class='fa fa-clipboard'></i> Copy
+                    </button>
+                </div>
             </div>
         {% endif %}
     </div>
@@ -523,31 +556,59 @@
 </div>
 
 <script src='https://code.jquery.com/jquery-latest.min.js'></script>
+<script src='{% static 'autosize.min.js' %}'></script>
 <script src='https://d3js.org/d3.v4.min.js'></script>
 <script>
     function onMouseUpdate(e) {
-        return tooltip.style('top', (e.pageY - 10) + 'px')
-                      .style('left', (e.pageX + 10) + 'px');
+        return tooltip.style('top', (e.pageY - 10) + 'px').style('left', (e.pageX + 10) + 'px');
     }
 
-
-    let max_height = 0;
-    tabs = jQuery('.tab-content .tab-pane');
-    jQuery.each(tabs, function () {
-        this.classList.add('active'); /* make all visible */
-        max_height = (this.clientHeight > max_height ? this.clientHeight : max_height);
-        if (!jQuery(this).hasClass('show')) {
-            this.classList.remove('active'); /* hide again */
+    function expand(element_id, element) {
+        collapse(element);
+        element = document.getElementById(element_id);
+        if (element.getAttribute('style').includes('height')){
+            element.setAttribute('style', 'overflow: hidden; overflow-wrap: break-word;');
+        } else {
+            autosize.update(element);
         }
+    }
+
+    $(document).ready(function () {
+        autosize(document.querySelectorAll('textarea'));
+
+        let min_height = 0;
+        let tabs = jQuery('.tab-content .tab-pane');
+        jQuery.each(tabs, function () {
+            this.classList.add('active'); /* make all visible */
+            min_height = (this.clientHeight > min_height ? this.clientHeight : min_height);
+            if (!jQuery(this).hasClass('show')) {
+                this.classList.remove('active'); /* hide again */
+            }
+        });
+        jQuery.each(tabs, function () {
+            jQuery(this).css('min-height', min_height);
+        });
     });
-    jQuery.each(tabs, function () {
-        jQuery(this).height(max_height);
-    });
+
+    function copy(element) {
+        /* Get the text field */
+        const copyText = element.parentElement.previousElementSibling.lastElementChild;
+        copyText.select();
+        copyText.setSelectionRange(0, 99999); /* For mobile devices */
+
+        /* Copy the text inside the text field */
+        document.execCommand("copy");
+
+        /* Alert the copied text */
+        alert("Copied the text: " + copyText.value);
+    }
 
     {% if item.hotspots.count > 0 %}
         const color = d3.scaleOrdinal(d3.schemeCategory10).domain(['*', 'A', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'Y', 'sp']);
         const group = [{% for hotspot in item.hotspots.all %}'{{ hotspot.hotspot }}',{% endfor %}];
-        const data = [{ {% for hotspot in item.hotspots.all %}'{{ hotspot.hotspot }}' : {{ hotspot.count }},{% endfor %} }];
+        const data = [{
+            {% for hotspot in item.hotspots.all %}'{{ hotspot.hotspot }}' : {{ hotspot.count }},{% endfor %}
+        }];
         const layers = d3.stack()
             .keys(group)
             .offset(d3.stackOffsetDiverging)
@@ -637,9 +698,9 @@
             tooltip.text(d.key + ': ' + d.data[d.key]);
             tooltip.style('visibility', 'visible');
         })
-            .on('mousemove', function(event) {
+            .on('mousemove', function (event) {
                 return tooltip.style('top', (event.pageY - 10) + 'px')
-                              .style('left', (event.pageX + 10) + 'px');
+                    .style('left', (event.pageX + 10) + 'px');
             })
             .on('mouseout', function () {
                 tooltip.style('visibility', 'hidden');
