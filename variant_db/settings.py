@@ -93,10 +93,10 @@ DATABASES = {
 	'default': {
 		'ENGINE': 'django.db.backends.mysql',
 		'NAME': 'variant_db',
-		'USER': 'root',
-		'PASSWORD': 'password',
-		'HOST': 'localhost',
-		'PORT': '',
+		'USER': 'irene',
+		'PASSWORD': 'irene123',
+		'HOST': '10.0.2.2',
+		'PORT': '3306',
 	}
 }
 
