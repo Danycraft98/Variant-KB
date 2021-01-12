@@ -145,6 +145,7 @@ class Disease(models.Model):
 class Score(models.Model):
     for_score = models.CharField(max_length=20, null=True)
     against_score = models.CharField(max_length=20, null=True)
+    content = models.CharField(max_length=100, null=True)
     disease = models.ForeignKey(Disease, related_name='score', on_delete=models.CASCADE, null=True, blank=True)
 
 

@@ -7,7 +7,7 @@ function collapse(element) {
 }
 
 function select_evidence(element) {
-    document.querySelectorAll("[id^='" + element.id + "']").forEach(function (item, index) {
+    document.querySelectorAll("[id^='" + element.id + "_']").forEach(function (item, index) {
         if (index > 7) {
             calculate_score(element);
         }

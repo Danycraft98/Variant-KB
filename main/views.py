@@ -10,11 +10,25 @@ from django.urls import reverse
 
 import datetime
 import json
+import os
 import pandas
 from urllib import parse
 from weasyprint import HTML, CSS
 from api.models import *
 from .tables import GeneTable, VariantTable, DiseaseTable, HistoryTable, add_evidence
+
+
+def read_file(filename, **kwargs):
+    """Read file with **kwargs; files supported: xls, xlsx, csv, csv.gz, pkl"""
+
+    read_map = {'xls': pandas.read_excel, 'xlsx': pandas.read_excel, 'csv': pandas.read_csv,
+                'gz': pandas.read_csv, 'pkl': pandas.read_pickle}
+
+    ext = os.path.splitext(filename)[1].lower()[1:]
+    assert ext in read_map, "Input file not in correct format, must be xls, xlsx, csv, csv.gz, pkl; current format '{0}'".format(ext)
+    assert os.path.isfile(filename), "File Not Found Exception '{0}'.".format(filename)
+
+    return read_map[ext](filename, **kwargs)
 
 
 @login_required
@@ -31,7 +45,7 @@ def search(request):
         if name:
             try:
                 item = Gene.objects.get(name=name)
-                return redirect('gene', gene_id=item.id)
+                return redirect('gene', gene_name=item.name)
             except Gene.DoesNotExist:
                 pass
         else:
@@ -86,14 +100,16 @@ def variant(request, gene_name, variant_p):
         score_items = PathItem.objects.all()
     except Variant.DoesNotExist:
         raise Http404('Variant does not exist')
-    return render(request, 'variants/form.html', {'item': item, 'items': score_items})
+    return render(request, 'variants/form.html', {'item': item, 'items': score_items, 'title': 'Edit - ' + item.protein})
 
 
 @login_required
 def upload(request):
     exists_dict = {'yes': [], 'no': []}
     if 'dict' not in request.POST:
-        raw_data = pandas.read_excel(request.FILES.get('file'), dtype=str, header=20, engine='openpyxl')
+        with open(request.FILES.get('file').name, "wb+") as file:
+            file.write(request.FILES.get('file').file.getbuffer())
+        raw_data = read_file(request.FILES.get('file').name, dtype=str, header=20)
         raw_data.fillna('na', inplace=True)
         default_header = list(raw_data.columns)
         [default_header.remove(key) for key in ['IGV', 'UCSC Genome Browser', 'HGMD']]
@@ -170,24 +186,31 @@ def save(request, gene_name, variant_p):
         i = 2
         while request.POST.get('d' + str(i) + '_disease'):
             branch = request.POST.get('d' + str(i) + '_branch')
+            dx_dict = {'name': request.POST.get('d' + str(i) + '_disease'), 'report': request.POST.get('d' + str(i) + '_desc'), 'others': request.POST.get('d' + str(i) + '_others')}
             if not request.POST.get('d' + str(i) + '_id').isdigit():
-                dx_id = Disease.objects.create(name=request.POST.get('d' + str(i) + '_disease'), report=request.POST.get('d' + str(i) + '_desc'), others=request.POST.get('d' + str(i) + '_others'), variant=item, branch=branch)
+                dx_id = Disease.objects.create(**dx_dict, variant=item, branch=branch)
                 History.objects.create(content='Added Disease: ' + str(dx_id), user=request.user, timestamp=datetime.datetime.now(), variant=item)
             else:
-                Disease.objects.filter(pk=request.POST.get('d' + str(i) + '_id')).update(name=request.POST.get('d' + str(i) + '_disease'), report=request.POST.get('d' + str(i) + '_desc'), others=request.POST.get('d' + str(i) + '_others'))
+                dx = Disease.objects.filter(pk=request.POST.get('d' + str(i) + '_id'))
+                old_dx = dict(dx.first().__dict__)
+                dx.update(**dx_dict)
                 dx_id = Disease.objects.get(pk=request.POST.get('d' + str(i) + '_id'))
-                History.objects.create(content='Updated Disease: ' + str(dx_id), user=request.user, timestamp=datetime.datetime.now(), variant=item)
+                if any(key in {k: None if old_dx[k] == dx_dict[k] else dx_dict[k] for k in dx_dict} for key in dx_dict.keys()):
+                    History.objects.create(content='updated Disease: ' + str(dx_id), user=request.user, timestamp=datetime.datetime.now(), variant=item)
 
             if branch == 'gp':
                 for element in ITEMS.keys():
                     item_id = PathItem.objects.get(key=element)
                     add_evidence(request, 'd' + str(i) + '_' + element, dx_id, item, item_id)
-                for_score = request.POST.get('d' + str(i) + '_for_score')
-                against_score = request.POST.get('d' + str(i) + '_against_score')
+                score_dict = {
+                    'for_score': request.POST.get('d' + str(i) + '_for_score'),
+                    'against_score': request.POST.get('d' + str(i) + '_against_score'),
+                    'content': request.POST.get('d' + str(i) + '_acmg')
+                }
                 if Score.objects.filter(disease=dx_id):
-                    Score.objects.filter(disease=dx_id).update(for_score=for_score, against_score=against_score)
+                    Score.objects.filter(disease=dx_id).update(**score_dict)
                 else:
-                    Score.objects.get_or_create(for_score=for_score, against_score=against_score, disease=dx_id)
+                    Score.objects.get_or_create(**score_dict, disease=dx_id)
             else:
                 j = 1
                 func_sig = request.POST.get('d' + str(i) + '_func_sig')
@@ -240,7 +263,7 @@ def variant_text(request, gene_name, variant_p):
         item = Variant.objects.get(protein=variant_p, gene__name=gene_name)
     except Variant.DoesNotExist:
         raise Http404('Variant does not exist')
-    return render(request, 'variants/detail.html', {'item': item})
+    return render(request, 'variants/detail.html', {'item': item, 'title': 'Detail - ' + item.protein})
 
 
 @login_required
@@ -260,12 +283,14 @@ def exported(request, gene_name, variant_p):
         raise Http404('Variant does not exist')
     diseases = Disease.objects.filter(name__in=request.POST.getlist('disease'))
     html = HTML(string=render_to_string('general/export.html', {'item': item, 'diseases': diseases}))
-    html.write_pdf(target='/tmp/report.pdf', stylesheets=[CSS('static/bootstrap.min.css')])
+    html.write_pandasf(target='/tmp/report.pandasf', stylesheets=[
+        CSS('static/bootstrap.min.css'), CSS('static/main.css')
+    ])
 
     fs = FileSystemStorage('/tmp')
-    with fs.open('report.pdf') as pdf:
-        response = HttpResponse(pdf, content_type='application/pdf')
-        response['Content-Disposition'] = "attachment; filename=report.pdf"
+    with fs.open('report.pandasf') as pandasf:
+        response = HttpResponse(pandasf, content_type='application/pandasf')
+        response['Content-Disposition'] = "attachment; filename=report.pandasf"
         return response
 
 
@@ -275,4 +300,4 @@ def history(request, gene_name, variant_p):
         histories = HistoryTable([h for h in item.history.all()])
     except Variant.DoesNotExist:
         raise Http404('Variant does not exist')
-    return render(request, 'variants/index.html', {'item': item, 'table': histories, 'title': 'History'})
+    return render(request, 'variants/index.html', {'item': item, 'table': histories, 'title': 'History - ' + item.protein})

@@ -1,6 +1,7 @@
 <html lang='en'>
 <head>
     <title>Variant and Disease</title>
+
     <style>
         body {
             background-color: #f7f7f8;
@@ -10,201 +11,269 @@
 <body>
 <div class='container-fluid px-5 pb-5'>
     <h2>Diseases Exported</h2>
+
     <div class='row form-group'>
-        <div class='col-2'><strong>Variant:</strong></div>
+        <div class='col-3'>Variant:</div>
         <div class='col-9'>{{ item }}</div>
     </div>
     <div class='row form-group'>
-        <div class='col-2'><strong>Gene:</strong></div>
+        <div class='col-3'>Gene:</div>
         <div class='col-9'>{{ item.gene }}</div>
     </div>
+    <hr/>
 
-    {% for disease in diseases.all %}
-        <div class='row form-group'>
-            <div class='col-2'><strong>Disease Name:</strong></div>
-            <div class='col-9'>{{ disease.name }}</div>
-        </div>
-        <div class='row form-group'>
-            <div class='col-2'><strong>Disease Report</strong></div>
-            <div class='col-9'>{{ disease.report }}</div>
-        </div>
-        <br/>
-        {% if disease.score.first %}
-            <div class='card'>
-                <div class='card-header'>2015 ACMG Score Result</div>
-                <div class='card-body ml-3'>
-                    <div class='row form-group'>
-                        <div class='col-1'></div>
-                        <div class='col-3'>Evidence FOR Pathogenicity</div>
-                        <div class='col-5'>{{ disease.score.first.for_score }}</div>
+    {% for disease in item.diseases.all %}
+        <div class='card mb-5'>
+            <div class='card-header h6' href='#' data-toggle='collapse' data-target='#d{{ forloop.counter }}'>
+                {{ disease.branch | upper }} Interpretation - {{ disease.name }} [{{ disease.get_reviewed_display }}{% if disease.reviewed != 'n' %}: {% endif %}{% if disease.reviewed != 'n' %}
+                {{ disease.reviewed_date|date:'N j, Y' }}{% elif disease.reviewed != 'n' and disease.reviewed != 'r' and disease.meta_review_user %}{{ disease.meta_reviewed_date|date:'N j, Y' }}{% elif disease.reviewed == 'a' %} {{ disease.approved_date|date:'N j, Y' }}{% endif %}]
+            </div>
+            <div id='d{{ forloop.counter }}' class='card-body collapse show'>
+                {% if disease.branch == 'gp' %}
+                    <div class='d{{ forloop.counter }} ml-3'>
+                        <dl class='row'>
+                            <dt class='col-3'>Disease Name</dt>
+                            <dd class='col-9'>{{ disease.name }}</dd>
+
+                            <dt class='col-3'>MIM#</dt>
+                            <dd class='col-9'>{{ disease.others }}</dd>
+
+                            <dt class='col-6'>Germline Clinical Report</dt>
+                            <dd class='col-6'>{{ disease.report }}</dd>
+                        </dl>
                     </div>
-                    <div class='row form-group'>
-                        <div class='col-1'></div>
-                        <div class='col-3'>Evidence AGAINST Pathogenicity</div>
-                        <div class='col-5'>{{ disease.score.first.against_score }}</div>
-                    </div>
-                </div>
-            </div>
-            <br/>
 
-            {% regroup disease.evidences.all by item as dict_items %}
+                    <fieldset class='mb-3 box_fieldset'>
+                        <legend class='h6'>2015 ACMG Score Result</legend>
+                        <dl class='row ml-3'>
+                            <dt class='col-4 offset-md-1'>Evidence FOR Pathogenicity</dt>
+                            <dd class='col-7'>{{ disease.score.first.for_score }}</dd>
 
-            <div class='card'>
-            <div class='card-header'>
-                Evidence FOR Pathogenicity
-            </div>
-            <div class='card-body ml-3'>
-                {% for set in dict_items %}
-                    {% if 'P' in set.grouper.key and 'B' not in set.grouper.key %}
-                        <div class='row'>
-                        <div class='col-1'>
-                            <strong>{{ set.grouper }}</strong>
-                        </div>
-                        {% for evidence in set.list %}
-                            {% if forloop.counter > 1 %}
-                                <div class='row'>
-                                <div class='col-1'></div>
-                            {% endif %}
-                        <div class='col-2'><strong>Source Type</strong></div>
-                        <div class='col-3'>{{ evidence.get_source_type_display }}</div>
-                        </div>
-                            <div class='row'>
-                                <div class='col-1'></div>
-                                <div class='col-2'><strong>Source ID</strong></div>
-                                <div class='col-3'>{{ evidence.source_id }}</div>
-                            </div>
-                            <div class='row mb-4'>
-                                <div class='col-1'></div>
-                                <div class='col-2'><strong>Evidence Statement</strong></div>
-                                <div class='col-6'>{{ evidence.statement }}</div>
-                                <div class='col-3'>{{ evidence.histories.last }}</div>
-                            </div>
-                        {% endfor %}
-                    {% endif %}
-                    <hr/>
-                {% endfor %}
-                </div>
-            </div>
-            <br/>
+                            <dt class='col-4 offset-md-1'>Evidence AGAINST Pathogenicity</dt>
+                            <dd class='col-7'>{{ disease.score.first.against_score }}</dd>
+                        </dl>
+                    </fieldset>
 
-            <div class='card'>
-                <div class='card-header'>
-                    Evidence AGAINST Pathogenicity
-                </div>
-                <div class='card-body ml-3'>
-                    {% for set in dict_items %}
-                        {% if 'B' in set.grouper.key %}
-                            <div class='row'>
-                            <div class='col-1'>
-                                <label>{{ set.grouper }}</label>
-                            </div>
-                            {% for evidence in set.list %}
-                                {% if forloop.counter > 1 %}
+                    {% regroup disease.evidences.all by item as dict_items %}
+                    <fieldset class='mb-3 box_fieldset'>
+                        <legend class='h6'>Evidence FOR Pathogenicity</legend>
+                        <div id='d{{ forloop.counter }}_for' class='collapse show ml-3'>
+                            {% for set in dict_items %}
+                                {% if 'P' in set.grouper.key and 'B' not in set.grouper.key %}
                                     <div class='row'>
-                                    <div class='col-1'></div>
+                                    <div class='col-2'>{{ set.grouper }}</div>
+                                    {% for evidence in set.list %}
+                                        {% if forloop.counter > 1 %}
+                                            <div class='row'>
+                                            <div class='col-2'></div>
+                                        {% endif %}
+                                    <div class='col-custom-2'>Source Type</div>
+                                    <div class='col-7'>{{ evidence.get_source_type_display }}</div>
+                                    </div>
+                                        <div class='row'>
+                                            <div class='offset-md-1 col-custom-2'>Source ID</div>
+                                            <div class='col-8'>{{ evidence.source_id }}</div>
+                                        </div>
+                                        <div class='row mb-4'>
+                                            <div class='offset-md-1 col-custom-2'>Evidence Statement</div>
+                                            <div class='col-8'>{{ evidence.statement }}</div>
+                                        </div>
+                                    {% endfor %}
+                                    <hr/>
                                 {% endif %}
-                            <div class='col-1'><label>Source</label></div>
-                            <div class='col-2'>Type: {{ evidence.get_source_type_display }}</div>
-                            </div>
-                                <div class='row'>
-                                    <div class='col-3'><strong>Source Type</strong></div>
-                                    <div class='col-2'>{{ evidence.get_source_type_display }}</div>
-                                </div>
-                                <div class='row'>
-                                    <div class='col-3'><strong>Source ID</strong></div>
-                                    <div class='col-2'>{{ evidence.source_id }}</div>
-                                </div>
-                                <div class='row mb-4'>
-                                    <div class='col-3'><strong>Evidence Statement</strong></div>
-                                    <div class='col-7'>{{ item.statement }}</div>
-                                    <div class='col-2'>{{ item.histories.last }}</div>
-                                </div>
                             {% endfor %}
-                        {% endif %}
-                    {% endfor %}
-                    </div>
-                </div>
-                <br/>
+                            </div>
+                    </fieldset>
 
+                    <fieldset class='mb-3 d{{ forloop.counter }} box_fieldset'>
+                        <legend class='h6'>Evidence AGAINST Pathogenicity</legend>
+                        <div id='d{{ forloop.counter }}_against' class='collapse show ml-3'>
+                            {% for set in dict_items %}
+                                {% if 'B' in set.grouper.key %}
+                                    <div class='row'>
+                                    <div class='col-1'>
+                                        {{ set.grouper }}
+                                    </div>
+                                    {% for evidence in set.list %}
+                                        {% if forloop.counter > 1 %}
+                                            <div class='row'>
+                                            <div class='col-1'></div>
+                                        {% endif %}
+                                    <div class='col-custom-2'>Source Type</div>
+                                    <div class='col-7'>{{ evidence.get_source_type_display }}</div>
+                                    </div>
+                                        <div class='row'>
+                                            <div class='offset-md-1 col-custom-2'>Source ID</div>
+                                            <div class='col-8'>{{ evidence.source_id }}</div>
+                                        </div>
+                                        <div class='row mb-4'>
+                                            <div class='offset-md-1 col-custom-2'>Evidence Statement</div>
+                                            <div class='col-8'>{{ evidence.statement }}</div>
+                                        </div>
+                                    {% endfor %}
+                                    <hr/>
+                                {% endif %}
+                            {% endfor %}
+                            </div>
+                    </fieldset>
                 {% else %}
+                    <div class='d{{ forloop.counter }} ml-3'>
+                        <div class='row form-group'>
+                            <div class='col-custom-2'>Disease Name</div>
+                            <div class='col-9'>{{ disease.name }}</div>
+                        </div>
+                    </div>
 
-                <div class='card-body ml-3'>
-                    {% for set in disease.functionals.all %}
-                        {% if forloop.counter == 1 %}
+                    <fieldset class='mb-3 d{{ forloop.counter }} box_fieldset'>
+                        <legend class='h6'>Functional Significance</legend>
+
+                        <div id='d{{ forloop.counter }}_func' class='collapse show ml-3'>
+                            {% if disease.functionals.count > 0 %}
+                                <div class='row form-group'>
+                                    <div class='col-custom-2'>Functional Significance</div>
+                                    <div class='col-9'>{{ disease.functionals.first.key }}</div>
+                                </div>
+                            {% endif %}
+                            {% for set in disease.functionals.all %}
+                                <div class='row form-group'>
+                                    <div class='col-custom-2'>Functional Class</div>
+                                    <div class='col-9'>{{ set.value }}</div>
+                                </div>
+                                {% for evidence in set.evidences.all %}
+                                    <div class='row form-group'>
+                                        <div class='col-custom-2'>Source Type</div>
+                                        <div class='col-7'>{{ evidence.get_source_type_display }}</div>
+                                    </div>
+                                    <div class='row form-group'>
+                                        <div class='col-custom-2'>Source ID</div>
+                                        <div class='col-7'>{{ evidence.source_id }}</div>
+                                    </div>
+                                    <div class='row form-group mb-4'>
+                                        <div class='col-custom-2'>Evidence Statement</div>
+                                        <div class='col-8'>{{ evidence.statement }}</div>
+                                    </div>
+                                {% endfor %}
+                                <hr/>
+                            {% endfor %}
+                        </div>
+                    </fieldset>
+
+                    <fieldset class='mb-3 d{{ forloop.counter }} box_fieldset'>
+                        <legend class='h6'>Other Evidences</legend>
+                        <div id='d{{ forloop.counter }}_other' class='collapse show ml-3'>
                             <div class='row form-group'>
-                                <div class='col-3'><strong>Functional Significance</strong></div>
-                                <div class='col-3'>{{ set.key }}</div>
+                                <div class='col-3'>Tier</div>
+                                <div class='col-7'>{{ disease.others }}</div>
                             </div>
+                            {% for evidence in disease.evidences.all %}
+                                {% if evidence.subevidences.all.count > 0 %}
+                                    <div class='row form-group'>
+                                        <div class='col-3'>Source Type</div>
+                                        <div class='col-9'>{{ evidence.get_source_type_display }}</div>
+                                    </div>
+                                    <div class='row form-group'>
+                                        <div class='col-3'>Source ID</div>
+                                        <div class='col-9'>{{ evidence.source_id }}</div>
+                                    </div>
+                                    <div class='row form-group'>
+                                        <div class='col-3'>Evidence Statement</div>
+                                        <div class='col-9'>{{ evidence.statement }}</div>
+                                    </div>
+                                    {% with sub=evidence.subevidences.first %}
+                                        <div class='row form-group'>
+                                            <div class='col-3'>Evidence Significance</div>
+                                            <div class='col-9'>{{ sub.evid_sig }}</div>
+                                        </div>
+                                        <div class='row form-group'>
+                                            <div class='col-3'>Evidence Level</div>
+                                            <div class='col-9'>{{ sub.level }}</div>
+                                        </div>
+                                        <div class='row form-group'>
+                                            <div class='col-3'>Evidence Direction</div>
+                                            <div class='col-9'>{{ sub.evid_dir }}</div>
+                                        </div>
+                                        <div class='row form-group'>
+                                            <div class='col-3'>Clinical Significance</div>
+                                            <div class='col-9'>{{ sub.clin_sig }}</div>
+                                        </div>
+                                        <div class='row form-group'>
+                                            <div class='col-3'>Drug/Drug Class/Dx</div>
+                                            <div class='col-9'>{{ sub.drug_class }}</div>
+                                        </div>
+                                        <div class='row form-group'>
+                                            <div class='col-3'>Significance</div>
+                                            <div class='col-9'>{{ sub.evid_rating }}</div>
+                                        </div>
+                                    {% endwith %}
+                                    <hr/>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </fieldset>
+
+                    <fieldset class='mb-3 d{{ forloop.counter }} box_fieldset'>
+                        <legend class='h6'>Report Texts</legend>
+                        <div id='d{{ forloop.counter }}_report' class='collapse show ml-3'>
+                            {% for report in disease.reports.all %}
+                                {% if 'Notes' not in report.name %}
+                                    <div class='row form-group'>
+                                        <div class='col-3'>{{ report.name }}</div>
+                                        <div class='col-6'>
+                                            <textarea id='gene-desc' rows="1" readonly class='form-control bg-white' aria-label='{{ report.name }}'>{{ report.content }}</textarea>
+                                        </div>
+                                        <div class='col-custom-2 pl-5 btn-group' style='height:35px'>
+                                            <button type='button' class='btn btn-outline-secondary btn-sm' onclick="expand('gene-desc',this)">Expand</button>
+                                            <button type='button' class='btn btn-outline-secondary btn-sm' onclick='copy(this)'>
+                                                <i class='fa fa-clipboard'></i> Copy
+                                            </button>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </fieldset>
+                {% endif %}
+                <fieldset class='mb-3 d{{ forloop.counter }} box_fieldset'>
+                    <legend class='h6'>Review Information</legend>
+                    <div id='d{{ forloop.counter }}_review' class='collapse show ml-3'>
+                        {% if disease.reviewed == 'n' %}
+                            <dl class='row form-group'>
+                                <dt class='col-3'>No Reviews</dt>
+                            </dl>
                         {% endif %}
-                        <div class='row form-group'>
-                            <div class='col-3'><strong>Functional Class</strong></div>
-                            <div class='col-3'>{{ set.value }}</div>
-                        </div>
-                        {% for evidence in set.evidences.all %}
-                            <div class='row form-group'>
-                                <div class='col-3'><strong>Source Type</strong></div>
-                                <div class='col-2'>{{ evidence.get_source_type_display }}</div>
-                            </div>
-                            <div class='row form-group'>
-                                <div class='col-3'><strong>Source ID</strong></div>
-                                <div class='col-2'>{{ evidence.source_id }}</div>
-                            </div>
-                            <div class='row form-group mb-4'>
-                                <div class='col-3'><strong>Evidence Statement</strong></div>
-                                <div class='col-7'>{{ evidence.statement }}</div>
-                                <div class='col-2'>{{ evidence.histories.last }}</div>
-                            </div>
-                        {% endfor %}
-                        <hr/>
-                    {% endfor %}
-                    {% for evidence in disease.evidences.all %}
-                        <div class='row form-group'>
-                            <div class='col-3'><strong>Source Type</strong></div>
-                            <div class='col-2'>{{ evidence.get_source_type_display }}</div>
-                        </div>
-                        <div class='row form-group'>
-                            <div class='col-3'><strong>Source ID</strong></div>
-                            <div class='col-2'>{{ evidence.source_id }}</div>
-                        </div>
-                        <div class='row form-group'>
-                            <div class='col-3'><strong>Evidence Statement</strong></div>
-                            <div class='col-7'>{{ evidence.statement }}</div>
-                            <div class='col-2'>{{ evidence.histories.last }}</div>
-                        </div>
-                        {% with sub=evidence.subevidences.first %}
-                            <div class='row form-group'>
-                                <div class='col-3'><strong>Evidence Significance</strong></div>
-                                <div class='col-2'>{{ sub.evid_sig }}</div>
-                            </div>
-                            <div class='row form-group'>
-                                <div class='col-3'><strong>Evidence Level</strong></div>
-                                <div class='col-2'>{{ sub.level }}</div>
-                            </div>
-                            <div class='row form-group'>
-                                <div class='col-3'><strong>Evidence Direction</strong></div>
-                                <div class='col-2'>{{ sub.evid_dir }}</div>
-                            </div>
-                            <div class='row form-group'>
-                                <div class='col-3'><strong>Clinical Significance</strong></div>
-                                <div class='col-2'>{{ sub.clin_sig }}</div>
-                            </div>
-                            <div class='row form-group'>
-                                <div class='col-3'><strong>Drug / Class</strong></div>
-                                <div class='col-2'>{{ sub.drug_class }}</div>
-                            </div>
-                            <div class='row form-group'>
-                                <div class='col-3'><strong>Significance</strong></div>
-                                <div class='col-2'>{{ sub.evid_rating }}</div>
-                            </div>
-                        {% endwith %}
-                        <hr/>
-                    {% endfor %}
-                </div>
+                        {% if disease.reviewed != 'n' %}
+                            <dl class='row'>
+                                <dt class='col-3'>Reviewed</dt>
+                                <dd class='col-9'>By {{ disease.review_user }} on {{ disease.reviewed_date|date:'N j, Y' }}</dd>
+                            </dl>
+                        {% endif %}
+                        {% if disease.reviewed != 'n' and disease.reviewed != 'r' and disease.meta_review_user %}
+                            <dl class='row'>
+                                <dt class='col-3'>Secondly Reviewed<!--Meta-Reviewed--></dt>
+                                <dd class='col-9'>By {{ disease.meta_review_user }} on {{ disease.meta_reviewed_date|date:'N j, Y' }}</dd>
+                            </dl>
+                        {% endif %}
+                        {% if disease.reviewed == 'a' %}
+                            <dl class='row'>
+                                <dt class='col-3'>Approved</dt>
+                                <dd class='col-9'>By {{ disease.approve_user }} on {{ disease.approved_date|date:'N j, Y' }}</dd>
+                            </dl>
+                        {% endif %}
+                    </div>
+                    <div id='d{{ forloop.counter }}_notes' class='collapse show ml-3'>
+                        <dl class='row'>
+                            {% for report in disease.reports.all %}
+                                {% if 'Note' in report.name %}
+                                    <dt class='col-3'>{{ report.name }}</dt>
+                                    <dd class='col-9'>sdf{{ report.content }}</dd>
+                                {% endif %}
+                            {% endfor %}
+                        </dl>
+                    </div>
+                </fieldset>
             </div>
-            <br/>
-        {% endif %}
+        </div>
     {% endfor %}
-    </div>
 </div>
 </body>
 </html>

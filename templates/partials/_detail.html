@@ -423,7 +423,7 @@
                 </div>
                 <div class='col-custom p-0'></div>
                 <div class='col-custom-4'>
-                    <textarea id='gene-desc' rows="1" readonly class='form-control bg-white' aria-label='Gene-Descriptive'>{{ item.gene.content }}</textarea>
+                    <textarea id='gene-desc' row='2' readonly class='form-control bg-white' aria-label='Gene-Descriptive'>{{ item.gene.content }}</textarea>
                 </div>
                 <div class='col-custom-1-5 pl-5 btn-group' style='height:35px'>
                     <button type='button' class='btn btn-outline-secondary btn-sm' onclick="expand('gene-desc',this)">Expand</button>
@@ -440,7 +440,7 @@
                 </div>
                 <div class='col-custom p-0'></div>
                 <div class='col-custom-4'>
-                    <textarea id='variant-desc' readonly class='form-control bg-white' aria-label='Variant-Descriptive'>value='{{ item.content }}</textarea>
+                    <textarea id='variant-desc' row='2' readonly class='form-control bg-white' aria-label='Variant-Descriptive'>{{ item.content }}</textarea>
                 </div>
                 <div class='col-custom-1-5 pl-5 btn-group' style='height:35px'>
                     <button type='button' class='btn btn-outline-secondary btn-sm' onclick="expand('variant-desc',this)">Expand</button>
@@ -457,7 +457,7 @@
                 </div>
                 <div class='col-custom p-0'></div>
                 <div class='col-custom-4'>
-                    <textarea id='gene-germline' readonly class='form-control bg-white' aria-label='Variant-Germline Implication'>{{ item.gene.germline_content }}</textarea>
+                    <textarea id='gene-germline' row='2' readonly class='form-control bg-white' aria-label='Variant-Germline Implication'>{{ item.gene.germline_content }}</textarea>
                 </div>
                 <div class='col-custom-1-5 pl-5 btn-group' style='height:35px'>
                     <button type='button' class='btn btn-outline-secondary btn-sm' onclick="expand('gene-germline',this)">Expand</button>
@@ -474,7 +474,7 @@
                 </div>
                 <div class='col-custom p-0'></div>
                 <div class='col-custom-4'>
-                    <textarea id='gene-germline' readonly class='form-control bg-white' aria-label='Variant-Germline Implication'>{{ item.germline_content }}</textarea>
+                    <textarea id='variant-germline' row='2' readonly class='form-control bg-white' aria-label='Variant-Germline Implication'>{{ item.germline_content }}</textarea>
                 </div>
                 <div class='col-custom-1-5 pl-5 btn-group' style='height:35px'>
                     <button type='button' class='btn btn-outline-secondary btn-sm' onclick="expand('variant-germline',this)">Expand</button>
@@ -566,8 +566,8 @@
     function expand(element_id, element) {
         collapse(element);
         element = document.getElementById(element_id);
-        if (element.getAttribute('style').includes('height')){
-            element.setAttribute('style', 'overflow: hidden; overflow-wrap: break-word;');
+        if (element.getAttribute('style').includes(' height')){
+            element.setAttribute('style', 'overflow: hidden; overflow-wrap: break-word; min-height: 48px;');
         } else {
             autosize.update(element);
         }
@@ -575,6 +575,9 @@
 
     $(document).ready(function () {
         autosize(document.querySelectorAll('textarea'));
+        Object.values(document.querySelectorAll('textarea')).forEach(function(element) {
+            element.setAttribute('style', 'overflow: hidden; overflow-wrap: break-word; min-height: 48px;');
+        });
 
         let min_height = 0;
         let tabs = jQuery('.tab-content .tab-pane');
