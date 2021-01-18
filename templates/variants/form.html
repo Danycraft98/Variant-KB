@@ -552,7 +552,7 @@
         }
 
         $(document).ready(function () {
-            let tier, review, meta_review, approved;
+            let tier, review, meta_review, approved, dx_label;
             if ('{{ user.specialist }}'.localeCompare('True') === 0) {
                 document.getElementById('d0_review').removeAttribute('disabled')
                 document.getElementById('d1_review').removeAttribute('disabled')
@@ -562,7 +562,7 @@
             {% for disease in item.diseases.all %}
                 i = {{ forloop.counter }} +1;
                 disease = add_disease('{{ disease.branch }}');
-                const dx_label = document.getElementById(disease.id + '_label');
+                dx_label = document.getElementById(disease.id + '_label');
                 dx_label.innerText = dx_label.innerText.replace('[Disease]', '{{ disease.name }}');
                 dx_label.innerText = dx_label.innerText.replace('[Status]', "[{{ disease.get_reviewed_display }}{% if disease.reviewed != 'n' %}:{% endif %}{% if disease.reviewed != 'n' %}{{ disease.reviewed_date|date:'N j, Y' }}{% elif disease.reviewed != 'n' and disease.reviewed != 'r' and disease.meta_review_user %}{{ disease.meta_reviewed_date|date:'N j, Y' }}{% elif disease.reviewed == 'a' %} {{ disease.approved_date|date:'N j, Y' }}{% endif %}]");
                 {% if disease.branch == 'gp' %}

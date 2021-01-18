@@ -192,10 +192,10 @@ def save(request, gene_name, variant_p):
                     'against_score': request.POST.get('d' + str(i) + '_against_score'),
                     'content': request.POST.get('d' + str(i) + '_acmg')
                 }
-                if Score.objects.filter(disease=dx_id):
-                    Score.objects.filter(disease=dx_id).update(**score_dict)
+                if DxToScore.objects.filter(disease=dx_id):
+                    Score.objects.filter(id=DxToScore.objects.get(disease=dx_id).score.id).update(**score_dict)
                 else:
-                    Score.objects.get_or_create(**score_dict, disease=dx_id)
+                    Score.objects.get_or_create(**score_dict)
             else:
                 j = 1
                 func_sig = request.POST.get('d' + str(i) + '_func_sig')

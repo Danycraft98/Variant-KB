@@ -4,8 +4,8 @@ from accounts.models import User
 from .constants import *
 
 __all__ = [
-    'Gene', 'Variant', 'Disease', 'History', 'CancerHotspot', 'PathItem', 'Score', 'Functional',
-    'Evidence', 'SubEvidence', 'Report'
+    'Gene', 'Variant', 'Disease', 'History', 'CancerHotspot', 'PathItem', 'DxToScore',
+    'Score', 'Functional', 'Evidence', 'SubEvidence', 'Report'
 ]
 
 
