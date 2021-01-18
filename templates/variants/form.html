@@ -29,13 +29,14 @@
                                 <div class='row mx-2'>
                                     <div class='col-6 form-group'>
                                         <label for='d0_disease'>Disease</label>
-                                        <input class='form-control' id='d0_disease' name='d0_disease'>
-                                    </div>
-                                    <div class='col-6 form-group'>
-                                        <label for='d0_others'>MIM#</label>
-                                        <select class='form-control selectpicker' id='d0_others' name='d0_others' data-live-search='true'>
-                                            <option>?</option>
-                                        </select>
+                                        <input list='disease_list' class='form-control' id='d0_disease' name='d0_disease'>
+                                        <datalist id="disease_list">
+                                            <option value="DX1">
+                                            <option value="DX2">
+                                            <option value="DX3">
+                                            <option value="DX4">
+                                            <option value="DX5">
+                                        </datalist>
                                     </div>
                                 </div>
 
@@ -73,7 +74,7 @@
                                     <div class='ml-3 collapse show' id='d0_for'>
                                         {% for item in items %}
                                             {% if 'P' in item.key and 'B' not in item.key %}
-                                                <fieldset id='d0_{{ item }}_fields'>
+                                                <fieldset id='d0_{{ item }}_fields' title='{{ item.content }}'>
                                                     <fieldset id='d0_{{ item }}_field'>
                                                         <div class='row form-group'>
                                                             <div class='form-check col-1'>
@@ -113,7 +114,7 @@
                                     <div class='ml-3 collapse show' id='d0_against'>
                                         {% for item in items %}
                                             {% if 'B' in item.key %}
-                                                <fieldset id='d0_{{ item }}_fields'>
+                                                <fieldset id='d0_{{ item }}_fields' title='{{ item.content }}'>
                                                     <fieldset id='d0_{{ item }}_field'>
                                                         <div class='row form-group'>
                                                             <div class='form-check col-1'>
