@@ -1,5 +1,6 @@
-from django.core.files.storage import FileSystemStorage
-from django.core.mail import send_mail
+import json
+from urllib import parse
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.files.storage import FileSystemStorage
@@ -75,16 +76,45 @@ def gene(request, gene_name):
 
 
 @login_required
-def variant(request, gene_name, variant_p):
+def variant(request, gene_name, protein):
     if not request.user.is_staff:
         messages.warning(request, 'You are not authorized to edit variants.')
         return HttpResponseRedirect(reverse('gene', args=[gene_name]))
+
     try:
-        item = Variant.objects.get(gene__name=gene_name, protein=variant_p)
+        item = Variant.objects.get(gene__name=gene_name, protein=protein)
         score_items = PathItem.objects.all()
     except Variant.DoesNotExist:
         raise Http404('Variant does not exist')
-    return render(request, 'variants/form.html', {'item': item, 'items': score_items, 'title': 'Edit - ' + item.protein})
+
+    if item.diseases.count() > 0:
+        forms = [
+            GPDiseaseFormSet(request.POST or None, request.FILES or None, initial=item.diseases.filter(branch='gp').values()),
+            SODiseaseFormSet(request.POST or None, request.FILES or None, initial=item.diseases.filter(branch='so').values())
+        ]
+    else:
+        forms = [
+            GPDiseaseFormSet(request.POST or None, request.FILES or None),
+            SODiseaseFormSet(request.POST or None, request.FILES or None),
+        ]
+
+    if request.method == 'POST':
+        if forms[0].is_valid():
+            print(forms[1].cleaned_data)
+            dx_values = forms[0].cleaned_data
+            create_disease(request, item, dx_values)
+
+        if forms[1].is_valid():
+            print(forms[1].cleaned_data)
+            dx_values = forms[1].cleaned_data
+            create_disease(request, item, dx_values)
+
+        if not forms[0].is_valid() and not forms[1].is_valid():
+            return HttpResponseRedirect(reverse('variant', args=(gene_name, protein)))
+
+        return HttpResponseRedirect(reverse('variant_text', args=(gene_name, protein)))
+
+    return render(request, 'variants/form.html', {'item': item, 'title': 'Edit - ' + item.protein, 'items': score_items, 'forms': forms})
 
 
 @login_required
@@ -98,6 +128,7 @@ def upload(request):
         default_header = list(raw_data.columns)
         [default_header.remove(key) for key in ['IGV', 'UCSC Genome Browser', 'HGMD']]
         raw_data = raw_data.rename(columns=str.lower)
+
     else:
         raw_data = pandas.DataFrame.from_records(json.loads(request.POST.get('dict')))
         default_header = list(raw_data.columns)
@@ -160,27 +191,18 @@ def upload(request):
         return render(request, 'general/uploaded.html', {'tables': (new_html, exist_html), 'is_empty': (new.empty, exist.empty), 'dict': raw_data.to_json(), 'title': 'Uploads'})
 
 
+"""
 @login_required
-def save(request, gene_name, variant_p):
+def save(request, gene_name, protein):
     try:
-        Variant.objects.filter(gene__name=gene_name).filter(protein=variant_p).update(content=request.POST.get('variant_report', ''), germline_content=request.POST.get('variant_germline_report', ''))
+        Variant.objects.filter(gene__name=gene_name).filter(protein=protein).update(content=request.POST.get('variant_report', ''), germline_content=request.POST.get('variant_germline_report', ''))
         Gene.objects.filter(name=gene_name).update(content=request.POST.get('gene_report', ''), germline_content=request.POST.get('gene_germline_report', ''))
-        item = Variant.objects.get(gene__name=gene_name, protein=variant_p)
+        item = Variant.objects.get(gene__name=gene_name, protein=protein)
 
         i = 2
         while request.POST.get('d' + str(i) + '_disease'):
             branch = request.POST.get('d' + str(i) + '_branch')
             dx_dict = {'name': request.POST.get('d' + str(i) + '_disease'), 'report': request.POST.get('d' + str(i) + '_desc'), 'others': request.POST.get('d' + str(i) + '_others')}
-            if not request.POST.get('d' + str(i) + '_id').isdigit():
-                dx_id = Disease.objects.create(**dx_dict, variant=item, branch=branch)
-                History.objects.create(content='Added Disease: ' + str(dx_id), user=request.user, timestamp=datetime.datetime.now(), variant=item)
-            else:
-                dx = Disease.objects.filter(pk=request.POST.get('d' + str(i) + '_id'))
-                old_dx = dict(dx.first().__dict__)
-                dx.update(**dx_dict)
-                dx_id = Disease.objects.get(pk=request.POST.get('d' + str(i) + '_id'))
-                if any(key in {k: None if old_dx[k] == dx_dict[k] else dx_dict[k] for k in dx_dict} for key in dx_dict.keys()):
-                    History.objects.create(content='updated Disease: ' + str(dx_id), user=request.user, timestamp=datetime.datetime.now(), variant=item)
 
             if branch == 'gp':
                 for element in ITEMS.keys():
@@ -238,49 +260,50 @@ def save(request, gene_name, variant_p):
             i += 1
     except Variant.DoesNotExist:
         raise Http404('Variant does not exist')
-    return HttpResponseRedirect(reverse('variant_text', args=(gene_name, variant_p)))
+    return HttpResponseRedirect(reverse('variant_text', args=(gene_name, protein)))
+"""
 
 
 @login_required
-def variant_text(request, gene_name, variant_p):
+def variant_text(request, gene_name, protein):
     try:
-        item = Variant.objects.get(protein=variant_p, gene__name=gene_name)
+        item = Variant.objects.get(protein=protein, gene__name=gene_name)
     except Variant.DoesNotExist:
         raise Http404('Variant does not exist')
     return render(request, 'variants/detail.html', {'item': item, 'title': 'Detail - ' + item.protein})
 
 
 @login_required
-def export(request, gene_name, variant_p):
+def export(request, gene_name, protein):
     try:
-        item = Variant.objects.get(gene__name=gene_name, protein=variant_p)
+        item = Variant.objects.get(gene__name=gene_name, protein=protein)
         disease_list = DiseaseTable(item.diseases.all())
     except Variant.DoesNotExist:
         raise Http404('Variant does not exist')
     return render(request, 'variants/index.html', {'title': 'Export for Variant', 'item': item, 'table': disease_list})
 
 
-def exported(request, gene_name, variant_p):
+def exported(request, gene_name, protein):
     try:
-        item = Variant.objects.get(gene__name=gene_name, protein=variant_p)
+        item = Variant.objects.get(gene__name=gene_name, protein=protein)
     except Variant.DoesNotExist:
         raise Http404('Variant does not exist')
     diseases = Disease.objects.filter(name__in=request.POST.getlist('disease'))
     html = HTML(string=render_to_string('general/export.html', {'item': item, 'diseases': diseases}))
-    html.write_pandasf(target='/tmp/report.pandasf', stylesheets=[
-        CSS('static/bootstrap.min.css'), CSS('static/main.css')
+    html.write_pdf(target='/tmp/report.pdf', stylesheets=[
+        CSS('static/css/bootstrap.min.css'), CSS('static/css/main.css')
     ])
 
     fs = FileSystemStorage('/tmp')
-    with fs.open('report.pandasf') as pandasf:
-        response = HttpResponse(pandasf, content_type='application/pandasf')
-        response['Content-Disposition'] = "attachment; filename=report.pandasf"
+    with fs.open('report.pdf') as pdf:
+        response = HttpResponse(pdf, content_type='application/pdf')
+        response['Content-Disposition'] = "attachment; filename=report.pdf"
         return response
 
 
-def history(request, gene_name, variant_p):
+def history(request, gene_name, protein):
     try:
-        item = Variant.objects.get(gene__name=gene_name, protein=variant_p)
+        item = Variant.objects.get(gene__name=gene_name, protein=protein)
         histories = HistoryTable([h for h in item.history.all()])
     except Variant.DoesNotExist:
         raise Http404('Variant does not exist')

@@ -8,12 +8,12 @@ from api.constants import *
 
 __all__ = ['GPDiseaseFormSet', 'SODiseaseFormSet']
 
-# Germline ------------------------------------------------------------------------------------------
+# Germline Pathogenicity------------------------------------------------------------------------------------------
 
 
 class GPDiseaseBaseForm(BaseNestedModelForm):
     id = forms.CharField(required=False, widget=forms.HiddenInput())
-    branch = forms.ChoiceField(initial='gp', choices=BRANCH_CHOICES, widget=forms.RadioSelect(attrs={
+    branch = forms.ChoiceField(required=False, initial='gp', choices=BRANCH_CHOICES, widget=forms.RadioSelect(attrs={
         'class': 'form-inline'
     }))
     name = forms.CharField(label='Disease Name', widget=forms.TextInput(attrs={
@@ -22,17 +22,14 @@ class GPDiseaseBaseForm(BaseNestedModelForm):
         'placeholder': 'Enter Name...',
         'oninput': 'get_report(this);update_header(this)'
     }))
-    report = forms.CharField(label='Germline Clinical Report', widget=forms.Textarea(attrs={
+    report = forms.CharField(required=False, label='Germline Clinical Report', widget=forms.Textarea(attrs={
         'class': 'form-control',
         'rows': '2'
-    }))
-    others = forms.ChoiceField(label='Tier', choices=TIER_CHOICES, required=False, widget=forms.Select(attrs={
-        'class': 'form-control',
     }))
 
     class Meta:
         model = Disease
-        fields = ['id', 'branch', 'name', 'report', 'others']  # 'reviewed', ]
+        fields = ['id', 'branch', 'name', 'report']  # 'reviewed', ]
 
 
 class ScoreForm(forms.ModelForm):
@@ -82,15 +79,14 @@ class EvidenceForm(forms.ModelForm):
 GPDiseaseFormSet = inlineformset_factory(
     Disease,
     Evidence,
-    extra=1,
     form=GPDiseaseBaseForm,
 )
-# Somatic ------------------------------------------------------------------------------------------
+# Somatic Oncogenicity ------------------------------------------------------------------------------------------
 
 
 class SODiseaseBaseForm(BaseNestedModelForm):
     id = forms.CharField(required=False, widget=forms.HiddenInput())
-    branch = forms.ChoiceField(initial='so', choices=BRANCH_CHOICES, widget=forms.RadioSelect(attrs={
+    branch = forms.ChoiceField(required=False, initial='so', choices=BRANCH_CHOICES, widget=forms.RadioSelect(attrs={
         'class': 'form-inline'
     }))
     name = forms.CharField(label='Disease Name', widget=forms.TextInput(attrs={
@@ -99,11 +95,11 @@ class SODiseaseBaseForm(BaseNestedModelForm):
         'placeholder': 'Enter Name...',
         'oninput': 'get_report(this);update_header(this)'
     }))
-    report = forms.CharField(label='Germline Clinical Report', widget=forms.Textarea(attrs={
+    report = forms.CharField(required=False, label='Germline Clinical Report', widget=forms.Textarea(attrs={
         'class': 'form-control',
         'rows': '2'
     }))
-    others = forms.ChoiceField(label='Tier', choices=TIER_CHOICES, required=False, widget=forms.Select(attrs={
+    others = forms.ChoiceField(required=False, label='Tier', choices=TIER_CHOICES, widget=forms.Select(attrs={
         'class': 'form-control',
     }))
 
@@ -112,12 +108,12 @@ class SODiseaseBaseForm(BaseNestedModelForm):
         fields = ['id', 'branch', 'name', 'report', 'others']  # 'reviewed', ]
 
 
-class FunctionalBaseForm(BaseInlineFormSet):
+class FunctionalForm(forms.ModelForm):
     id = forms.CharField(required=False, widget=forms.HiddenInput())
-    key = forms.ChoiceField(label='Functional Significance', choices=FUNC_SIG_CHOICES, required=False, widget=forms.Select(attrs={
+    key = forms.ChoiceField(required=False, label='Functional Significance', choices=FUNC_SIG_CHOICES, widget=forms.Select(attrs={
         'class': 'form-control',
     }))
-    value = forms.ChoiceField(label='Functional Category', choices=FUNC_CAT_CHOICES, required=False, widget=forms.Select(attrs={
+    value = forms.ChoiceField(required=False, label='Functional Category', choices=FUNC_CAT_CHOICES, widget=forms.Select(attrs={
         'class': 'form-control',
     }))
 
@@ -158,11 +154,10 @@ SODiseaseFormSet = nestedformset_factory(
     Disease,
     Functional,
     form=SODiseaseBaseForm,
-    extra=1,
-    #formset=FunctionalBaseForm,
     nested_formset=inlineformset_factory(
         Evidence, SubEvidence, form=EvidenceForm,
         formset=SubEvidenceFormSet,
-        extra=1, fields='__all__'
+        fields='__all__',
+        extra=1
     ),
 )

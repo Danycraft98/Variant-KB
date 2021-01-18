@@ -19,14 +19,14 @@ def read_file(filename, **kwargs):
 
 
 def create_disease(request, item, dx_values):
-    dx_id = dx_values.pop('id', '')
+    dx_id = dx_values
     if dx_id.isdigit():
         dx = Disease.objects.filter(pk=dx_id)
         old_dx = dict(dx.first().__dict__)
         dx.update(**dx_values)
         dx_id = dx.first()
-        # if any(key in {k: None if old_dx[k] == dx_values[k] else dx_values[k] for k in dx_values} for key in dx_values.keys()):
-        #    History.objects.create(content='updated Disease: ' + str(dx_id), user=request.user, timestamp=datetime.datetime.now(), variant=item)
+        if any(key in {k: None if old_dx[k] == dx_values[k] else dx_values[k] for k in dx_values} for key in dx_values.keys()):
+            History.objects.create(content='updated Disease: ' + str(dx_id), user=request.user, timestamp=datetime.datetime.now(), variant=item)
     else:
         dx_id = Disease.objects.create(**dx_values, variant=item)
-        # History.objects.create(content='Added Disease: ' + str(dx_id), user=request.user, timestamp=datetime.datetime.now(), variant=item)
+        History.objects.create(content='Added Disease: ' + str(dx_id), user=request.user, timestamp=datetime.datetime.now(), variant=item)

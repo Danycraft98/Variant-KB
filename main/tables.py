@@ -2,7 +2,7 @@ from django_tables2.utils import A
 import django_tables2 as tables
 import datetime
 
-from api.models import Gene, Variant, Disease, Evidence, SubEvidence, History
+from api.models import *
 
 
 def add_evidence(request, prefix, dx_id, variant, item=None):

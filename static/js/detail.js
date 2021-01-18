@@ -45,7 +45,7 @@ function copy() {
         if (element.checked === true) {
             /* Copy the text inside the text field to another field */
             console.log(element.value);
-            report_str += element.value + ':\n' + copyText.value + '\n\n';
+            report_str += copyText.value + '\n\n';
         }
     });
     selected_reports.value = report_str.substring(0, report_str.length - 2);
