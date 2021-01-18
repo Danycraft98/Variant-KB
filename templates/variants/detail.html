@@ -49,15 +49,15 @@
                                 <div class='ml-3'>
                                     <div class='row form-group'>
                                         <div class='col-4 offset-md-1'><label for='for_score'>Evidence FOR Pathogenicity</label></div>
-                                        <div class='col-5'><input class='form-control' id='for_score' value='{{ disease.score.first.for_score }}' readonly></div>
+                                        <div class='col-5'><input class='form-control' id='for_score' value='{{ disease.dxtoscore.score.for_score }}' readonly></div>
                                     </div>
                                     <div class='row form-group'>
                                         <div class='col-4 offset-md-1'><label for='against_score'>Evidence AGAINST Pathogenicity</label></div>
-                                        <div class='col-5'><input class='form-control' id='against_score' value='{{ disease.score.first.against_score }}' readonly></div>
+                                        <div class='col-5'><input class='form-control' id='against_score' value='{{ disease.dxtoscore.score.against_score }}' readonly></div>
                                     </div>
                                     <div class='row form-group'>
                                         <div class='col-4 offset-md-1'><label for='against_score'>ACMG Classification</label></div>
-                                        <div class='col-5'><input class='form-control' id='against_score' value='{{ disease.score.first.content }}' readonly></div>
+                                        <div class='col-5'><input class='form-control' id='against_score' value='{{ disease.dxtoscore.score.content }}' readonly></div>
                                     </div>
                                 </div>
                             </fieldset>

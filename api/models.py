@@ -150,7 +150,7 @@ class Score(models.Model):
 
 
 class DxToScore(models.Model):
-    disease = models.OneToOneField(Disease, on_delete=models.CASCADE, related_name='disease', null=True, blank=True)
+    disease = models.OneToOneField(Disease, on_delete=models.CASCADE, related_name='score', null=True, blank=True)
     score = models.OneToOneField(Disease, on_delete=models.CASCADE, null=True, blank=True)
 
 

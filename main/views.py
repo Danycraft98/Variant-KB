@@ -195,7 +195,7 @@ def save(request, gene_name, variant_p):
                 if DxToScore.objects.filter(disease=dx_id):
                     Score.objects.filter(id=DxToScore.objects.get(disease=dx_id).score.id).update(**score_dict)
                 else:
-                    Score.objects.get_or_create(**score_dict)
+                    Score.objects.create(**score_dict)
             else:
                 j = 1
                 func_sig = request.POST.get('d' + str(i) + '_func_sig')
@@ -246,6 +246,7 @@ def save(request, gene_name, variant_p):
 def variant_text(request, gene_name, variant_p):
     try:
         item = Variant.objects.get(protein=variant_p, gene__name=gene_name)
+
     except Variant.DoesNotExist:
         raise Http404('Variant does not exist')
     return render(request, 'variants/detail.html', {'item': item, 'title': 'Detail - ' + item.protein})
@@ -268,14 +269,14 @@ def exported(request, gene_name, variant_p):
         raise Http404('Variant does not exist')
     diseases = Disease.objects.filter(name__in=request.POST.getlist('disease'))
     html = HTML(string=render_to_string('general/export.html', {'item': item, 'diseases': diseases}))
-    html.write_pdf(target='/tmp/report.pandasf', stylesheets=[
-        CSS('static/bootstrap.min.css'), CSS('static/main.css')
+    html.write_pdf(target='/tmp/report.pdf', stylesheets=[
+        CSS('static/css/bootstrap.min.css'), CSS('static/css/main.css')
     ])
 
     fs = FileSystemStorage('/tmp')
-    with fs.open('report.pandasf') as pandasf:
-        response = HttpResponse(pandasf, content_type='application/pandasf')
-        response['Content-Disposition'] = "attachment; filename=report.pandasf"
+    with fs.open('report.pdf') as pandasf:
+        response = HttpResponse(pandasf, content_type='application/pdf')
+        response['Content-Disposition'] = "attachment; filename=report.pdf"
         return response
 
 

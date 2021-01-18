@@ -552,7 +552,7 @@
         }
 
         $(document).ready(function () {
-            let tier, review, meta_review, approved, dx_label;
+            let tier, review, meta_review, approved, dx_label, btn;
             if ('{{ user.specialist }}'.localeCompare('True') === 0) {
                 document.getElementById('d0_review').removeAttribute('disabled')
                 document.getElementById('d1_review').removeAttribute('disabled')
@@ -608,7 +608,7 @@
                         document.getElementById(disease.id + '_func_sig').value = '{{ func.key }}';
                         document.getElementById(func_class.id + '_func_class').value = '{{ func.value }}';
 
-                        const btn = document.getElementById(func_class.id + '_btn');
+                        btn = document.getElementById(func_class.id + '_btn');
                         {% for evidence in func.evidences.all %}
                             {% if forloop.counter > 1 %}
                                 add_evidence_type1(btn);
