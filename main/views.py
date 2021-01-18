@@ -2,33 +2,17 @@ from django.core.files.storage import FileSystemStorage
 from django.core.mail import send_mail
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.files.storage import FileSystemStorage
+from django.core.mail import send_mail
 from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.shortcuts import redirect
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 from django.urls import reverse
-
-import datetime
-import json
-import os
-import pandas
-from urllib import parse
 from weasyprint import HTML, CSS
-from api.models import *
-from .tables import GeneTable, VariantTable, DiseaseTable, HistoryTable, add_evidence
 
-
-def read_file(filename, **kwargs):
-    """Read file with **kwargs; files supported: xls, xlsx, csv, csv.gz, pkl"""
-
-    read_map = {'xls': pandas.read_excel, 'xlsx': pandas.read_excel, 'csv': pandas.read_csv,
-                'gz': pandas.read_csv, 'pkl': pandas.read_pickle}
-
-    ext = os.path.splitext(filename)[1].lower()[1:]
-    assert ext in read_map, "Input file not in correct format, must be xls, xlsx, csv, csv.gz, pkl; current format '{0}'".format(ext)
-    assert os.path.isfile(filename), "File Not Found Exception '{0}'.".format(filename)
-
-    return read_map[ext](filename, **kwargs)
+from .forms import *
+from .functions import *
+from .tables import GeneTable, VariantTable, DiseaseTable, HistoryTable
 
 
 @login_required

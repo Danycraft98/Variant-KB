@@ -6,13 +6,28 @@ function collapse(element) {
     }
 }
 
+function update_header(element) {
+    const dx_id = element.id.split('_')[0],
+          dx_label = document.getElementById(dx_id + '_label');
+    let dx_review = document.querySelector('input[name="' + dx_id + '_review"][type="checkbox"]');
+    let replace_text = dx_label.innerText.split(/[/-]+/)[1]
+    dx_label.innerText = dx_label.innerText.replace(replace_text, ' ' + element.value + ' ');
+
+    if (dx_review !== null) {
+        dx_review = dx_review.nextElementSibling.innerHTML;
+    } else {
+        dx_review = 'No Review';
+    }
+    replace_text = dx_label.innerText.split(/[/-]+/)[2]
+    dx_label.innerText = dx_label.innerText.replace(replace_text, ' ' + dx_review);
+}
+
 function select_evidence(element) {
     document.querySelectorAll("[id^='" + element.id + "_']").forEach(function (item, index) {
         if (index > 7) {
             calculate_score(element);
         }
 
-        console.log(item, index);
         if (element.checked === true) {
             item.removeAttribute('disabled');
         } else if (item.getAttribute('class') && !item.getAttribute('class').includes("check")) {
@@ -63,6 +78,17 @@ function add_disease(dtype) {
     return cln;
 }
 
+function create_divider(element) {
+    const elements = element.querySelectorAll('fieldset'), length = elements.length - 1;
+    Object.values(elements).forEach(function (sub_element, index) {
+        if (index !== length && sub_element.nextSibling.tagName !== 'HR') {
+            const hr = document.createElement('hr');
+            hr.setAttribute('class', 'divider');
+            element.insertBefore(hr, sub_element.nextSibling);
+        }
+    });
+}
+
 function add_evidence(element) {
     const sub_id = element.id.slice(0, -3)
     const id = sub_id + "field"
@@ -85,13 +111,13 @@ function add_evidence(element) {
 }
 
 function add_f_class(element) {
-    const disease_num = element.id.split("_")[0];
+    const dx_id = element.id.split("_")[0];
     // Get the container
-    const container = document.getElementById(disease_num + "_func_classes");
+    const container = document.getElementById(dx_id + "_func_classes");
     const fc_num = container.children.length - 1
 
-    let cln = document.getElementById(disease_num + "_fc0").cloneNode(true);
-    cln.querySelectorAll("[id^='" + disease_num + "_fc']").forEach(function (element) {
+    let cln = document.getElementById(dx_id + "_fc0").cloneNode(true);
+    cln.querySelectorAll("[id^='" + dx_id + "_fc']").forEach(function (element) {
         element.id = element.id.replace(/fc\d/gi, 'fc' + fc_num)
         if (element.name) {
             element.name = element.name.replace(/fc\d/gi, 'fc' + fc_num);
@@ -100,9 +126,9 @@ function add_f_class(element) {
             element.setAttribute("hidden", "");
         }
     })
-    cln.id = disease_num + "_fc" + fc_num;
+    cln.id = dx_id + "_fc" + fc_num;
     cln.removeAttribute('hidden');
-    cln.setAttribute('class', 'mt-4 mb-0')
+    cln.setAttribute('class', 'mt-2 pt-2 mb-0 double-hr')
 
     // Append the cloned <li> element to <ul> with id="myList1"
     container.appendChild(cln);
@@ -129,25 +155,27 @@ function add_evidence_type1(element) {
 
     // Append the cloned element to container
     container.appendChild(cln);
+    create_divider(container);
 }
 
 function add_evidence_type2(element) {
-    const disease_num = element.id.split("_")[0];
+    const dx_id = element.id.split("_")[0];
     // Get the container
-    const container = document.getElementById(disease_num + "_evidences2");
+    const container = document.getElementById(dx_id + "_evidences2");
 
     // Copy the element and its child nodes
-    const cln = document.getElementById(disease_num + "_etype2_1").cloneNode(true);
-    cln.querySelectorAll("[id^='" + disease_num + "_etype2_']").forEach(function (element) {
+    const cln = document.getElementById(dx_id + "_etype2_1").cloneNode(true);
+    cln.querySelectorAll("[id^='" + dx_id + "_etype2_']").forEach(function (element) {
         if (element.tagName !== 'SELECT') {
             element.value = '';
         }
         element.id = element.id.slice(0, -1) + (container.children.length + 1);
     })
-    cln.id = disease_num + "_etype2_" + (container.children.length + 1);
+    cln.id = dx_id + "_etype2_" + (container.children.length + 1);
 
     // Append the cloned element to container
     container.appendChild(cln);
+    create_divider(container);
 }
 
 function getElementsByValue(value, tag, id) {
@@ -207,8 +235,8 @@ function tierChange(element, options, result) {
         if (result === 'Tier IV' && selectedTrue) {
             btn.setAttribute('disabled', '');
             if (div) {
-                div.querySelectorAll("[id^='" + evid_id + "']").forEach(function(element) {
-                    if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA'){
+                div.querySelectorAll("[id^='" + evid_id + "']").forEach(function (element) {
+                    if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
                         element.value = '';
                     }
                 })
@@ -227,8 +255,8 @@ function tierChange(element, options, result) {
 }
 
 function calculate_score(element) {
-    const disease_num = element.id.slice(0, 2)
-    const checkboxes = document.getElementsByName(disease_num);
+    const dx_id = element.id.slice(0, 2)
+    const checkboxes = document.getElementsByName(dx_id);
 
     let l_path, path, l_benign, benign = false;
     const dict = {};
@@ -306,7 +334,7 @@ function calculate_score(element) {
     } else {
         forScore = "Uncertain"
     }
-    document.getElementById(disease_num + "_for_score").setAttribute("value", forScore);
+    document.getElementById(dx_id + "_for_score").setAttribute("value", forScore);
 
     if (dict["BA"]) {
         benign = true;
@@ -330,7 +358,26 @@ function calculate_score(element) {
     } else {
         againstScore = "Uncertain"
     }
-    document.getElementById(disease_num + "_against_score").setAttribute("value", againstScore);
+    document.getElementById(dx_id + "_against_score").setAttribute("value", againstScore);
+    set_ACMG_class(dx_id)
+}
+
+function set_ACMG_class(dx_id) {
+    const for_score = document.getElementById(dx_id + "_for_score").value;
+    const against_score = document.getElementById(dx_id + "_against_score").value;
+    const acmg_class = document.getElementById(dx_id + "_acmg");
+
+    if (for_score.includes('Pathogenic')) {
+        if (against_score === 'Uncertain') {
+            acmg_class.setAttribute("value", for_score);
+        } else if (against_score.includes('Benign')) {
+            acmg_class.setAttribute("value", 'VUS');
+        }
+    } else if (against_score.includes('Benign')) {
+        acmg_class.setAttribute("value", against_score);
+    } else {
+        acmg_class.setAttribute("value", 'Uncertain');
+    }
 }
 
 function updateMsg() {

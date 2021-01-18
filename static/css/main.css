@@ -1,13 +1,46 @@
+.hidden {
+    position: absolute;
+    visibility: hidden;
+    opacity: 0;
+}
+
+input[type=checkbox] + label {
+    font-style: italic;
+}
+
+input[type=checkbox]:checked + label {
+    background-color: #6c757d;
+    color: white;
+    font-style: normal;
+    font-weight: bold;
+}
+
+select, input[type='text'], textarea {
+    display: block;
+    width: 100%;
+    height: calc(1.5em + .75rem + 2px);
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out
+}
+
 .collapser {
     cursor: pointer;
 }
 
-hr {
-    border-top: 1px solid rgb(201, 205, 209);
+.double-hr {
+    border-top: 3px double #545b62 !important
 }
 
-.double-hr {
-    border-top: 3px double rgb(201, 205, 209);
+div[data-toggle='collapse'].card-header:hover {
+    background-color: rgba(0, 0, 0, 0.3);
 }
 
 .col-custom {
@@ -63,6 +96,14 @@ fieldset#level {
     padding: 0.7em 1.4em !important;
 }
 
+hr {
+    border-top: 1px solid rgb(201, 205, 209);
+}
+
+hr.divider {
+    border-top: 1px solid #545b62 !important;
+}
+
 legend {
     text-align: left !important;
     width: auto;
@@ -72,15 +113,12 @@ legend {
 
 textarea:read-only {
     box-sizing: border-box;
-    min-height: 31px;
     overflow-x: hidden;
 }
 
 textarea:read-only {
     border: 0;
     padding: 0;
-    height: 2.25rem;
-    min-height: 2.25rem;
     resize: none;
     overflow-y: hidden;
 }

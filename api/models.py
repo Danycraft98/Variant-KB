@@ -1,9 +1,12 @@
 from django.db import models
-from accounts.models import User
 
-# Constant Pathogenic titles
-ITEMS = {'PVS1': 10, 'PS1': 7, 'PS2': 7, 'PS3': 7, 'PS4': 7, 'PM': 2, 'PM1': 2, 'PM2': 2, 'PM3': 2, 'PM4': 2, 'PM5': 2, 'PM6': 2, 'PP1': 1, 'PP2': 1, 'PP3': 1, 'PP4': 1, 'PP5': 1,
-         'BA1': 16, 'BS1': 8, 'BS2': 8, 'BS3': 8, 'BS4': 8, 'BP1': 1, 'BP2': 1, 'BP3': 1, 'BP4': 1, 'BP5': 1, 'BP6': 1, 'BP7': 1}
+from accounts.models import User
+from .constants import *
+
+__all__ = [
+    'Gene', 'Variant', 'Disease', 'History', 'CancerHotspot', 'PathItem', 'Score', 'Functional',
+    'Evidence', 'SubEvidence', 'Report'
+]
 
 
 # Create your models here.
@@ -47,7 +50,7 @@ class Variant(models.Model):
         ('P', 'possibly damaging'),
         ('B', 'benign'),
         ('na', 'na'),
-    ), max_length=2, default='na',  verbose_name='Polyphen2_HDIV_pred')
+    ), max_length=2, default='na', verbose_name='Polyphen2_HDIV_pred')
     polyphen2_hvar_pred = models.CharField(choices=(
         ('D', 'probably damaging'),
         ('P', 'possibly damaging'),
@@ -110,6 +113,7 @@ class CancerHotspot(models.Model):
 
 class PathItem(models.Model):
     key = models.CharField(max_length=5, null=True)
+    content = models.CharField(max_length=75, null=True)
     value = models.IntegerField(default=0)
 
     def __str__(self):
@@ -118,11 +122,8 @@ class PathItem(models.Model):
 
 class Disease(models.Model):
     name = models.CharField(max_length=20, null=True)
-    branch = models.CharField(choices=(
-        ('so', 'Somatic Oncogenecity'),
-        ('gp', 'Germline Pathogenecity')
-    ), max_length=2, default='so')
-    others = models.CharField(max_length=20, null=True)
+    branch = models.CharField(choices=BRANCH_CHOICES, max_length=2, default='so')
+    others = models.CharField(choices=TIER_CHOICES, max_length=20, null=True)
     report = models.CharField(max_length=20, null=True)
     variant = models.ForeignKey(Variant, related_name='diseases', on_delete=models.CASCADE, null=True, blank=True)
     reviewed = models.CharField(choices=(
@@ -146,12 +147,23 @@ class Score(models.Model):
     for_score = models.CharField(max_length=20, null=True)
     against_score = models.CharField(max_length=20, null=True)
     content = models.CharField(max_length=100, null=True)
-    disease = models.ForeignKey(Disease, related_name='score', on_delete=models.CASCADE, null=True, blank=True)
+
+
+class DxToScore(models.Model):
+    disease = models.OneToOneField(Disease, on_delete=models.CASCADE, related_name='disease', null=True, blank=True)
+    score = models.OneToOneField(Disease, on_delete=models.CASCADE, null=True, blank=True)
 
 
 class Functional(models.Model):
-    key = models.CharField(max_length=20, null=True)
-    value = models.CharField(max_length=20, null=True)
+    key = models.CharField(
+        choices=FUNC_SIG_CHOICES, max_length=20,
+        null=True,
+    )
+    value = models.CharField(
+        choices=FUNC_CAT_CHOICES,
+        max_length=20,
+        null=True
+    )
     disease = models.ForeignKey(Disease, related_name='functionals', on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
@@ -159,11 +171,6 @@ class Functional(models.Model):
 
 
 class Evidence(models.Model):
-    TYPE_CHOICES = [
-        ('PM', 'PMID'),
-        ('O', 'Others'),
-    ]
-
     item = models.ForeignKey(PathItem, on_delete=models.CASCADE, null=True, blank=True)
     functional = models.ForeignKey(Functional, related_name='evidences', on_delete=models.CASCADE, null=True, blank=True)
     disease = models.ForeignKey(Disease, related_name='evidences', on_delete=models.CASCADE, null=True, blank=True)
@@ -185,22 +192,29 @@ class Evidence(models.Model):
 
 
 class SubEvidence(models.Model):
-    SIG_CHOICES = [
-        ('Pred', 'Predictive'),
-        ('Prog', 'Prognostic'),
-        ('Diag', 'Diagnostic'),
-    ]
-
-    level = models.CharField(max_length=1, null=True)
     evid_sig = models.CharField(
         max_length=4,
-        choices=SIG_CHOICES,
+        choices=EVID_SIG_CHOICES,
         default='Pred',
     )
-    evid_dir = models.BooleanField(null=True)
-    clin_sig = models.CharField(max_length=25)
+    level = models.CharField(
+        max_length=1,
+        choices=EVID_LEVEL_CHOICES,
+        null=True
+    )
+    evid_dir = models.BooleanField(
+        choices=EVID_DIR_CHOICES,
+        null=True
+    )
+    clin_sig = models.CharField(
+        choices=CLIN_SIG_CHOICES,
+        max_length=25
+    )
     drug_class = models.TextField(null=True)
-    evid_rating = models.IntegerField(default=1)
+    evid_rating = models.IntegerField(
+        choices=EVID_RATING_CHOICES,
+        default=1
+    )
     evidence = models.ForeignKey(Evidence, related_name='subevidences', on_delete=models.CASCADE, null=True, blank=True)
     variant = models.ForeignKey(Variant, related_name='subevidences', on_delete=models.CASCADE, null=True, blank=True)
 
@@ -233,6 +247,7 @@ class History(models.Model):
         return str(self.user) + ' / ' + self.timestamp.strftime('%Y-%m-%d')
 
 
+# TODO: Delete Class
 class Interpretation(models.Model):
     content = models.TextField(blank=True)
     genes = models.ManyToManyField(Gene, related_name='interpretations')

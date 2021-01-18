@@ -11,8 +11,10 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+from os.path import dirname, join, realpath
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+from django.core.files.uploadhandler import MemoryFileUploadHandler, TemporaryFileUploadHandler
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Quick-start development settings - unsuitable for production
@@ -141,3 +143,11 @@ STATICFILES_DIRS = [
 	os.path.join(BASE_DIR, "static"),
 	'/var/www/static/',
 ]
+
+
+UPLOADS_PATH = join(dirname(realpath(__file__)), 'static/uploads/')
+FILE_UPLOAD_TEMP_DIR = join(dirname(realpath(__file__)), 'static/tmp-uploads/')
+FILE_UPLOAD_HANDLERS = (
+	"django.core.files.uploadhandler.MemoryFileUploadHandler",
+	"django.core.files.uploadhandler.TemporaryFileUploadHandler"
+)
