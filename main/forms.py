@@ -112,7 +112,7 @@ class SODiseaseBaseForm(BaseNestedModelForm):
         fields = ['id', 'branch', 'name', 'report', 'others']  # 'reviewed', ]
 
 
-class FunctionalBaseForm(BaseInlineFormSet):
+class FunctionalBaseFormSet(BaseInlineFormSet):
     id = forms.CharField(required=False, widget=forms.HiddenInput())
     key = forms.ChoiceField(label='Functional Significance', choices=FUNC_SIG_CHOICES, required=False, widget=forms.Select(attrs={
         'class': 'form-control',
@@ -159,7 +159,7 @@ SODiseaseFormSet = nestedformset_factory(
     Functional,
     form=SODiseaseBaseForm,
     extra=1,
-    #formset=FunctionalBaseForm,
+    #formset=FunctionalBaseFormSet,
     nested_formset=inlineformset_factory(
         Evidence, SubEvidence, form=EvidenceForm,
         formset=SubEvidenceFormSet,
