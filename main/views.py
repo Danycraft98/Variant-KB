@@ -1,5 +1,6 @@
-from django.core.files.storage import FileSystemStorage
-from django.core.mail import send_mail
+import json
+from urllib import parse
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.files.storage import FileSystemStorage
@@ -10,9 +11,9 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from weasyprint import HTML, CSS
 
-from .forms import *
+from api.constants import ITEMS
 from .functions import *
-from .tables import GeneTable, VariantTable, DiseaseTable, HistoryTable
+from .tables import GeneTable, VariantTable, DiseaseTable, HistoryTable, add_evidence
 
 
 @login_required
@@ -267,7 +268,7 @@ def exported(request, gene_name, variant_p):
         raise Http404('Variant does not exist')
     diseases = Disease.objects.filter(name__in=request.POST.getlist('disease'))
     html = HTML(string=render_to_string('general/export.html', {'item': item, 'diseases': diseases}))
-    html.write_pandasf(target='/tmp/report.pandasf', stylesheets=[
+    html.write_pdf(target='/tmp/report.pandasf', stylesheets=[
         CSS('static/bootstrap.min.css'), CSS('static/main.css')
     ])
 

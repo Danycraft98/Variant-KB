@@ -265,7 +265,7 @@
                             {% for report in disease.reports.all %}
                                 {% if 'Note' in report.name %}
                                     <dt class='col-3'>{{ report.name }}</dt>
-                                    <dd class='col-9'>sdf{{ report.content }}</dd>
+                                    <dd class='col-9'>{{ report.content }}</dd>
                                 {% endif %}
                             {% endfor %}
                         </dl>
