@@ -1,3 +1,7 @@
+a {
+    text-decoration: none !important
+}
+
 .hidden {
     position: absolute;
     visibility: hidden;
@@ -23,7 +27,7 @@ input[type=checkbox]:checked + label {
     border-top: 3px double #545b62 !important
 }
 
-div[data-toggle='collapse'].card-header:hover {
+div[data-bs-toggle='collapse'].card-header:hover {
     background-color: rgba(0, 0, 0, 0.3);
 }
 
@@ -93,6 +97,11 @@ legend {
     width: auto;
     padding: 0 10px;
     border-bottom: none;
+    float: none;
+}
+
+.table > :not(caption) > tr > td {
+    border-bottom: grey 1px !important;
 }
 
 textarea:read-only {

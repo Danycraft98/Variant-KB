@@ -3,21 +3,22 @@
 {% load custom_tags %}
 
 {% block content %}
-    <div class='card shadow my-5'>
-        <!-- Page Heading -->
+    <div class='page-header mt-4 d-flex flex-row align-items-center justify-content-between border-bottom'>
+        <h3>{{ title }}</h3>
+        {% if 'Export' in title %}
+            <div class='align-items-right my-2'>
+                <a class='btn btn-outline-primary' type='button' href='{% url 'variant_text' item.gene.name item.protein %}'>Cancel</a>
+                <button class='btn btn-primary' type='submit'>Export</button>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class='card my-5'>
         {% if 'Export' in title %}
             <form method='post' action='{% url 'exported' item.gene.name item.protein %}'>
+            {% csrf_token %}
         {% endif %}
-        {% csrf_token %}
-        <div class='card-header d-flex flex-row align-items-center justify-content-between'>
-            <h5 class='text-primary my-auto'>{{ title }}</h5>
-            {% if 'Export' in title %}
-                <div class='align-items-right'>
-                    <a class='btn btn-outline-primary' type='button' href='{% url 'variant_text' item.gene.name item.protein %}'>Cancel</a>
-                    <button class='btn btn-primary' type='submit'>Export</button>
-                </div>
-            {% endif %}
-        </div>
+
 
         <!-- Page Body -->
         <div class='card-body'>
@@ -53,13 +54,16 @@
         </div>
     {% endif %}
 
-    <link rel='stylesheet' href='//cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css'>
+    <link rel='stylesheet' href='//cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css'>
 {% endblock %}
 
 {% block script %}
-    <script src='//cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js'></script>
+    <script src='//cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js'></script>
     <script>
-        $('#warningModal').modal('show')
+        const warningModal = document.getElementById('warningModal')
+        if (warningModal) {
+            warningModal.show();
+        }
         $(document).ready(function () {
             $('.dataTable').DataTable(
                 {% if table.class_type == 'Variant' %}

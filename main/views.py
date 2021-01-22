@@ -13,13 +13,14 @@ from weasyprint import HTML, CSS
 
 from .forms import *
 from .functions import *
-from .tables import GeneTable, VariantTable, DiseaseTable, HistoryTable
+from .tables import *
 
 
 @login_required
 def index(request):
-    gene_list = GeneTable(Gene.objects.all())
-    return render(request, 'variants/index.html', {'table': gene_list, 'title': 'List of Genes'})
+    counts = [Gene.objects.count(), Variant.objects.count(), Disease.objects.count()]
+    mini_tables = [GeneCardTable(Gene.objects.all()), VariantCardTable(Variant.objects.all()), DiseaseCardTable(Disease.objects.all())]
+    return render(request, 'general/index.html', {'counts': counts, 'mini_tables': mini_tables})
 
 
 @login_required
@@ -56,6 +57,12 @@ def account_request(request):
 
 
 @login_required
+def genes(request):
+    gene_list = GeneTable(Gene.objects.all())
+    return render(request, 'variants/index.html', {'table': gene_list, 'title': 'List of Genes'})
+
+
+@login_required
 def variants(request):
     if request.GET:
         variant_list = VariantTable(Variant.objects.filter(chr__contains=request.GET.get('chromosome', ''), protein__contains=request.GET.get('protein', ''), cdna__contains=request.GET.get('cdna', ''), ref__contains=request.GET.get('ref', ''), alt__contains=request.GET.get('alt', '')))
@@ -88,33 +95,39 @@ def variant(request, gene_name, protein):
         raise Http404('Variant does not exist')
 
     if item.diseases.count() > 0:
+        diseases = [item.diseases.filter(branch='so'), item.diseases.filter(branch='gp')]
         forms = [
-            GPDiseaseFormSet(request.POST or None, request.FILES or None, initial=item.diseases.filter(branch='gp').values()),
-            SODiseaseFormSet(request.POST or None, request.FILES or None, initial=item.diseases.filter(branch='so').values())
+            SODiseaseFormSet(request.POST or None, request.FILES or None, initial=diseases[0].values()),
+            GPDiseaseFormSet(request.POST or None, request.FILES or None, initial=diseases[1].values()),
+            EvidenceFormSet(request.POST or None, request.FILES or None),
+            PathItemFormSet(request.POST or None, request.FILES or None, initial=PathItem.objects.all().values())
         ]
+        for i, form in enumerate(forms[:2]):
+            form.extra = len(diseases[i])
     else:
         forms = [
-            GPDiseaseFormSet(request.POST or None, request.FILES or None),
             SODiseaseFormSet(request.POST or None, request.FILES or None),
+            GPDiseaseFormSet(request.POST or None, request.FILES or None),
+            EvidenceFormSet(request.POST or None, request.FILES or None),
+            PathItemFormSet(request.POST or None, request.FILES or None, initial=PathItem.objects.all().values())
         ]
 
     if request.method == 'POST':
-        if forms[0].is_valid():
-            print(forms[1].cleaned_data)
-            dx_values = forms[0].cleaned_data
-            create_disease(request, item, dx_values)
-
-        if forms[1].is_valid():
-            print(forms[1].cleaned_data)
-            dx_values = forms[1].cleaned_data
-            create_disease(request, item, dx_values)
+        print(forms[0].errors, forms[1].errors, forms[2].errors, forms[3].errors,)
+        for formset in forms[:2]:
+            for form in formset:
+                if form.is_valid():
+                    create_disease(request, item, form.cleaned_data)
 
         if not forms[0].is_valid() and not forms[1].is_valid():
             return HttpResponseRedirect(reverse('variant', args=(gene_name, protein)))
 
         return HttpResponseRedirect(reverse('variant_text', args=(gene_name, protein)))
 
-    return render(request, 'variants/form.html', {'item': item, 'title': 'Edit - ' + item.protein, 'items': score_items, 'forms': forms})
+    return render(request, 'variants/form.html', {
+        'item': item, 'title': 'Edit - ' + item.protein,
+        'items': score_items, 'forms': forms[:2],
+        'other_forms': forms[2:]})
 
 
 @login_required
@@ -189,79 +202,6 @@ def upload(request):
         exist_html = exist.to_html(classes='exist table table-bordered table-hover', justify='left')
         new_html = new.to_html(classes='new table table-bordered table-hover', justify='left')
         return render(request, 'general/uploaded.html', {'tables': (new_html, exist_html), 'is_empty': (new.empty, exist.empty), 'dict': raw_data.to_json(), 'title': 'Uploads'})
-
-
-"""
-@login_required
-def save(request, gene_name, protein):
-    try:
-        Variant.objects.filter(gene__name=gene_name).filter(protein=protein).update(content=request.POST.get('variant_report', ''), germline_content=request.POST.get('variant_germline_report', ''))
-        Gene.objects.filter(name=gene_name).update(content=request.POST.get('gene_report', ''), germline_content=request.POST.get('gene_germline_report', ''))
-        item = Variant.objects.get(gene__name=gene_name, protein=protein)
-
-        i = 2
-        while request.POST.get('d' + str(i) + '_disease'):
-            branch = request.POST.get('d' + str(i) + '_branch')
-            dx_dict = {'name': request.POST.get('d' + str(i) + '_disease'), 'report': request.POST.get('d' + str(i) + '_desc'), 'others': request.POST.get('d' + str(i) + '_others')}
-
-            if branch == 'gp':
-                for element in ITEMS.keys():
-                    item_id = PathItem.objects.get(key=element)
-                    add_evidence(request, 'd' + str(i) + '_' + element, dx_id, item, item_id)
-                score_dict = {
-                    'for_score': request.POST.get('d' + str(i) + '_for_score'),
-                    'against_score': request.POST.get('d' + str(i) + '_against_score'),
-                    'content': request.POST.get('d' + str(i) + '_acmg')
-                }
-                if Score.objects.filter(disease=dx_id):
-                    Score.objects.filter(disease=dx_id).update(**score_dict)
-                else:
-                    Score.objects.get_or_create(**score_dict, disease=dx_id)
-            else:
-                j = 1
-                func_sig = request.POST.get('d' + str(i) + '_func_sig')
-                while request.POST.get('d' + str(i) + '_fc' + str(j)):
-                    if not request.POST.get('d' + str(i) + '_fc' + str(j) + '_id').isdigit():
-                        func_id = Functional.objects.create(key=func_sig, value=request.POST.get('d' + str(i) + '_fc' + str(j)), disease=dx_id)
-                    else:
-                        func_id = Functional.objects.get(pk=request.POST.get('d' + str(i) + '_fc' + str(j) + '_id'))
-                        Functional.objects.filter(pk=request.POST.get('d' + str(i) + '_fc' + str(j) + '_id')).update(key=func_sig, value=request.POST.get('d' + str(i) + '_fc' + str(j)))
-
-                    add_evidence(request, 'd' + str(i) + '_fc' + str(j) + '_etype1', dx_id, item, func_id)
-                    j += 1
-                add_evidence(request, 'd' + str(i) + '_etype2', dx_id, item)
-
-            for report_id, report, field_name in zip(request.POST.getlist('d' + str(i) + '_report_id'), request.POST.getlist('d' + str(i) + '_report'), request.POST.getlist('d' + str(i) + '_report_name')):
-                if len(report) > 0:
-                    if not report_id.isdigit():
-                        Report.objects.create(name=field_name, content=report, gene=item.gene, variant=item, disease=dx_id)
-                    else:
-                        Report.objects.filter(pk=report_id).update(name=field_name, content=report)
-
-            notes_id = request.POST.get('d' + str(i) + '_notes_id', None)
-            content = request.POST.get('d' + str(i) + '_notes', '')
-            if notes_id.isdigit():
-                Report.objects.filter(pk=notes_id).update(content=content)
-            else:
-                Report.objects.create(name='Curation Notes', content=content, gene=item.gene, variant=item, disease=dx_id)
-
-            review_val = request.POST.getlist('d' + str(i) + '_review', ['n'])[-1]
-            filter_val = Disease.objects.filter(pk=dx_id.id)
-            if review_val == 'r':
-                filter_val.update(reviewed_date=datetime.datetime.now(), review_user=request.user)
-                History.objects.create(content='Reviewed Disease: ' + str(filter_val.first()), user=request.user, timestamp=datetime.datetime.now(), variant=item)
-            elif review_val == 'm':
-                filter_val.update(meta_reviewed_date=datetime.datetime.now(), meta_review_user=request.user)
-                History.objects.create(content='Secondly Reviewed Disease: ' + str(filter_val.first()), user=request.user, timestamp=datetime.datetime.now(), variant=item)
-            elif review_val == 'a':
-                filter_val.update(approved_date=datetime.datetime.now(), approve_user=request.user)
-                History.objects.create(content='Approved Disease: ' + str(filter_val.first()), user=request.user, timestamp=datetime.datetime.now(), variant=item)
-            filter_val.update(reviewed=review_val)
-            i += 1
-    except Variant.DoesNotExist:
-        raise Http404('Variant does not exist')
-    return HttpResponseRedirect(reverse('variant_text', args=(gene_name, protein)))
-"""
 
 
 @login_required

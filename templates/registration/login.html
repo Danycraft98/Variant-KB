@@ -4,7 +4,7 @@
 {% block style %}
     <style>
         .bg-image {
-            background: url({% static 'variant_logo.jpg' %}) center;
+            background: url({% static 'images/variant_logo.jpg' %}) center;
             background-size: cover;
         }
     </style>
@@ -37,34 +37,36 @@
                                                 please login with an account that has access.</p>
                                         {% endif %}
                                     {% endif %}
+
                                     <form class='user' method='POST' action=''>
                                         {% csrf_token %}
-                                        <div class='input-group'>
-                                            <div class='input-group-append'>
-                                                <span class='input-group-text' style='width:40px'><span class='fa fa-user'></span></span>
-                                            </div>
-                                            <label for='username'></label><input type='text' class='form-control' name='username' id='username' placeholder='Username'>
+                                        <div class='input-group mb-3'>
+                                            <span class='input-group-text' style='width:40px'>
+                                                <i class='fa fa-user'></i>
+                                            </span>
+                                            {{ form.username }}
                                         </div>
-                                        <br/>
-                                        <div class='input-group'>
-                                            <div class='input-group-append'>
-                                                <span class='input-group-text' style='width:40px'><span class='fa fa-key'></span></span>
-                                            </div>
-                                            <label for='password'></label><input type='password' class='form-control' name='password' id='password' placeholder='Password'>
+
+                                        <div class='input-group mb-3'>
+                                            <span class='input-group-text' style='width:40px'>
+                                                <i class='fa fa-key'></i>
+                                            </span>
+                                            {{ form.password }}
                                         </div>
+
                                         <hr/>
-                                        <button class='btn btn-lg btn-primary btn-block' type='submit'><i class='fa fa-sign-in'></i> Login</button>
+                                        <button class='btn btn-primary col-12' type='submit'><i class='fa fa-sign-in'></i> Login</button>
                                         <input type='hidden' name='next' value='{{ next }}'/>
                                     </form>
                                     <div class='row text-center mt-2 mr-1'>
                                         <div class='col'>
                                             <p class='kpx_forgotPwd'>
-                                                <a href='{% url 'signup' %}'>Register</a>
+                                                <a class='small' href='{% url 'signup' %}'>Register</a>
                                             </p>
                                         </div>
                                         <div class='col'>
                                             <p class=''>
-                                                <a href='{% url 'password_reset' %}'>Forgot password?</a>
+                                                <a class='small' href='{% url 'password_reset' %}'>Forgot password?</a>
                                             </p>
                                         </div>
                                     </div>

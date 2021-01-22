@@ -1,14 +1,17 @@
+# Django Packages -------------------
+Django>=3.1.5
+django-cors-headers>=3.6.0
+django-nested-formset
+django-tables2>=2.3.4
+djangorestframework>=3.12.2
+
+# Other Packages --------------------
 asgiref>=3.3.1
 cairocffi>=1.2.0
 CairoSVG>=2.5.1
 cffi>=1.14.4
 cssselect2>=0.4.1
 defusedxml>=0.6.0
-Django>=3.1.5
-django-cors-headers>=3.6.0
-django-nested-formset
-django-tables2>=2.3.4
-djangorestframework>=3.12.2
 html5lib>=1.1
 mysqlclient>=2.0.3
 numpy>=1.19.5

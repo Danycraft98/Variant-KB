@@ -1,7 +1,7 @@
-from django.db import models
 from django.contrib.auth.models import (
     BaseUserManager, AbstractBaseUser, PermissionsMixin
 )
+from django.db import models
 
 
 class UserManager(BaseUserManager):
@@ -13,10 +13,16 @@ class UserManager(BaseUserManager):
         """
         Creates and saves a User with the given email and password.
 
-        username: str; User's username
-        email: str; User's email
-        password: str; User's password
-        return: User
+        Args:
+            username (str): User's username
+            email (str): User's email
+            password (str): User's password
+        
+        Returns: User
+
+        >>> userManager = UserManager()
+        >>> userManager.create_user('username', 'password', 'email@email.com')
+
         """
         user = self.model(
             username=username,
@@ -31,10 +37,16 @@ class UserManager(BaseUserManager):
         """
         Creates and saves a staff user with the given email and password.
 
-        username: str; User's username
-        email: str; User's email
-        password: str; User's password
-        return: User
+        Args:
+            username (str): User's username
+            email (str): User's email
+            password (str): User's password
+        
+        Returns: User
+
+        >>> userManager = UserManager()
+        >>> userManager.create_staffuser('username', 'password', 'email@email.com')
+
         """
         user = self.create_user(
             username,
@@ -49,10 +61,16 @@ class UserManager(BaseUserManager):
         """
         Creates and saves a superuser with the given email and password.
 
-        username: str; User's username
-        email: str; User's email
-        password: str; User's password
-        return: User
+        Args:
+            username (str): User's username
+            email (str): User's email
+            password (str): User's password
+        
+        Returns: User
+
+        >>> userManager = UserManager()
+        >>> userManager.create_specialist('username', 'password', 'email@email.com')
+
         """
         user = self.create_user(
             username,
@@ -68,10 +86,16 @@ class UserManager(BaseUserManager):
         """
         Creates and saves a superuser with the given email and password.
 
-        username: str; User's username
-        email: str; User's email
-        password: str; User's password
-        return: User
+        Args:
+            username (str): User's username
+            email (str): User's email
+            password (str): User's password
+        
+        Returns: User
+
+        >>> userManager = UserManager()
+        >>> userManager.create_counselor('username', 'password', 'email@email.com')
+
         """
         user = self.create_user(
             username,
@@ -87,6 +111,17 @@ class UserManager(BaseUserManager):
     def create_scientist(self, username, email, password):
         """
         Creates and saves a superuser with the given email and password.
+        
+        Args:
+            username (str): User's username
+            email (str): User's email
+            password (str): User's password
+        
+        Returns: User
+
+        >>> userManager = UserManager()
+        >>> userManager.create_scientist('username', 'password', 'email@email.com')
+
         """
         user = self.create_user(
             username,
@@ -104,10 +139,16 @@ class UserManager(BaseUserManager):
         """
         Creates and saves a superuser with the given email and password.
 
-        username: str; User's username
-        email: str; User's email
-        password: str; User's password
-        return: User
+        Args:
+            username (str): User's username
+            email (str): User's email
+            password (str): User's password
+        
+        Returns: User
+
+        >>> userManager = UserManager()
+        >>> userManager.create_superuser('username', 'password', 'email@email.com')
+
         """
         user = self.create_user(
             username,
@@ -128,16 +169,17 @@ class User(AbstractBaseUser, PermissionsMixin):
     """
     A class used to represent a User object
 
-    username: models.CharField; User's username
-    email: models.EmailField; User's email
-    active: models.BooleanField; User's active status
-    is_active: models.BooleanField; User's active status
-    staff: models.BooleanField; User's active status
-    specialist: models.BooleanField; User's specialist status
-    counselor: models.BooleanField; User's counselor status
-    scientist: models.BooleanField; User's scientist status
-    admin: models.BooleanField; User's admin status
-    objects: UserManager; Connection to user manager object
+    Attributes:
+        username (models.CharField): User's username
+        email (models.EmailField): User's email
+        active (models.BooleanField): User's active status
+        is_active (models.BooleanField): User's active status
+        staff (models.BooleanField): User's active status
+        specialist (models.BooleanField): User's specialist status
+        counselor (models.BooleanField): User's counselor status
+        scientist (models.BooleanField): User's scientist status
+        admin (models.BooleanField): User's admin status
+        objects (UserManager): Connection to user manager object
     """
 
     username = models.CharField(max_length=150, unique=True)
@@ -158,7 +200,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         """
         The user is identified by their email address
 
-        return: str
+        Returns: str
         """
         return self.email
 
@@ -166,7 +208,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         """
         The user is identified by their email address
 
-        return: str
+        Returns: str
         """
         return self.email
 
@@ -174,51 +216,56 @@ class User(AbstractBaseUser, PermissionsMixin):
         """
         The string return method
 
-        :return:
+        Returns: str
         """
         return self.username
 
     @property
     def is_staff(self):
         """
-        staff status is returned
+        The user staff status is returned
 
-        return: bool
+        Returns: bool
         """
         return self.staff
 
     @property
     def is_scientist(self):
         """
-        scientist status is returned
+        The user scientist status is returned
 
-        return: bool
+        Returns: bool
         """
         return self.scientist
 
     @property
     def is_counselor(self):
         """
-        counselor status is returned
+        The user counselor status is returned
 
-        return: bool
+        Returns: bool
         """
         return self.counselor
 
     @property
     def is_specialist(self):
         """
-        specialist status is returned
+        The user specialist status is returned
 
-        return: bool
+        Returns: bool
         """
         return self.specialist
 
     @property
     def is_admin(self):
         """
-        admin status is returned
+        The user admin status is returned
 
-        return: bool
+        Returns: bool
         """
         return self.admin
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()

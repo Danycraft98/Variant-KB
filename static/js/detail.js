@@ -16,7 +16,7 @@ $(document).ready(function () {
     autosize(document.querySelectorAll('textarea'));
 
     let min_height = 0;
-    let tabs = jQuery('.tab-content .tab-pane');
+    let tabs = jQuery('#detail-content .tab-pane');
     jQuery.each(tabs, function () {
         this.classList.add('active'); /* make all visible */
         min_height = (this.clientHeight > min_height ? this.clientHeight : min_height);
@@ -24,6 +24,7 @@ $(document).ready(function () {
             this.classList.remove('active'); /* hide again */
         }
     });
+
     jQuery.each(tabs, function () {
         jQuery(this).css('min-height', min_height);
     });

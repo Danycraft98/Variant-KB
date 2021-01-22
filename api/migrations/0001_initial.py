@@ -34,8 +34,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=20, null=True)),
-                ('branch', models.CharField(choices=[('so', 'Somatic Oncogenecity'), ('gp', 'Germline Pathogenecity')], default='so', max_length=2)),
-                ('others', models.CharField(max_length=20, null=True)),
+                ('branch', models.CharField(choices=[('gp', 'Germline Pathogenecity'), ('so', 'Somatic Oncogenecity')], default='so', max_length=2)),
+                ('others', models.CharField(choices=[(None, 'Select'), ('Tier I', 'Tier I'), ('Tier II', 'Tier II'), ('Tier III', 'Tier III'), ('Tier IV', 'Tier IV')], max_length=20, null=True)),
                 ('report', models.CharField(max_length=20, null=True)),
                 ('reviewed', models.CharField(choices=[('n', 'Not Reviewed'), ('r', 'Reviewed'), ('m', 'Secondly Reviewed'), ('a', 'Approved')], default='n', max_length=1)),
                 ('reviewed_date', models.DateTimeField(null=True, verbose_name='reviewed date')),
@@ -46,7 +46,7 @@ class Migration(migrations.Migration):
                 ('review_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='reviewed_variants', to=settings.AUTH_USER_MODEL)),
             ],
         ),
-
+        
         migrations.CreateModel(
             name='Evidence',
             fields=[
@@ -57,7 +57,7 @@ class Migration(migrations.Migration):
                 ('disease', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='evidences', to='api.disease')),
             ],
         ),
-
+        
         migrations.CreateModel(
             name='Gene',
             fields=[
@@ -68,7 +68,7 @@ class Migration(migrations.Migration):
                 ('germline_content', models.TextField(blank=True)),
             ],
         ),
-
+        
         migrations.CreateModel(
             name='PathItem',
             fields=[
@@ -78,17 +78,7 @@ class Migration(migrations.Migration):
                 ('value', models.IntegerField(default=0)),
             ],
         ),
-
-        migrations.CreateModel(
-            name='Score',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('for_score', models.CharField(max_length=20, null=True)),
-                ('against_score', models.CharField(max_length=20, null=True)),
-                ('content', models.CharField(max_length=100, null=True)),
-            ],
-        ),
-
+        
         migrations.CreateModel(
             name='Variant',
             fields=[
@@ -136,22 +126,33 @@ class Migration(migrations.Migration):
                 ('gene', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='variants', to='api.gene')),
             ],
         ),
-
+        
         migrations.CreateModel(
             name='SubEvidence',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('level', models.CharField(max_length=1, null=True)),
-                ('evid_sig', models.CharField(choices=[('Pred', 'Predictive'), ('Prog', 'Prognostic'), ('Diag', 'Diagnostic')], default='Pred', max_length=4)),
-                ('evid_dir', models.BooleanField(null=True)),
-                ('clin_sig', models.CharField(max_length=25)),
-                ('drug_class', models.TextField(null=True)),
-                ('evid_rating', models.IntegerField(default=1)),
+                ('evid_sig', models.CharField(choices=[(None, 'Select'), ('Pred', 'Predictive'), ('Prog', 'Prognostic'), ('Diag', 'Diagnostic')], default='Pred', max_length=4, verbose_name='Evidence Significance')),
+                ('level', models.CharField(choices=[(None, 'Select'), ('A', 'A'), ('B', 'B'), ('C', 'C'), ('D', 'D'), ('E', 'E')], max_length=1, null=True, verbose_name='Evidence Level')),
+                ('evid_dir', models.BooleanField(choices=[(None, 'Select'), (True, 'Support'), (False, 'Does Not Support')], null=True, verbose_name='Evidence Direction')),
+                ('clin_sig', models.CharField(choices=[(None, 'Select'), ('Pred: Resistance', 'Pred: Resistance'), ('Pred: Adverse Response', 'Pred: Adverse Response'), ('Pred: Reduced Sensitivity', 'Pred: Reduced Sensitivity'), ('Pred: Sensitivity', 'Pred: Sensitivity'), ('Prog: Better Outcome', ' disabled hidden> Prog: Better Outcome'), ('Prog: Poorer Outcome', ' disabled hidden> Prog: Poorer Outcome'), ('Dx: Positive Diagnosis', ' disabled hidden> Dx: Positive Diagnosis'), ('Dx: Negative Diagnosis', ' disabled hidden> Dx: Negative Diagnosis')], max_length=25, verbose_name='Clinical Significance')),
+                ('drug_class', models.TextField(null=True, verbose_name='Drug/Drug Class/Dx')),
+                ('evid_rating', models.IntegerField(choices=[(0, 'Select'), (1, '1 Star'), (2, '2 Stars'), (3, '3 Stars'), (4, '4 Stars'), (5, '5 Stars')], default=1, verbose_name='Evidence Rating')),
                 ('evidence', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='subevidences', to='api.evidence')),
                 ('variant', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='subevidences', to='api.variant')),
             ],
         ),
-
+        
+        migrations.CreateModel(
+            name='Score',
+            fields=[
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('for_score', models.CharField(max_length=20, null=True)),
+                ('against_score', models.CharField(max_length=20, null=True)),
+                ('content', models.CharField(max_length=100, null=True)),
+                ('disease', models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='score', to='api.disease')),
+            ],
+        ),
+        
         migrations.CreateModel(
             name='Report',
             fields=[
@@ -163,7 +164,7 @@ class Migration(migrations.Migration):
                 ('variant', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='reports', to='api.variant')),
             ],
         ),
-
+        
         migrations.CreateModel(
             name='Interpretation',
             fields=[
@@ -173,7 +174,7 @@ class Migration(migrations.Migration):
                 ('variants', models.ManyToManyField(related_name='interpretations', to='api.Variant')),
             ],
         ),
-
+        
         migrations.CreateModel(
             name='History',
             fields=[
@@ -188,44 +189,35 @@ class Migration(migrations.Migration):
                 'ordering': ['timestamp'],
             },
         ),
-
+        
         migrations.CreateModel(
             name='Functional',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('key', models.CharField(max_length=20, null=True)),
-                ('value', models.CharField(max_length=20, null=True)),
+                ('key', models.CharField(choices=[(None, 'Select'), ('Established', 'Established Significance'), ('Likely', 'Likely Significance'), ('Predicted', 'Predicted/Possible Significance'), ('VUS', 'Uncertain Significance'), ('Benign', 'Benign')], max_length=20, null=True, verbose_name='Functional Significance')),
+                ('value', models.CharField(choices=[(None, 'Select'), ('GOF', 'GOF'), ('LOF', 'LOF'), ('TP53 functional', 'TP53 functional'), ('TP53 non-functional', 'TP53 non-functional'), ('BRAF Class I', 'BRAF Class I'), ('BRAF Class II', 'BRAF Class II'), ('BRAF Class III', 'BRAF Class III')], max_length=20, null=True, verbose_name='Functional Class')),
                 ('disease', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='functionals', to='api.disease')),
             ],
         ),
-
+        
         migrations.AddField(
             model_name='evidence',
             name='functional',
             field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='evidences', to='api.functional'),
         ),
-
+        
         migrations.AddField(
             model_name='evidence',
             name='item',
             field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='api.pathitem'),
         ),
-
-        migrations.CreateModel(
-            name='DxToScore',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('disease', models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='api.disease')),
-                ('score', models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='score', to='api.disease')),
-            ],
-        ),
-
+        
         migrations.AddField(
             model_name='disease',
             name='variant',
             field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='diseases', to='api.variant'),
         ),
-
+        
         migrations.CreateModel(
             name='CancerHotspot',
             fields=[
