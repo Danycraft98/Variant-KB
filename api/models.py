@@ -232,7 +232,7 @@ class Disease(models.Model):
     name = models.CharField(max_length=20, null=True)
     branch = models.CharField(choices=BRANCH_CHOICES, max_length=2, default='so')
     others = models.CharField(choices=TIER_CHOICES, max_length=20, null=True)
-    report = models.CharField(max_length=20, null=True)
+    report = models.CharField(verbose_name='Germline Report', max_length=20, null=True)
     variant = models.ForeignKey(Variant, related_name='diseases', on_delete=models.CASCADE, null=True, blank=True)
     reviewed = models.CharField(choices=(
         ('n', 'Not Reviewed'),

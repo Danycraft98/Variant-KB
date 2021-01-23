@@ -38,14 +38,14 @@
             <div class='container-fluid m-0 p-0 row'>
                 <div class='nav nav-tabs col-9 d-flex justify-content-start' id='nav-tab' role='tablist'>
                     {% with form=forms.0 %}
-                        <a class='empty-form nav-link active' href='#{{ form.empty_form.branch.value }}' data-bs-toggle='tab' role='tab' aria-controls='nav-new' aria-selected='true'>New Interpretation</a>
+                        <a class='empty-form nav-link active' href='#empty_div' data-bs-toggle='tab' role='tab' aria-controls='nav-new' aria-selected='true'>New Interpretation</a>
                     {% endwith %}
 
                     {% for form in forms %}
-                        {% for subform in form %}
+                        {% for subform in form.forms %}
                             {% if subform.name.value %}
-                                <a class='nav-link' href='#{{ subform.prefix }}' data-bs-toggle='tab' role='tab' aria-controls='nav-{{ subform.prefix }}' aria-selected='false'>
-                                    Disease: {{ subform.name.value }}
+                                <a class='nav-link' href='#{{ form.prefix }}div{{ forloop.counter0 }}' data-bs-toggle='tab' role='tab' aria-controls='nav-{{ subform.prefix }}' aria-selected='false'>
+                                    {{ subform.branch.value | upper }} Disease: {{ subform.name.value }}
                                 </a>
                             {% endif %}
                         {% endfor %}
@@ -88,15 +88,14 @@
                     {{ form.non_form_errors }}
 
                     {% with subform=form.empty_form %}
+                        {{ subform.management_form }}
                         {% include 'partials/_disease.html' %}
                     {% endwith %}
 
                     {% for subform in form.forms %}
-                        {% if subform.name.value %}
-                            {% include 'partials/_disease.html' %}
-                        {% endif %}
+                        {{ subform.management_form }}
+                        {% include 'partials/_disease.html' %}
                     {% endfor %}
-
                 {% endfor %}
             </div>
         </form>
@@ -104,7 +103,6 @@
 {% endblock %}
 
 {% block script %}
-    <!--script src='{% static 'js/django-formset.js' %}'></script-->
     <script src='{% static 'js/add_evidence.js' %}'></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery.formset/1.2.2/jquery.formset.min.js' integrity='sha512-ltwjKsDTo3hW/wV66ZaEkf2wOAFxmg7rWM76J8kOcYKLSKy44WBYO/BFaNNH3NGDS8BSz3meB9wtSnm41oL+pA==' crossorigin='anonymous'></script>
     <script>

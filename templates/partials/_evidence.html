@@ -1,0 +1,11 @@
+{% for field in evid %}
+    {% if 'Source' in field.label or 'Statement' in field.label %}
+        <div class='row my-2'>
+            <div class='col-4'>{{ field.label }}</div>
+            <div class='{% if 'Statement' in field.label %}col-5{% else %}col-4{% endif %}'>{{ field }}</div>
+            {% if 'Type' in field.label %}
+                <div class='offset-md-2 col-2'>{{ evid.DELETE }}</div>
+            {% endif %}
+        </div>
+    {% endif %}
+{% endfor %}

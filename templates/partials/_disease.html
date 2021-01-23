@@ -1,155 +1,74 @@
-<div class='tab-pane fade {% if 'prefix' in subform.name.id_for_label and subform.branch.value == 'so' %}show active empty-form{% endif %}' id='{% if 'prefix' in subform.name.id_for_label %}{{ subform.branch.value }}{% else %}{{ subform.prefix }}{% endif %}' role='tabpanel'
-     aria-labelledby='{{ subform.prefix }}-tab'>
-    <div id='d{{ subform.name.id_for_label }}_label' class='card-header container-fluid'>
+<div class='tab-pane fade {% if 'so_-__prefix' in subform.name.id_for_label %}show active empty-form{% endif %}' id='{% if 'prefix' in subform.name.id_for_label %}empty_div{% else %}{{ form.prefix }}div{{ forloop.counter0 }}{% endif %}' role='tabpanel' aria-labelledby='{{ form.prefix }}-tab'>
+    <div id='d{{ form.name.id_for_label }}_label' class='card-header container-fluid'>
         <div class='row my-2'>
-            <div class='h6 col-6 d-flex justify-content-start' href='#' data-bs-toggle='collapse' data-bs-target='#d{{ subform.name.id_for_label }}_dx' aria-expanded='true'>
-                {% if subform.branch.value == 'gp' %}Germline Pathogenicity{% else %}Somatic Oncogenicity{% endif %} - [Disease] / [Status]
+            <div class='h6 col-6 d-flex justify-content-start' href='#' data-bs-toggle='collapse' data-bs-target='#d{{ form.name.id_for_label }}_dx' aria-expanded='true'>
+                {% if subform.branch.value == 'so' %}Somatic Oncogenicity{% else %}Germline Pathogenicity{% endif %} - [Disease] / [Status]
             </div>
 
-            <div class='col-6 d-flex justify-content-end form-check-inline' style='margin-right: 0' {% if 'prefix' not in subform.name.id_for_label %}readonly{% endif %}>
-                {% for radio in subform.branch %}{{ radio }}{% endfor %}
-            </div>
-        </div>
-    </div>
-
-    <div>
-        {{ subform.errors }}
-    </div>
-
-    <div id='d{{ subform.name.id_for_label }}_dx' class='card-body container collapse show {% if 'prefix' in subform.name.id_for_label %}empty-form{% endif %}'>
-        <div class='row'>
-            <div class='col-12'>
-                {% if subform.name.errors %}
-                    {% for error in subform.name.errors %}{{ error }}{% endfor %}
-                {% endif %}
-            </div>
-        </div>
-
-        <div class='row my-2'>
-            <div class='col-4'>{{ subform.name.label }}</div>
-            <div class='col-5'>{{ subform.name }}</div>
-            <div class='offset-md-1 col-2'>{{ subform.DELETE }} {{ subform.DELETE.label }}</div>
-        </div>
-
-        {% if subform.branch.value == 'so' %}
-
-            <div class='row'>
-                <div class='col-12'>
-                    {% if subform.key.errors %}
-                        {% for error in subform.key.errors %}{{ error }}{% endfor %}
-                    {% endif %}
+            {% if 'so_-__prefix' in subform.name.id_for_label %}
+                <div class='col-6 d-flex justify-content-end form-check-inline' style='margin-right: 0' {% if 'prefix' not in subform.name.id_for_label %}readonly{% endif %}>
+                    {% for radio in subform.branch %}{{ radio }}{% endfor %}
                 </div>
-            </div>
-
-            <div class='row form-group my-2'>
-                <div class='col-4'>{{ subform.key.label }}</div>
-                <div class='col-4'>{{ subform.key }}</div>
-                <div class='offset-md-1 col-3 pr-3'>
-                    <button type='button' class='btn btn-primary pull-right' onclick='add_func_cat(this)'>Add Functional Category</button>
-                </div>
-            </div>
-
-        {% else %}
-
-            <div class='row'>
-                <div class='col-12'>
-                    {% if subform.report.errors %}
-                        {% for error in subform.report.errors %}{{ error }}{% endfor %}
-                    {% endif %}
-                </div>
-            </div>
-
-            <div class='row form-group my-2'>
-                <div class='col-4'>{{ subform.report.label }}</div>
-                <div class='col-4'>{{ subform.report }}</div>
-            </div>
-
-        {% endif %}
+            {% endif %}
+        </div>
     </div>
 
     {% if subform.branch.value == 'so' %}
 
-        <div id='func_cat'>
-            <div class='card-header border-top justify-content-between d-flex' href='#'>
-                <div class='h6 mr-auto my-auto' href='#' data-bs-toggle='collapse' data-bs-target='.d{{ subform.name.id_for_label }}_func' aria-expanded='true'>
-                    Functional Evidences
-                </div>
-
-                <div class='ml-auto'>
-                    <button type='button' class='btn btn-primary' id='{{ other_forms.0.name }}' onclick='add_evid(this)'>Add Functional Evidences</button>
-                </div>
+        <div id='d{{ subform.name.id_for_label }}_dx' class='card-body container collapse show {% if 'prefix' in subform.name.id_for_label %}empty-form{% endif %}'>
+            <div class='row my-2'>
+                <div class='col-4'>{{ subform.name.label }}</div>
+                <div class='col-5'>{{ subform.name }}</div>
+                <div class='offset-md-1 col-2'>{{ subform.DELETE }} {{ subform.DELETE.label }}</div>
             </div>
 
-            <div class='func_evid d{{ subform.name.id_for_label }}_func collapse show'>
-                {{ other_forms.0.management_form }}
-                {% for form in other_forms.0 %}
-                    {{ form.management_form }}
+            {% for func in child_forms.0.forms %}
+                {{ func.management_form }}
+                {% if forloop.counter0 == 0 %}
+                    <div class='row form-group my-2'>
+                        <div class='col-4'>{{ func.key.label }}</div>
+                        <div class='col-4'>{{ func.key }}</div>
+                        <div class='offset-md-1 col-3 pr-3'>
+                            <button type='button' class='btn btn-primary pull-right' onclick='add_func_cat(this)'>
+                                Add Functional Category
+                            </button>
+                        </div>
+                    </div>
+                    </div>
+                {% endif %}
 
-                    {{ subform.child_id }}
-                    <div id='form{{ other_forms.0.name }}' class='card-body container border-bottom'>
-                        <div class='row'>
-                            <div class='col-12'>
-                                {% if subform.value.errors %}
-                                    {% for error in subform.value.errors %}{{ error }}{% endfor %}
-                                {% endif %}
-                            </div>
+                <div id='func_cat'>
+                    <div class='card-header border-top justify-content-between d-flex' href='#'>
+                        <div class='h6 mr-auto my-auto' href='#' data-bs-toggle='collapse' data-bs-target='.d{{ form.name.id_for_label }}_func' aria-expanded='true'>
+                            Functional Evidences
                         </div>
 
-                        <div class='row form-group my-2'>
-                            <div class='col-4'>{{ subform.value.label }}</div>
-                            <div class='col-4'>{{ subform.value }}</div>
+                        <div class='ml-auto'>
+                            <button type='button' class='btn btn-primary' id='{{ func.name }}' onclick='add_evid(this)'>Add Functional Evidences</button>
                         </div>
                     </div>
 
-                    <div id='form{{ other_forms.0.name }}' class='card-body container'>
-                        <div class='row my-2'>
-                            <div class='col-12'>
-                                {% if form.source_type.errors %}
-                                    {% for error in form.source_type.errors %}{{ error }}{% endfor %}
-                                {% endif %}
+                    <div class='func_evid d{{ form.name.id_for_label }}_func collapse show'>
+                        <div id='form{{ other_forms.0.name }}' class='card-body container border-bottom'>
+                            <div class='row form-group my-2'>
+                                <div class='col-4'>{{ func.value.label }}</div>
+                                <div class='col-4'>{{ func.value }}</div>
                             </div>
                         </div>
 
-                        <div class='row my-2'>
-                            <div class='col-4'>{{ form.source_type.label }}</div>
-                            <div class='col-4'>{{ form.source_type }}</div>
-                            <div class='offset-md-2 col-2'>{{ form.DELETE }} {{ form.DELETE.label }}</div>
-                        </div>
-
-                        <div class='row'>
-                            <div class='col-12'>
-                                {% if form.source_type.errors %}
-                                    {% for error in form.source_id.errors %}{{ error }}{% endfor %}
-                                {% endif %}
+                        {% for evid in subchild_forms.0 %}
+                            {{ evid.management_form }}
+                            <div id='form{{ evid.name }}' class='card-body container'>
+                                {% include 'partials/_evidence.html' %}
                             </div>
-                        </div>
-
-                        <div class='row my-2'>
-                            <div class='col-4'>{{ form.source_id.label }}</div>
-                            <div class='col-4'>{{ form.source_id }}</div>
-                        </div>
-
-                        <div class='row'>
-                            <div class='col-12'>
-                                {% if form.source_type.errors %}
-                                    {% for error in form.statement.errors %}{{ error }}{% endfor %}
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <div class='row form-group my-2'>
-                            <div class='col-4'>{{ form.statement.label }}</div>
-                            <div class='col-5'>{{ form.statement }}</div>
-                            <div class='col-3'></div>
-                        </div>
+                        {% endfor %}
                     </div>
-                {% endfor %}
-            </div>
-        </div>
+                </div>
+            {% endfor %}
 
         <div id='act_evid'>
             <div class='card-header border-top justify-content-between d-flex' href='#'>
-                <div class='h6 mr-auto my-auto' href='#' data-bs-toggle='collapse' data-bs-target='.d{{ subform.name.id_for_label }}_evid' aria-expanded='true'>
+                <div class='h6 mr-auto my-auto' href='#' data-bs-toggle='collapse' data-bs-target='.d{{ form.name.id_for_label }}_evid' aria-expanded='true'>
                     Actionability Evidences
                 </div>
                 <div class='ml-auto'>
@@ -164,192 +83,96 @@
                         <div class='col-4'>{{ subform.others }}</div>
                     </div>
                 </div>
+                {% for evid in subchild_forms.0.forms %}
+                    {{ evid.management_form }}
+                    <div id='inner_form{{ forloop.counter }}' class='card-body container {% if 'prefix' in form.name.id_for_label %}empty-form{% endif %}'>
+                        {% include 'partials/_evidence.html' %}
 
-                <div id='inner_form{{ forloop.counter }}' class='card-body container {% if 'prefix' in subform.name.id_for_label %}empty-form{% endif %}'>
-                    {{ other_forms.0.management_form }}
-                    {% for form in other_forms.0 %}
-                        {{ form.management_form }}
-                        <div class='row'>
-                            <div class='col-12'>
-                                {% if form.source_type.errors %}
-                                    {% for error in form.source_type.errors %}{{ error }}{% endfor %}
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <div class='row my-2'>
-                            <div class='col-4'>{{ form.source_type.label }}</div>
-                            <div class='col-4'>{{ form.source_type }}</div>
-                            <div class='offset-md-2 col-2'>{{ subform.DELETE }}</div>
-                        </div>
-
-                        <div class='row'>
-                            <div class='col-12'>
-                                {% if form.source_id.errors %}
-                                    {% for error in form.source_id.errors %}{{ error }}{% endfor %}
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <div class='row my-2'>
-                            <div class='col-4'>{{ form.source_id.label }}</div>
-                            <div class='col-4'>{{ form.source_id }}</div>
-                        </div>
-
-                        <div class='row'>
-                            <div class='col-12'>
-                                {% if form.statement.errors %}
-                                    {% for error in form.statement.errors %}{{ error }}{% endfor %}
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <div class='row form-group my-2'>
-                            <div class='col-4'>{{ form.statement.label }}</div>
-                            <div class='col-5'>{{ form.statement }}</div>
-                            <div class='col-3'></div>
-                        </div>
-
-                        <div class='row'>
-                            <div class='col-12'>
-                                {% if form.evid_sig.errors %}
-                                    {% for error in form.evid_sig.errors %}{{ error }}{% endfor %}
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <div class='row form-group my-2'>
-                            <div class='col-4'>{{ form.evid_sig.label }}</div>
-                            <div class='col-4'>{{ form.evid_sig }}</div>
-                        </div>
-
-                        <div class='row'>
-                            <div class='col-12'>
-                                {% if form.level.errors %}
-                                    {% for error in form.level.errors %}{{ error }}{% endfor %}
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <div class='row form-group my-2'>
-                            <div class='col-4'>{{ form.level.label }}</div>
-                            <div class='col-4'>{{ form.level }}</div>
-                        </div>
-
-                        <div class='row'>
-                            <div class='col-12'>
-                                {% if form.evid_dir.errors %}
-                                    {% for error in form.evid_dir.errors %}{{ error }}{% endfor %}
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <div class='row form-group my-2'>
-                            <div class='col-4'>{{ form.evid_dir.label }}</div>
-                            <div class='col-4'>{{ form.evid_dir }}</div>
-                        </div>
-
-                        <div class='row'>
-                            <div class='col-12'>
-                                {% if form.clin_sig.errors %}
-                                    {% for error in form.clin_sig.errors %}{{ error }}{% endfor %}
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <div class='row form-group my-2'>
-                            <div class='col-4'>{{ form.clin_sig.label }}</div>
-                            <div class='col-4'>{{ form.clin_sig }}</div>
-                        </div>
-
-                        <div class='row'>
-                            <div class='col-12'>
-                                {% if form.drug_class.errors %}
-                                    {% for error in form.drug_class.errors %}{{ error }}{% endfor %}
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <div class='row form-group my-2'>
-                            <div class='col-4'>{{ form.drug_class.label }}</div>
-                            <div class='col-4'>{{ form.drug_class }}</div>
-                        </div>
-
-                        <div class='row'>
-                            <div class='col-12'>
-                                {% if form.evid_rating.errors %}
-                                    {% for error in form.evid_rating.errors %}{{ error }}{% endfor %}
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <div class='row form-group my-2'>
-                            <div class='col-4'>{{ form.evid_rating.label }}</div>
-                            <div class='col-4'>{{ form.evid_rating }}</div>
-                        </div>
+                        {% for field in evid %}
+                            {% if 'Source' not in field.label and 'Statement' not in field.label %}
+                                <div class='row my-2'>
+                                    <div class='col-4'>{{ field.label }}</div>
+                                    <div class='col-4'>{{ field }}</div>
+                                    <div class='offset-md-2 col-2'>{{ form.DELETE }}</div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
                         <hr/>
-                    {% endfor %}
-                </div>
+                    </div>
+                {% endfor %}
             </div>
         </div>
 
     {% else %}
 
-        <div id='score'>
-            <div class='card-header justify-content-between' href='#' data-bs-toggle='collapse' data-bs-target='#d{{ subform.name.id_for_label }}_score' aria-expanded='true'>
-                <div class='h6 mr-auto my-2'>2015 ACMG Score</div>
+        <div id='d{{ form.name.id_for_label }}_dx' class='card-body container collapse show {% if 'prefix' in form.name.id_for_label %}empty-form{% endif %}'>
+            <div class='row my-2'>
+                <div class='col-4'>{{ subform.name.label }}</div>
+                <div class='col-5'>{{ subform.name }}</div>
+                <div class='offset-md-1 col-2'>{{ subform.DELETE }} {{ subform.DELETE.label }}</div>
             </div>
 
-            <div id='d{{ subform.name.id_for_label }}_score' class='card-body container collapse show {% if 'prefix' in subform.name.id_for_label %}empty-form{% endif %}'>
-                {{ subform.child_id }}
-                <div class='row form-group my-2'>
-                    <div class='col-4'>{{ subform.content.label }}</div>
-                    <div class='col-4'>{{ subform.content }}</div>
-                </div>
-
-                <div class='row form-group my-2'>
-                    <div class='col-4'>{{ subform.for_score.label }}</div>
-                    <div class='col-4'>{{ subform.for_score }}</div>
-                </div>
-
-                <div class='row form-group my-2'>
-                    <div class='col-4'>{{ subform.against_score.label }}</div>
-                    <div class='col-4'>{{ subform.against_score }}</div>
-                </div>
+            <div class='row form-group my-2'>
+                <div class='col-4'>{{ subform.report.label }}</div>
+                <div class='col-4'>{{ subform.report }}</div>
             </div>
         </div>
 
+        {% for score in child_forms.1.forms %}
+            <div id='score'>
+                <div class='card-header justify-content-between' href='#' data-bs-toggle='collapse' data-bs-target='#d{{ form.name.id_for_label }}_score' aria-expanded='true'>
+                    <div class='h6 mr-auto my-2'>2015 ACMG Score</div>
+                </div>
+
+                <div id='d{{ score.name.id_for_label }}_score' class='card-body container collapse show {% if 'prefix' in form.name.id_for_label %}empty-form{% endif %}'>
+                    {{ form.child_id }}
+                    <div class='row form-group my-2'>
+                        <div class='col-4'>{{ score.content.label }}</div>
+                        <div class='col-4'>{{ score.content }}</div>
+                    </div>
+
+                    <div class='row form-group my-2'>
+                        <div class='col-4'>{{ score.for_score.label }}</div>
+                        <div class='col-4'>{{ score.for_score }}</div>
+                    </div>
+
+                    <div class='row form-group my-2'>
+                        <div class='col-4'>{{ score.against_score.label }}</div>
+                        <div class='col-4'>{{ score.against_score }}</div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+
         <div id='for_score'>
-            <div class='card-header border-top justify-content-between d-flex' href='#' data-bs-toggle='collapse' data-bs-target='#d{{ subform.name.id_for_label }}_for_score' aria-expanded='true'>
+            <div class='card-header border-top justify-content-between d-flex' href='#' data-bs-toggle='collapse' data-bs-target='#d{{ form.name.id_for_label }}_for_score' aria-expanded='true'>
                 <div class='h6 mr-auto my-2'>For Pathogenicity</div>
             </div>
 
-            {{ subform.management_form }}
-            <div id='d{{ subform.name.id_for_label }}_for_score' class='card-body container collapse show {% if 'prefix' in subform.name.id_for_label %}empty-form{% endif %}'>
-                {{ other_forms.1.management_form }}
-                {% for form in other_forms.1 %}
-                    {{ form.management_form }}
-                    {% if 'P' in form.key.value and 'B' not in form.key.value %}
-                        <div class='row my-2' title='{{ form.content.value }}'>
+            <div id='d{{ form.name.id_for_label }}_for_score' class='card-body container collapse show {% if 'prefix' in form.name.id_for_label %}empty-form{% endif %}'>
+                {% for score in subchild_forms.1.forms %}
+                    {{ score.management_form }}
+                    {% if 'P' in score.key.value and 'B' not in score.key.value %}
+                        <div class='row my-2' title='{{ score.content.value }}'>
                             <div class='col-4'>
-                                <input type='checkbox' id='{{ form.key.id_for_label }}' name='{{ form.key.name }}' value='{{ form.key.value }}' onchange='select_evidence(this)' aria-label='{{ form.key.value }}'/>
-                                {{ form.key.value }}
+                                <input type='checkbox' id='{{ score.key.id_for_label }}' name='{{ score.key.name }}' value='{{ score.key.value }}' onchange='select_evidence(this)' aria-label='{{ score.key.value }}'/>
+                                {{ score.key.value }}
                             </div>
                         </div>
 
                         <div class='row my-2'>
-                            <div class='col-4'>{{ form.source_type.label }}</div>
-                            <div class='col-4' id='{{ form.key.value }}_st'>{{ form.source_type }}</div>
+                            <div class='col-4'>{{ score.source_type.label }}</div>
+                            <div class='col-4' id='{{ score.key.value }}_st'>{{ score.source_type }}</div>
                         </div>
 
                         <div class='row my-2'>
-                            <div class='col-4'>{{ form.source_id.label }}</div>
-                            <div class='col-4' id='{{ form.key.value }}_si'>{{ form.source_id }}</div>
+                            <div class='col-4'>{{ score.source_id.label }}</div>
+                            <div class='col-4' id='{{ score.key.value }}_si'>{{ score.source_id }}</div>
                         </div>
 
                         <div class='row form-group my-2'>
-                            <div class='col-4'>{{ form.statement.label }}</div>
-                            <div class='col-5' id='{{ form.key.value }}_s'>{{ form.statement }}</div>
+                            <div class='col-4'>{{ score.statement.label }}</div>
+                            <div class='col-5' id='{{ score.key.value }}_s'>{{ score.statement }}</div>
                             <div class='col-3'></div>
                         </div>
                     {% endif %}
@@ -358,41 +181,39 @@
         </div>
 
         <div id='against_score'>
-            <div class='card-header border-top justify-content-between d-flex' href='#' data-bs-toggle='collapse' data-bs-target='#d{{ subform.name.id_for_label }}_against_score' aria-expanded='true'>
+            <div class='card-header border-top justify-content-between d-flex' href='#' data-bs-toggle='collapse' data-bs-target='#d{{ score.name.id_for_label }}_against_score' aria-expanded='true'>
                 <div class='h6 mr-auto my-2'>Against Pathogenicity</div>
             </div>
 
-            {{ subform.management_form }}
-            <div id='d{{ subform.name.id_for_label }}_against_score' class='card-body container {% if 'prefix' in subform.name.id_for_label %}empty-form{% endif %}'>
-                {{ other_forms.1.management_form }}
-                {% for form in other_forms.1 %}
-                    {% if 'B' in form.key.value %}
-                        <div class='row my-2' title='{{ form.content.value }}'>
+            <div id='d{{ form.name.id_for_label }}_for_score' class='card-body container collapse show {% if 'prefix' in form.name.id_for_label %}empty-form{% endif %}'>
+                {% for score in subchild_forms.1.forms %}
+                    {{ score.management_form }}
+                    {% if 'B' in score.key.value %}
+                        <div class='row my-2' title='{{ score.content.value }}'>
                             <div class='col-4'>
-                                {{ form.key }}
-                                {{ form.key.value }}
+                                <input type='checkbox' id='{{ score.key.id_for_label }}' name='{{ score.key.name }}' value='{{ score.key.value }}' onchange='select_evidence(this)' aria-label='{{ score.key.value }}'/>
+                                {{ score.key.value }}
                             </div>
                         </div>
 
                         <div class='row my-2'>
-                            <div class='col-4'>{{ form.source_type.label }}</div>
-                            <div class='col-4'>{{ form.source_type }}</div>
+                            <div class='col-4'>{{ score.source_type.label }}</div>
+                            <div class='col-4' id='{{ score.key.value }}_st'>{{ score.source_type }}</div>
                         </div>
 
                         <div class='row my-2'>
-                            <div class='col-4'>{{ form.source_id.label }}</div>
-                            <div class='col-4'>{{ form.source_id }}</div>
+                            <div class='col-4'>{{ score.source_id.label }}</div>
+                            <div class='col-4' id='{{ score.key.value }}_si'>{{ score.source_id }}</div>
                         </div>
 
                         <div class='row form-group my-2'>
-                            <div class='col-4'>{{ form.statement.label }}</div>
-                            <div class='col-5'>{{ form.statement }}</div>
+                            <div class='col-4'>{{ score.statement.label }}</div>
+                            <div class='col-5' id='{{ score.key.value }}_s'>{{ score.statement }}</div>
                             <div class='col-3'></div>
                         </div>
                     {% endif %}
                 {% endfor %}
             </div>
         </div>
-
     {% endif %}
 </div>
