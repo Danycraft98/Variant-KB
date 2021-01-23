@@ -94,30 +94,23 @@ def variant(request, gene_name, protein):
     except Variant.DoesNotExist:
         raise Http404('Variant does not exist')
 
-    if item.diseases.count() > 0:
-        diseases = [item.diseases.filter(branch='so'), item.diseases.filter(branch='gp')]
-        forms = [
-            SODiseaseFormSet(request.POST or None, request.FILES or None, initial=diseases[0].values()),
-            GPDiseaseFormSet(request.POST or None, request.FILES or None, initial=diseases[1].values()),
-            EvidenceFormSet(request.POST or None, request.FILES or None),
-            PathItemFormSet(request.POST or None, request.FILES or None, initial=PathItem.objects.all().values())
-        ]
-        for i, form in enumerate(forms[:2]):
-            form.extra = len(diseases[i])
-    else:
-        forms = [
-            SODiseaseFormSet(request.POST or None, request.FILES or None),
-            GPDiseaseFormSet(request.POST or None, request.FILES or None),
-            EvidenceFormSet(request.POST or None, request.FILES or None),
-            PathItemFormSet(request.POST or None, request.FILES or None, initial=PathItem.objects.all().values())
-        ]
+    diseases = [item.diseases.filter(branch='so'), item.diseases.filter(branch='gp')]
+    forms = [
+        SODiseaseFormSet(request.POST or None, request.FILES or None, initial=diseases[0].values(), prefix='so_'),
+        GPDiseaseFormSet(request.POST or None, request.FILES or None, initial=diseases[1].values(), prefix='gp_'),
+        EvidenceFormSet(request.POST or None, request.FILES or None, prefix='evid_'),
+        PathItemFormSet(request.POST or None, request.FILES or None, initial=PathItem.objects.all().values(), prefix='item_'),
+    ]
+    for i, form in enumerate(forms[:2]):
+        form.extra = len(diseases[i])
 
     if request.method == 'POST':
-        print(forms[0].errors, forms[1].errors, forms[2].errors, forms[3].errors,)
-        for formset in forms[:2]:
-            for form in formset:
-                if form.is_valid():
-                    create_disease(request, item, form.cleaned_data)
+        for main_formset, child_formset in zip(forms[:2], forms[2:]):
+            for main_form, child_form in zip(main_formset, child_formset):
+                #print('Disease: ', main_form, '\nChild:', child_form)
+                print('Disease: ', main_form.errors, '\nChild:', child_form.errors)
+                if main_form.is_valid() and child_form.is_valid():
+                    create_disease(request, item, main_form.cleaned_data, child_form.cleaned_data)
 
         if not forms[0].is_valid() and not forms[1].is_valid():
             return HttpResponseRedirect(reverse('variant', args=(gene_name, protein)))

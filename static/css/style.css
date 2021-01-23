@@ -13346,7 +13346,7 @@ body ul.the_champ_login_ul li .theChampLogin {
 
 label {
 	display: block;
-	width: 100%;
+	padding-right: 5px;
 	margin: 0 0 .5rem;
 	font-weight: 700;
 	color: #495057;

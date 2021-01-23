@@ -35,14 +35,6 @@
         <form action='{% url 'variant' item.gene.name item.protein %}' method='POST'>
             {% csrf_token %}
 
-            <div class='errors'>
-                {% for form in forms_ %}
-                    {% for error in form.errors %}
-                        {{ error.name }}
-                    {% endfor %}
-                {% endfor %}
-            </div>
-
             <div class='container-fluid m-0 p-0 row'>
                 <div class='nav nav-tabs col-9 d-flex justify-content-start' id='nav-tab' role='tablist'>
                     {% with form=forms.0 %}
@@ -67,6 +59,30 @@
             </div>
 
             <div class='tab-content' id='tab-content'>
+                <div class='tab-pane fade' id='no' role='tabpanel' aria-labelledby='{{ subform.prefix }}-tab'>
+                    <div id='d{{ subform.name.id_for_label }}_label' class='card-header container-fluid'>
+                        <div class='row my-2'>
+                            <div class='h6 col-6 d-flex justify-content-start'>
+                                No Disease
+                            </div>
+                            <div class='col-6 d-flex justify-content-end form-check-inline' style='margin-right: 0'>
+                                <label for='branch'>
+                                    <input type='radio' name='branch' value='no' class='form-check-inline' onchange='change_disease(this)' id='branch_0' checked>
+                                    No Disease
+                                </label>
+                                <label for='id_functionals-__prefix__-branch_1'>
+                                    <input type='radio' name='branch' value='gp' class='form-check-inline' onchange='change_disease(this)' id='branch_1'>
+                                    Germline Pathogenecity
+                                </label>
+                                <label for='id_functionals-__prefix__-branch_2'>
+                                    <input type='radio' name='branch' value='so' class='form-check-inline' onchange='change_disease(this)' id='branch_2'>
+                                    Somatic Oncogenecity
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 {% for form in forms %}
                     {{ form.management_form }}
                     {{ form.non_form_errors }}
@@ -90,7 +106,7 @@
 {% block script %}
     <!--script src='{% static 'js/django-formset.js' %}'></script-->
     <script src='{% static 'js/add_evidence.js' %}'></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.formset/1.2.2/jquery.formset.min.js" integrity="sha512-ltwjKsDTo3hW/wV66ZaEkf2wOAFxmg7rWM76J8kOcYKLSKy44WBYO/BFaNNH3NGDS8BSz3meB9wtSnm41oL+pA==" crossorigin="anonymous"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery.formset/1.2.2/jquery.formset.min.js' integrity='sha512-ltwjKsDTo3hW/wV66ZaEkf2wOAFxmg7rWM76J8kOcYKLSKy44WBYO/BFaNNH3NGDS8BSz3meB9wtSnm41oL+pA==' crossorigin='anonymous'></script>
     <script>
         function get_report(element) {
             const disease_id = element.id.split('_')[0];

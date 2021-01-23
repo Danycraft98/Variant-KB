@@ -14,11 +14,11 @@ __all__ = [
 class DiseaseForm(forms.ModelForm):
     id = forms.CharField(required=False, widget=forms.HiddenInput())
     child_id = forms.CharField(required=False, widget=forms.HiddenInput())
-    branch = forms.ChoiceField(required=False, initial='so', choices=BRANCH_CHOICES, widget=forms.RadioSelect(attrs={
-        'class': 'form-inline form-select'
+    branch = forms.ChoiceField(initial='so', choices=[('no', 'No Disease')] + BRANCH_CHOICES, widget=forms.RadioSelect(attrs={
+        'class': 'form-check-inline',
+        'onchange': 'change_disease(this)'
     }))
-    # Set Name Required True
-    name = forms.CharField(label='Disease Name', widget=forms.TextInput(attrs={
+    name = forms.CharField(required=False, label='Disease Name', widget=forms.TextInput(attrs={
         'class': 'form-control',
         'list': 'datalistOptions',
         'placeholder': 'Enter Name...',
@@ -51,8 +51,8 @@ class DiseaseForm(forms.ModelForm):
                     value = field.clean(value)
 
                 self.cleaned_data[name] = value
-                if name == 'id' and Disease.objects.filter(id=self.cleaned_data['id']).exists():
-                    raise ValidationError('Disease already exists')
+                #if name == 'id' and Disease.objects.filter(id=self.cleaned_data['id']).exists():
+                #    raise ValidationError('Disease already exists')
 
                 if hasattr(self, 'clean_%s' % name):
                     value = getattr(self, 'clean_%s' % name)()
@@ -103,6 +103,7 @@ class EvidenceForm(forms.ModelForm):
     evid_rating = forms.ChoiceField(required=False, choices=EVID_RATING_CHOICES, widget=forms.Select(attrs={
         'class': 'form-select'
     }))
+    prefix = 'evid_'
 
     class Meta:
         model = Evidence
@@ -155,6 +156,7 @@ class SODiseaseForm(DiseaseForm):
     value = forms.ChoiceField(required=False, label='Functional Category', choices=FUNC_CAT_CHOICES, widget=forms.Select(attrs={
         'class': 'form-select',
     }))
+    prefix = 'so_'
 
     class Meta:
         model = Functional
@@ -170,14 +172,14 @@ SODiseaseFormSet = inlineformset_factory(
     Functional,
     form=SODiseaseForm,
     min_num=1,
-    extra=1
 )
 
 
 # Germline Pathogenicity------------------------------------------------------------------------------------------
 class GPDiseaseForm(DiseaseForm):
-    branch = forms.ChoiceField(required=False, initial='gp', choices=BRANCH_CHOICES, widget=forms.RadioSelect(attrs={
-        'class': 'form-inline'
+    branch = forms.ChoiceField(initial='gp', choices=[('no', 'No Disease')] + BRANCH_CHOICES, widget=forms.RadioSelect(attrs={
+        'class': 'form-check-inline',
+        'onchange': 'change_disease(this)'
     }))
 
     for_score = forms.CharField(required=False, label='For Pathogenicity', widget=forms.TextInput(attrs={
@@ -192,6 +194,7 @@ class GPDiseaseForm(DiseaseForm):
         'class': 'form-control',
         'readonly': ''
     }))
+    prefix = 'gp_'
 
 
 class PathItemForm(forms.ModelForm):
@@ -202,6 +205,7 @@ class PathItemForm(forms.ModelForm):
     content = forms.CharField(required=False, widget=forms.TextInput(attrs={
         'class': 'form-control',
     }))
+    prefix = 'item_'
 
     class Meta:
         model = PathItem

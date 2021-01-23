@@ -1,3 +1,23 @@
+function change_disease(element) {
+    let branch = element.value, div = document.getElementById(branch), other_divs;
+    if (branch === 'gp') {
+        other_divs = [document.getElementById('so'), document.getElementById('no')];
+    } else if (branch === 'so') {
+        other_divs = [document.getElementById('gp'), document.getElementById('no')];
+    } else {
+        other_divs = [document.getElementById('gp'), document.getElementById('so')];
+    }
+
+    div.setAttribute('class', 'tab-pane fade show active empty-form');
+    other_divs.forEach(function (element) {
+        element.setAttribute('class', 'tab-pane fade empty-form');
+    });
+    Object.values(document.querySelectorAll('input[name*="__prefix__-branch"]'))
+        .forEach(function (element) {
+            element.checked = element.value === branch;
+        });
+}
+
 function add_evid(element) {
     const form_elem = $(element.parentElement.parentElement.nextElementSibling);
     const form = form_elem.first();
@@ -120,11 +140,6 @@ function create_divider(element) {
             element.insertBefore(hr, sub_element.nextSibling);
         }
     });
-}
-
-function change_disease(element) {
-    const name_str = element.lastElementChild.firstElementChild.firstElementChild.getAttribute('name')
-    console.log($('input[name="' + name_str + '"]:checked').val());
 }
 
 function copyReport(item) {

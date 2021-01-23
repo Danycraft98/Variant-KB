@@ -1,7 +1,19 @@
-<div class='tab-pane fade {% if 'prefix' in subform.name.id_for_label and subform.branch.value == 'so' %}show active empty-form{% endif %}' id='{% if 'prefix' in subform.name.id_for_label %}{{ form.empty_form.branch.value }}{% else %}{{ subform.prefix }}{% endif %}' role='tabpanel'
+<div class='tab-pane fade {% if 'prefix' in subform.name.id_for_label and subform.branch.value == 'so' %}show active empty-form{% endif %}' id='{% if 'prefix' in subform.name.id_for_label %}{{ subform.branch.value }}{% else %}{{ subform.prefix }}{% endif %}' role='tabpanel'
      aria-labelledby='{{ subform.prefix }}-tab'>
-    <div id='d{{ subform.name.id_for_label }}_label' class='card-header justify-content-between' href='#' data-bs-toggle='collapse' data-bs-target='#d{{ subform.name.id_for_label }}_dx' aria-expanded='true'>
-        <div class='h6 mr-auto my-2'>{% if subform.branch.value == 'gp' %}Germline Pathogenicity{% else %}Somatic Oncogenicity{% endif %} - [Disease] / [Status]</div>
+    <div id='d{{ subform.name.id_for_label }}_label' class='card-header container-fluid'>
+        <div class='row my-2'>
+            <div class='h6 col-6 d-flex justify-content-start' href='#' data-bs-toggle='collapse' data-bs-target='#d{{ subform.name.id_for_label }}_dx' aria-expanded='true'>
+                {% if subform.branch.value == 'gp' %}Germline Pathogenicity{% else %}Somatic Oncogenicity{% endif %} - [Disease] / [Status]
+            </div>
+
+            <div class='col-6 d-flex justify-content-end form-check-inline' style='margin-right: 0' {% if 'prefix' not in subform.name.id_for_label %}readonly{% endif %}>
+                {% for radio in subform.branch %}{{ radio }}{% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div>
+        {{ subform.errors }}
     </div>
 
     <div id='d{{ subform.name.id_for_label }}_dx' class='card-body container collapse show {% if 'prefix' in subform.name.id_for_label %}empty-form{% endif %}'>
@@ -32,7 +44,7 @@
             <div class='row form-group my-2'>
                 <div class='col-4'>{{ subform.key.label }}</div>
                 <div class='col-4'>{{ subform.key }}</div>
-                <div class='offset-md-1 col-3'>
+                <div class='offset-md-1 col-3 pr-3'>
                     <button type='button' class='btn btn-primary pull-right' onclick='add_func_cat(this)'>Add Functional Category</button>
                 </div>
             </div>
