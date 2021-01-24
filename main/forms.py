@@ -6,7 +6,7 @@ from api.constants import *
 from api.models import *
 
 __all__ = [
-    'DiseaseFormSet', 'ScoreFormSet', 'FunctionalFormSet', 'EvidenceFormSet', 'PathItemFormSet'
+    'DiseaseFormSet', 'ScoreFormSet', 'FunctionalFormSet', 'EvidenceFormSet', 'PathItemFormSet', 'ReportFormSet'
 ]
 
 
@@ -41,7 +41,6 @@ class BaseForm(forms.ModelForm):
 
 
 class DiseaseForm(BaseForm):
-    # TODO: Branch - 'onchange': 'change_disease(this)'
     id = forms.CharField(required=False, widget=forms.HiddenInput())
     child_id = forms.CharField(required=False, widget=forms.HiddenInput())
     prefix = 'dx_'
@@ -83,6 +82,20 @@ class EvidenceForm(BaseForm):
         return self.cleaned_data
 
 
+class ReportForm(BaseForm):
+    id = forms.CharField(required=False, widget=forms.HiddenInput())
+    prefix = 'report_'
+
+    class Meta:
+        model = Report
+        fields = '__all__'
+        exclude = ['DELETE', 'evidence', 'key']
+
+    def clean(self):
+        super(ReportForm, self).clean()
+        return self.cleaned_data
+
+
 DiseaseFormSet = modelformset_factory(
     Disease,
     form=DiseaseForm,
@@ -95,13 +108,20 @@ EvidenceFormSet = inlineformset_factory(
     SubEvidence,
     form=EvidenceForm,
     min_num=1,
-    extra=1
+    extra=1,
+)
+ReportFormSet = modelformset_factory(
+    Report,
+    form=ReportForm,
+    fields='__all__',
+    min_num=1,
+    extra=6,
 )
 
 
 # Somatic Oncogenicity ------------------------------------------------------------------------------------------
 class FunctionalForm(BaseForm):
-    prefix = 'so_'
+    prefix = 'func_'
 
     class Meta:
         model = Functional

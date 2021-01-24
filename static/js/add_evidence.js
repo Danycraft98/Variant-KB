@@ -4,8 +4,8 @@ $(document).ready(function () {
     });
 });
 
-function change_disease(element) {
-    let branch = element.value, div = document.querySelector('div[data-key="' + branch + '"]'), other_divs;
+function change_disease(main_elem) {
+    let branch = main_elem.value, div = document.querySelector('div[data-key="' + branch + '"]'), other_divs;
     if (branch === 'gp') {
         other_divs = [document.querySelector('div[data-key="so"]'), document.querySelector('div[data-key="no"]')];
     } else if (branch === 'so') {
@@ -18,9 +18,12 @@ function change_disease(element) {
     other_divs.forEach(function (element) {
         element.setAttribute('class', 'tab-pane fade empty-form');
     });
-    Object.values(div.querySelectorAll('input[name*="__prefix__-branch"]')).forEach(function (element) {
-        element.checked = element.value === branch;
+
+    Object.values(div.querySelectorAll('select[id*="branch"] option')).forEach(function (element) {
+        element.selected = element.value === branch;
     });
+
+    document.getElementById('empty_link').setAttribute('href', '#' + div.id);
 }
 
 function add_evid(element) {

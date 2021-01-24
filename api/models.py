@@ -230,16 +230,11 @@ class Disease(models.Model):
         approve_user (models.ForeignKey): Disease approve user
     """
     name = models.CharField(max_length=20)
-    branch = models.CharField(choices=BRANCH_CHOICES, max_length=2, default='so')
+    branch = models.CharField(choices=BRANCH_CHOICES, max_length=2, default='no')
     others = models.CharField(choices=TIER_CHOICES, max_length=20, null=True, blank=True)
     report = models.CharField(verbose_name='Germline Report', max_length=20, null=True, blank=True)
     variant = models.ForeignKey(Variant, related_name='diseases', on_delete=models.CASCADE, null=True, blank=True)
-    reviewed = models.CharField(choices=(
-        ('n', 'Not Reviewed'),
-        ('r', 'Reviewed'),
-        ('m', 'Secondly Reviewed'),
-        ('a', 'Approved'),
-    ), max_length=1, default='n')
+    reviewed = models.CharField(choices=REVIEWED_CHOICES, max_length=1, default='n')
     reviewed_date = models.DateTimeField('reviewed date', null=True, blank=True)
     review_user = models.ForeignKey(User, related_name='reviewed_variants', on_delete=models.CASCADE, null=True, blank=True)
     meta_reviewed_date = models.DateTimeField('meta-reviewed date', null=True, blank=True)
@@ -458,10 +453,3 @@ class History(models.Model):
         Returns: str
         """
         return str(self.user) + ' / ' + self.timestamp.strftime('%Y-%m-%d')
-
-
-# TODO: Delete Class
-class Interpretation(models.Model):
-    content = models.TextField(blank=True)
-    genes = models.ManyToManyField(Gene, related_name='interpretations')
-    variants = models.ManyToManyField(Variant, related_name='interpretations')

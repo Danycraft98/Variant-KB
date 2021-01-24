@@ -1,8 +1,8 @@
 # Constants
 BRANCH_CHOICES = [
     ('no', 'No Disease'),
-    ('gp', 'Germline Pathogenecity'),
-    ('so', 'Somatic Oncogenecity')
+    ('gp', 'Germline Pathogenicity'),
+    ('so', 'Somatic Oncogenicity')
 ]
 
 ITEMS = {  # 'PVS1 - SA': ['Stand Alone - whole gene deletion', 10],
@@ -114,4 +114,11 @@ EVID_RATING_CHOICES = [
     (3, '3 Stars'),
     (4, '4 Stars'),
     (5, '5 Stars'),
+]
+
+REVIEWED_CHOICES = [
+    ('n', 'Not Reviewed'),
+    ('r', 'Reviewed'),
+    ('m', 'Secondly Reviewed'),
+    ('a', 'Approved'),
 ]

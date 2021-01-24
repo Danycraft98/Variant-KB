@@ -84,6 +84,9 @@ def gene(request, gene_name):
 
 @login_required
 def variant(request, gene_name, protein):
+    branches = ['no', 'so', 'gp']
+    reports = ['Gene-Descriptive', 'Variant-Descriptive', 'Gene-Disease', 'Variant-Disease', 'Gene-Germline Implications', 'Variant-Germline Implications']
+
     if not request.user.is_staff:
         messages.warning(request, 'You are not authorized to edit variants.')
         return HttpResponseRedirect(reverse('gene', args=[gene_name]))
@@ -103,11 +106,13 @@ def variant(request, gene_name, protein):
     forms = [
         DiseaseFormSet(request.POST or None, request.FILES or None),
 
-        FunctionalFormSet(request.POST or None, request.FILES or None, prefix='so_'),
-        ScoreFormSet(request.POST or None, request.FILES or None, prefix='gp_'),
+        FunctionalFormSet(request.POST or None, request.FILES or None),
+        ScoreFormSet(request.POST or None, request.FILES or None),
 
-        EvidenceFormSet(request.POST or None, request.FILES or None, prefix='evid_'),
-        PathItemFormSet(request.POST or None, request.FILES or None, prefix='item_', initial=PathItem.objects.all().values()),
+        EvidenceFormSet(request.POST or None, request.FILES or None),
+        PathItemFormSet(request.POST or None, request.FILES or None, initial=PathItem.objects.all().values()),
+
+        ReportFormSet(request.POST or None, request.FILES or None),
     ]
 
     if request.method == 'POST':
@@ -125,8 +130,8 @@ def variant(request, gene_name, protein):
 
     return render(request, 'variants/form.html', {
         'item': item, 'title': 'Edit - ' + item.protein,
-        'items': score_items, 'form': forms[0], 'branches': ['no', 'so', 'gp'],
-        'child_forms': forms[1:3], 'subchild_forms': forms[3:]
+        'items': score_items, 'form': forms[0], 'branches': branches, 'reports': reports,
+        'child_forms': forms[1:3], 'subchild_forms': forms[3:5], 'report_form': forms[5]
     })
 
 

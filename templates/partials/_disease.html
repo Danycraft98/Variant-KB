@@ -1,25 +1,38 @@
+{% load custom_tags %}
+
 <div class='tab-pane fade {% if branch == 'no' %}show active{% endif %} {% if 'prefix' in subform.name.id_for_label %}empty-form{% endif %}' {% if 'prefix' in subform.name.id_for_label %}data-key='{{ branch }}'{% endif %}
-     id='{% if 'prefix' in subform.name.id_for_label %}empty_div{% else %}{{ form.prefix }}div{{ forloop.counter0 }}{% endif %}'
+     id='{% if 'prefix' in subform.name.id_for_label %}{{ form.empty_form.prefix }}{% else %}{{ form.prefix }}{% endif %}div{{ forloop.counter0 }}'
      role='tabpanel' aria-labelledby='{{ form.prefix }}-tab'>
 
     {{ subform.management_form }}
-    <div id='d{{ subform.name.id_for_label }}_label' class='card-header container-fluid'>
-        <div class='row my-2'>
-            <div class='h6 col-9 d-flex justify-content-start' href='#' data-bs-toggle='collapse' data-bs-target='#d{{ form.name.id_for_label }}_dx' aria-expanded='true'>
-                {% if subform.branch.value == 'so' or branch == 'so' %}Somatic Oncogenicity{% elif subform.branch.value == 'gp' or branch == 'gp' %}Germline Pathogenicity{% else %}No Disease{% endif %} - [Disease] / [Status]
+    <div id='{{ form.prefix }}label' class='card-header container-fluid'>
+        <div class='row'>
+            <div class='h6 col-8 d-flex justify-content-start my-2' href='#' data-bs-toggle='collapse' data-bs-target='#{{ form.prefix }}div' aria-expanded='true'>
+                {% if subform.name.value %}
+                    {{ subform.name.value }} /
+                    {% for item in subform.reviewed.field.choices %}
+                        {% if item.0 == subform.reviewed.value %}{{ item.1 }}{% endif %}
+                    {% endfor %}
+                {% else %}
+                    [Disease] / [Status]
+                {% endif %}
             </div>
 
-            {% if 'prefix' in subform.name.id_for_label %}
-                <div class='col-3 d-flex justify-content-end form-check-inline' style='margin-right: 0'>
-                    {{ subform.branch }}
-                </div>
-            {% endif %}
+            <div class='col-4 d-flex justify-content-end form-check-inline' style='margin-right: 0'>
+                <label class='h6 my-auto' for='{{ subform.branch.id_for_label }}'>{{ subform.branch.label }}:</label>
+
+                <select id='{{ subform.branch.id_for_label }}' onchange='change_disease(this)' {% if 'prefix' not in subform.name.id_for_label %}disabled{% endif %}>
+                    {% for branch in subform.branch %}
+                        {{ branch }}
+                    {% endfor %}
+                </select>
+            </div>
         </div>
     </div>
 
     {% if subform.branch.value == 'so' or branch == 'so' %}
 
-        <div id='d{{ subform.name.id_for_label }}_dx' class='card-body container collapse show {% if 'prefix' in subform.name.id_for_label %}empty-form{% endif %}'>
+        <div id='{{ form.prefix }}div' class='card-body container collapse show {% if 'prefix' in subform.name.id_for_label %}empty-form{% endif %}'>
             <div class='row my-2'>
                 <div class='col-4'>{{ subform.name.label }}</div>
                 <div class='col-5'>{{ subform.name }}</div>
@@ -38,7 +51,7 @@
                             </button>
                         </div>
                     </div>
-                </div>
+                    </div>
                 {% endif %}
 
                 <div id='func_cat'>
@@ -72,27 +85,27 @@
 
         <div id='act_evid'>
             <div class='card-header border-top justify-content-between d-flex' href='#'>
-                <div class='h6 mr-auto my-auto' href='#' data-bs-toggle='collapse' data-bs-target='.d{{ form.name.id_for_label }}_evid' aria-expanded='true'>
+                <div class='h6 mr-auto my-auto' href='#' data-bs-toggle='collapse' data-bs-target='.{{ subchild_forms.0.prefix }}div' aria-expanded='true'>
                     Actionability Evidences
                 </div>
-                <div class='ml-auto'>
-                    <button type='button' class='btn btn-primary' onclick='add_evid(this)'>Add Actionability Evidences</button>
-                </div>
+                <button type='button' class='ml-auto btn btn-primary' onclick='add_evid(this)'>Add Actionability Evidences</button>
             </div>
 
-            <div class='act_evid d{{ subform.name.id_for_label }}_evid collapse show'>
-                <div id='inner_form{{ forloop.counter }}' class='card-body container {% if 'prefix' in subform.name.id_for_label %}empty-form{% endif %} border-bottom'>
+            <div class='act_evid {{ subchild_forms.0.prefix }}_evid collapse show'>
+                <div class='card-body container {% if 'prefix' in subform.name.id_for_label %}empty-form{% endif %} border-bottom'>
                     <div class='row form-group my-2'>
                         <div class='col-4'>{{ subform.others.label }}</div>
                         <div class='col-4'>{{ subform.others }}</div>
                     </div>
                 </div>
+
+                {{ subchild_forms.0.management_form }}
                 {% for evid in subchild_forms.0.forms %}
                     <div id='inner_form{{ forloop.counter }}' class='card-body container {% if 'prefix' in form.name.id_for_label %}empty-form{% endif %}'>
                         {% include 'partials/_evidence.html' %}
 
                         {% for field in evid %}
-                            {% if 'Source' not in field.label and 'Statement' not in field.label %}
+                            {% if 'Evidence ' in field.label or 'C' in field.label %}
                                 <div class='row my-2'>
                                     <div class='col-4'>{{ field.label }}</div>
                                     <div class='col-4'>{{ field }}</div>
@@ -106,9 +119,30 @@
             </div>
         </div>
 
+        <div id='reports'>
+            <div class='card-header border-top justify-content-between d-flex' href='#' data-bs-toggle='collapse' data-bs-target='#{{ report_form.0.prefix }}div' aria-expanded='true'>
+                <div class='h6 my-auto'>Reports</div>
+            </div>
+
+            {{ report_form.management_form }}
+            <div id='{{ report_form.0.prefix }}div' class='card-body container collapse show {% if 'prefix' in subform.name.id_for_label %}empty-form{% endif %}'>
+                {% for subform, name in report_form|zip_list:reports %}
+                    {% if forloop.counter0 != 6 %}
+                        <div class='row my-2'>
+                            <div class='col-4'>{{ name }}</div>
+                            <div class='col-5'>{{ subform.content }}</div>
+                            <div class='col-3'>
+                                <input type='hidden' id='{{ subform.id_for_label }}' name='{{ subform.prefix }}-name' value='{{ name }}'/>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+
     {% elif subform.branch.value == 'gp' or branch == 'gp' %}
 
-        <div id='d{{ form.name.id_for_label }}_dx' class='card-body container collapse show {% if 'prefix' in form.name.id_for_label %}empty-form{% endif %}'>
+        <div id='{{ form.prefix }}div' class='card-body container collapse show {% if 'prefix' in form.name.id_for_label %}empty-form{% endif %}'>
             <div class='row my-2'>
                 <div class='col-4'>{{ subform.name.label }}</div>
                 <div class='col-5'>{{ subform.name }}</div>
@@ -190,5 +224,42 @@
             </div>
         </div>
 
+    {% endif %}
+
+    {% if subform.branch.value != 'no' or branch != 'no' %}
+        <div id='d{{ subform.name.id_for_label }}_label' class='card-header container-fluid'>
+            <div class='row my-2'>
+                <div class='h6 col-9 d-flex justify-content-start' href='#' data-bs-toggle='collapse' data-bs-target='#d{{ form.reviewed.id_for_label }}_dx' aria-expanded='true'>
+                    Review
+                </div>
+            </div>
+        </div>
+
+        <div id='{{ report_form.0.prefix }}div' class='card-body container collapse show {% if 'prefix' in subform.name.id_for_label %}empty-form{% endif %}'>
+            <div class='form-group'>
+                {% for item, review in subform.reviewed.field.choices|zip_list:subform.reviewed %}
+                    <div class='form-check form-check-inline'>
+                        <input id='{{ review.id_for_label }}' name='{{ subform.prefix }}{{ subform.reviewed.name }}' class='form-check-input' type='checkbox' value='{{ item.0 }}' {% if forloop.counter0 == 0 %}hidden{% endif %}/>
+                        <label for='{{ review.id_for_label }}' class='form-check-label' {% if forloop.counter0 == 0 %}hidden{% endif %}>{{ item.1 }}</label>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <hr class='double-hr'/>
+
+            {{ report_form.management_form }}
+            {% with curation=report_form.6 %}
+                <div class='row my-2'>
+                    <div class='col-4'>
+                        <label for='{{ curation.id_for_label }}'>Curation Notes</label>
+                    </div>
+                    <div class='col-5'>{{ curation.content }}</div>
+                    <div class='col-3'>
+                        <input type='hidden' id='{{ curation.id_for_label }}' name='{{ curation.prefix }}-name' value='Curation Notes'/>
+                    </div>
+                </div>
+            {% endwith %}
+            {{ report_form.content }}
+        </div>
     {% endif %}
 </div>

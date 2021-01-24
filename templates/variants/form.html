@@ -39,7 +39,7 @@
                 <div class='nav nav-tabs col-9 d-flex justify-content-start' id='nav-tab' role='tablist'>
                     {% with subform=form.empty_form %}
                         {% if 'prefix' in subform.name.id_for_label %}
-                            <a class='empty-form nav-link active' href='#empty_div' data-bs-toggle='tab' role='tab' aria-controls='nav-new' aria-selected='true'>New Interpretation</a>
+                            <a class='empty-form nav-link active' id='empty_link' href='#{{ form.empty_form.prefix }}div0' data-bs-toggle='tab' role='tab' aria-controls='nav-new' aria-selected='true'>New Interpretation</a>
                         {% endif %}
                     {% endwith %}
 
