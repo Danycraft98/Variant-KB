@@ -37,18 +37,18 @@
 
             <div class='container-fluid m-0 p-0 row'>
                 <div class='nav nav-tabs col-9 d-flex justify-content-start' id='nav-tab' role='tablist'>
-                    {% with form=forms.0 %}
-                        <a class='empty-form nav-link active' href='#empty_div' data-bs-toggle='tab' role='tab' aria-controls='nav-new' aria-selected='true'>New Interpretation</a>
+                    {% with subform=form.empty_form %}
+                        {% if 'prefix' in subform.name.id_for_label %}
+                            <a class='empty-form nav-link active' href='#empty_div' data-bs-toggle='tab' role='tab' aria-controls='nav-new' aria-selected='true'>New Interpretation</a>
+                        {% endif %}
                     {% endwith %}
 
-                    {% for form in forms %}
-                        {% for subform in form.forms %}
-                            {% if subform.name.value %}
-                                <a class='nav-link' href='#{{ form.prefix }}div{{ forloop.counter0 }}' data-bs-toggle='tab' role='tab' aria-controls='nav-{{ subform.prefix }}' aria-selected='false'>
-                                    {{ subform.branch.value | upper }} Disease: {{ subform.name.value }}
-                                </a>
-                            {% endif %}
-                        {% endfor %}
+                    {% for subform in form.forms %}
+                        {% if subform.name.value %}
+                            <a class='nav-link' href='#{{ form.prefix }}div{{ forloop.counter0 }}' data-bs-toggle='tab' role='tab' aria-controls='nav-{{ subform.prefix }}' aria-selected='false'>
+                                {{ subform.branch.value | upper }} Disease: {{ subform.name.value }}
+                            </a>
+                        {% endif %}
                     {% endfor %}
                 </div>
 
@@ -59,43 +59,17 @@
             </div>
 
             <div class='tab-content' id='tab-content'>
-                <div class='tab-pane fade' id='no' role='tabpanel' aria-labelledby='{{ subform.prefix }}-tab'>
-                    <div id='d{{ subform.name.id_for_label }}_label' class='card-header container-fluid'>
-                        <div class='row my-2'>
-                            <div class='h6 col-6 d-flex justify-content-start'>
-                                No Disease
-                            </div>
-                            <div class='col-6 d-flex justify-content-end form-check-inline' style='margin-right: 0'>
-                                <label for='branch'>
-                                    <input type='radio' name='branch' value='no' class='form-check-inline' onchange='change_disease(this)' id='branch_0' checked>
-                                    No Disease
-                                </label>
-                                <label for='id_functionals-__prefix__-branch_1'>
-                                    <input type='radio' name='branch' value='gp' class='form-check-inline' onchange='change_disease(this)' id='branch_1'>
-                                    Germline Pathogenecity
-                                </label>
-                                <label for='id_functionals-__prefix__-branch_2'>
-                                    <input type='radio' name='branch' value='so' class='form-check-inline' onchange='change_disease(this)' id='branch_2'>
-                                    Somatic Oncogenecity
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                {{ form.management_form }}
+                {{ form.non_form_errors }}
 
-                {% for form in forms %}
-                    {{ form.management_form }}
-                    {{ form.non_form_errors }}
-
-                    {% with subform=form.empty_form %}
-                        {{ subform.management_form }}
-                        {% include 'partials/_disease.html' %}
-                    {% endwith %}
-
-                    {% for subform in form.forms %}
-                        {{ subform.management_form }}
+                {% with subform=form.empty_form %}
+                    {% for branch in branches %}
                         {% include 'partials/_disease.html' %}
                     {% endfor %}
+                {% endwith %}
+
+                {% for subform in form.forms %}
+                    {% include 'partials/_disease.html' %}
                 {% endfor %}
             </div>
         </form>

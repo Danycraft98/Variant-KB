@@ -41,12 +41,9 @@ class BaseForm(forms.ModelForm):
 
 
 class DiseaseForm(BaseForm):
+    # TODO: Branch - 'onchange': 'change_disease(this)'
     id = forms.CharField(required=False, widget=forms.HiddenInput())
     child_id = forms.CharField(required=False, widget=forms.HiddenInput())
-    branch = forms.ChoiceField(initial='so', choices=[('no', 'No Disease')] + BRANCH_CHOICES, widget=forms.RadioSelect(attrs={
-        'class': 'form-check-inline',
-        'onchange': 'change_disease(this)'
-    }))
     prefix = 'dx_'
 
     class Meta:
@@ -91,7 +88,7 @@ DiseaseFormSet = modelformset_factory(
     form=DiseaseForm,
     fields='__all__',
     min_num=1,
-    extra=1
+    extra=1,
 )
 EvidenceFormSet = inlineformset_factory(
     Evidence,

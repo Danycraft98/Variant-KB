@@ -94,10 +94,14 @@ def variant(request, gene_name, protein):
     except Variant.DoesNotExist:
         raise Http404('Variant does not exist')
 
-    diseases = [item.diseases.filter(branch='so'), item.diseases.filter(branch='gp')]
+    diseases = item.diseases.all()
+    form = DiseaseFormSet(request.POST or None, request.FILES or None)
+    if diseases.count() > 0:
+        form.initial = diseases.values()
+        form.extra = diseases.count()
+
     forms = [
-        DiseaseFormSet(request.POST or None, request.FILES or None, prefix='so_', initial=diseases[0].values()),
-        DiseaseFormSet(request.POST or None, request.FILES or None, prefix='gp_', initial=diseases[1].values()),
+        DiseaseFormSet(request.POST or None, request.FILES or None),
 
         FunctionalFormSet(request.POST or None, request.FILES or None, prefix='so_'),
         ScoreFormSet(request.POST or None, request.FILES or None, prefix='gp_'),
@@ -105,17 +109,14 @@ def variant(request, gene_name, protein):
         EvidenceFormSet(request.POST or None, request.FILES or None, prefix='evid_'),
         PathItemFormSet(request.POST or None, request.FILES or None, prefix='item_', initial=PathItem.objects.all().values()),
     ]
-    for i, form in enumerate(forms[:2]):
-        form.extra = len(diseases[i])
 
     if request.method == 'POST':
         all_not_valid = True
-        for main_formset, child_formset, subchild_formset in zip(forms[:2], forms[2:4], forms[4:]):
-            for main_form, child_form, subchild_form in zip(main_formset, child_formset, subchild_formset):
-                print('Disease: ', main_form.errors, '\nChild:', child_form.errors)
-                if main_form.is_valid() and child_form.is_valid():
-                    all_not_valid = False
-                    create_disease(request, item, main_form.cleaned_data, child_form.cleaned_data)
+        for main_form, child_form, subchild_form in zip(forms[0], forms[1], forms[3]):
+            print('Disease: ', main_form.errors, '\nChild:', child_form.errors)
+            if main_form.is_valid() and child_form.is_valid():
+                all_not_valid = False
+                print('Test')
 
         if all_not_valid:
             return HttpResponseRedirect(reverse('variant', args=(gene_name, protein)))
@@ -124,8 +125,8 @@ def variant(request, gene_name, protein):
 
     return render(request, 'variants/form.html', {
         'item': item, 'title': 'Edit - ' + item.protein,
-        'items': score_items, 'forms': forms[:2],
-        'child_forms': forms[2:4], 'subchild_forms': forms[4:]
+        'items': score_items, 'form': forms[0], 'branches': ['no', 'so', 'gp'],
+        'child_forms': forms[1:3], 'subchild_forms': forms[3:]
     })
 
 

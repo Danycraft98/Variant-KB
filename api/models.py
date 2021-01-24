@@ -21,8 +21,8 @@ class Gene(models.Model):
     """
     name = models.CharField(max_length=20)
     pub_date = models.DateTimeField('date published')
-    content = models.TextField(blank=True)
-    germline_content = models.TextField(blank=True)
+    content = models.TextField(null=True, blank=True)
+    germline_content = models.TextField(null=True, blank=True)
 
     def __str__(self):
         """
@@ -90,26 +90,26 @@ class Variant(models.Model):
         alamut (models.CharField): Alamut Link
         gene (models.ForeignKey): Gene object
     """
-    genome_build = models.CharField(verbose_name='genome build', max_length=10, null=True)
-    chr = models.CharField(verbose_name='Chromosome', max_length=6, null=True)
-    start = models.CharField(max_length=10, null=True)
-    end = models.CharField(max_length=10, null=True)
-    ref = models.CharField(max_length=100, null=True)
-    alt = models.CharField(max_length=100, null=True)
+    genome_build = models.CharField(verbose_name='genome build', max_length=10, null=True, blank=True)
+    chr = models.CharField(verbose_name='Chromosome', max_length=6, null=True, blank=True)
+    start = models.CharField(max_length=10, null=True, blank=True)
+    end = models.CharField(max_length=10, null=True, blank=True)
+    ref = models.CharField(max_length=100, null=True, blank=True)
+    alt = models.CharField(max_length=100, null=True, blank=True)
     transcript = models.CharField(max_length=20)
-    cdna = models.CharField(verbose_name='c.', max_length=10, null=True)
+    cdna = models.CharField(verbose_name='c.', max_length=10, null=True, blank=True)
     protein = models.CharField(verbose_name='p.', max_length=20)
-    consequence = models.CharField(max_length=10, null=True)
-    exonic_function = models.CharField(max_length=20, null=True)
+    consequence = models.CharField(max_length=10, null=True, blank=True)
+    exonic_function = models.CharField(max_length=20, null=True, blank=True)
     content = models.TextField(blank=True)
     germline_content = models.TextField(blank=True)
 
-    af = models.CharField(verbose_name='AF', max_length=20, null=True)
-    af_popmax = models.CharField(verbose_name='AF_popmax', max_length=20, null=True)
-    cosmic70 = models.CharField(max_length=20, null=True)
-    clinvar = models.CharField(verbose_name='CLINVAR', max_length=20, null=True)
-    insilicodamaging = models.CharField(verbose_name='InSilicoDamaging', max_length=20, null=True)
-    insilicobenign = models.CharField(verbose_name='InSilicoBenign', max_length=100, null=True)
+    af = models.CharField(verbose_name='AF', max_length=20, null=True, blank=True)
+    af_popmax = models.CharField(verbose_name='AF_popmax', max_length=20, null=True, blank=True)
+    cosmic70 = models.CharField(max_length=20, null=True, blank=True)
+    clinvar = models.CharField(verbose_name='CLINVAR', max_length=20, null=True, blank=True)
+    insilicodamaging = models.CharField(verbose_name='InSilicoDamaging', max_length=20, null=True, blank=True)
+    insilicobenign = models.CharField(verbose_name='InSilicoBenign', max_length=100, null=True, blank=True)
     polyphen2_hdiv_pred = models.CharField(choices=(
         ('D', 'probably damaging'),
         ('P', 'possibly damaging'),
@@ -150,20 +150,20 @@ class Variant(models.Model):
         ('U', 'unknown'),
         ('na', 'na'),
     ), max_length=2, default='na', verbose_name='PROVEAN_pred')
-    tcga = models.CharField(verbose_name='TCGA#occurances', max_length=20, null=True)
-    oncokb = models.CharField(verbose_name='oncoKB', max_length=500, null=True)
-    oncokb_pmids = models.CharField(verbose_name='oncoKB_PMIDs', max_length=50, null=True)
-    watson = models.CharField(max_length=20, null=True)
-    watson_pmids = models.CharField(verbose_name='Watson_PMIDs', max_length=50, null=True)
-    qci = models.CharField(verbose_name='QCI', max_length=20, null=True)
-    qci_pmids = models.CharField(verbose_name='QCI_PMIDs', max_length=50, null=True)
-    jaxckb = models.CharField(verbose_name='JaxCKB', max_length=10, null=True)
-    jaxckb_pmids = models.CharField(verbose_name='JaxCKB_PMIDs', max_length=50, null=True)
-    pmkb = models.CharField(verbose_name='PMKB', max_length=10, null=True)
-    pmkb_citations = models.CharField(verbose_name='PMKB_citations', max_length=500, null=True)
-    civic = models.CharField(verbose_name='CIViC', max_length=50, null=True)
-    google = models.CharField(max_length=100, null=True)
-    alamut = models.CharField(max_length=70, null=True)
+    tcga = models.CharField(verbose_name='TCGA#occurances', max_length=20, null=True, blank=True)
+    oncokb = models.CharField(verbose_name='oncoKB', max_length=500, null=True, blank=True)
+    oncokb_pmids = models.CharField(verbose_name='oncoKB_PMIDs', max_length=50, null=True, blank=True)
+    watson = models.CharField(max_length=20, null=True, blank=True)
+    watson_pmids = models.CharField(verbose_name='Watson_PMIDs', max_length=50, null=True, blank=True)
+    qci = models.CharField(verbose_name='QCI', max_length=20, null=True, blank=True)
+    qci_pmids = models.CharField(verbose_name='QCI_PMIDs', max_length=50, null=True, blank=True)
+    jaxckb = models.CharField(verbose_name='JaxCKB', max_length=10, null=True, blank=True)
+    jaxckb_pmids = models.CharField(verbose_name='JaxCKB_PMIDs', max_length=50, null=True, blank=True)
+    pmkb = models.CharField(verbose_name='PMKB', max_length=10, null=True, blank=True)
+    pmkb_citations = models.CharField(verbose_name='PMKB_citations', max_length=500, null=True, blank=True)
+    civic = models.CharField(verbose_name='CIViC', max_length=50, null=True, blank=True)
+    google = models.CharField(max_length=100, null=True, blank=True)
+    alamut = models.CharField(max_length=70, null=True, blank=True)
     gene = models.ForeignKey(Gene, related_name='variants', on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
@@ -184,8 +184,8 @@ class CancerHotspot(models.Model):
         count (models.IntegerField): Cancer hotspot count value
         variant (models.ForeignKey): Variant object
     """
-    hotspot = models.CharField(max_length=70, null=True)
-    count = models.IntegerField(default=1)
+    hotspot = models.CharField(max_length=70, null=True, blank=True)
+    count = models.IntegerField(default=1, null=True, blank=True)
     variant = models.ForeignKey(Variant, related_name='hotspots', on_delete=models.CASCADE, null=True, blank=True)
 
 
@@ -198,9 +198,9 @@ class PathItem(models.Model):
         value (models.IntegerField): Path item score value
         content (models.CharField): Path item description
     """
-    key = models.CharField(max_length=5, null=True)
-    content = models.CharField(max_length=75, null=True)
-    value = models.IntegerField(default=0)
+    key = models.CharField(max_length=5, null=True, blank=True)
+    content = models.CharField(max_length=75, null=True, blank=True)
+    value = models.IntegerField(default=0, null=True, blank=True)
 
     def __str__(self):
         """
@@ -229,10 +229,10 @@ class Disease(models.Model):
         approved_date (models.DateTimeField): Disease approved date
         approve_user (models.ForeignKey): Disease approve user
     """
-    name = models.CharField(max_length=20, null=True)
+    name = models.CharField(max_length=20)
     branch = models.CharField(choices=BRANCH_CHOICES, max_length=2, default='so')
-    others = models.CharField(choices=TIER_CHOICES, max_length=20, null=True)
-    report = models.CharField(verbose_name='Germline Report', max_length=20, null=True)
+    others = models.CharField(choices=TIER_CHOICES, max_length=20, null=True, blank=True)
+    report = models.CharField(verbose_name='Germline Report', max_length=20, null=True, blank=True)
     variant = models.ForeignKey(Variant, related_name='diseases', on_delete=models.CASCADE, null=True, blank=True)
     reviewed = models.CharField(choices=(
         ('n', 'Not Reviewed'),
@@ -240,11 +240,11 @@ class Disease(models.Model):
         ('m', 'Secondly Reviewed'),
         ('a', 'Approved'),
     ), max_length=1, default='n')
-    reviewed_date = models.DateTimeField('reviewed date', null=True)
+    reviewed_date = models.DateTimeField('reviewed date', null=True, blank=True)
     review_user = models.ForeignKey(User, related_name='reviewed_variants', on_delete=models.CASCADE, null=True, blank=True)
-    meta_reviewed_date = models.DateTimeField('meta-reviewed date', null=True)
+    meta_reviewed_date = models.DateTimeField('meta-reviewed date', null=True, blank=True)
     meta_review_user = models.ForeignKey(User, related_name='meta_reviewed_variants', on_delete=models.CASCADE, null=True, blank=True)
-    approved_date = models.DateTimeField('approved date', null=True)
+    approved_date = models.DateTimeField('approved date', null=True, blank=True)
     approve_user = models.ForeignKey(User, related_name='approved_variants', on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
@@ -266,9 +266,9 @@ class Score(models.Model):
         content (models.CharField): Score ACMG classification
         disease (models.OneToOneField): Disease object
     """
-    for_score = models.CharField(verbose_name='For Pathogenicity', max_length=20, null=True)
-    against_score = models.CharField(verbose_name='Against Pathogenicity', max_length=20, null=True)
-    content = models.CharField(verbose_name='ACMG Classification', max_length=100, null=True)
+    for_score = models.CharField(verbose_name='For Pathogenicity', max_length=20, null=True, blank=True)
+    against_score = models.CharField(verbose_name='Against Pathogenicity', max_length=20, null=True, blank=True)
+    content = models.CharField(verbose_name='ACMG Classification', max_length=100, null=True, blank=True)
     disease = models.OneToOneField(Disease, on_delete=models.CASCADE, related_name='score', null=True, blank=True)
 
     def __str__(self):
@@ -293,12 +293,14 @@ class Functional(models.Model):
         verbose_name='Functional Significance',
         choices=FUNC_SIG_CHOICES, max_length=20,
         null=True,
+        blank=True
     )
     value = models.CharField(
         verbose_name='Functional Class',
         choices=FUNC_CAT_CHOICES,
         max_length=20,
-        null=True
+        null=True,
+        blank=True
     )
     disease = models.ForeignKey(Disease, related_name='functionals', on_delete=models.CASCADE, null=True, blank=True)
 
@@ -330,8 +332,10 @@ class Evidence(models.Model):
         max_length=2,
         choices=TYPE_CHOICES,
         default='PM',
+        null=True,
+        blank=True
     )
-    source_id = models.CharField(max_length=20, null=True)
+    source_id = models.CharField(max_length=20, null=True, blank=True)
     statement = models.TextField(null=True)
 
     def __str__(self):
@@ -372,12 +376,14 @@ class SubEvidence(models.Model):
         verbose_name='Evidence Level',
         max_length=1,
         choices=EVID_LEVEL_CHOICES,
-        null=True
+        null=True,
+        blank=True
     )
     evid_dir = models.BooleanField(
         verbose_name='Evidence Direction',
         choices=EVID_DIR_CHOICES,
-        null=True
+        null=True,
+        blank=True
     )
     clin_sig = models.CharField(
         verbose_name='Clinical Significance',
@@ -386,7 +392,8 @@ class SubEvidence(models.Model):
     )
     drug_class = models.TextField(
         verbose_name='Drug/Drug Class/Dx',
-        null=True
+        null=True,
+        blank=True
     )
     evid_rating = models.IntegerField(
         verbose_name='Evidence Rating',
@@ -432,7 +439,7 @@ class History(models.Model):
         object (models.ForeignKey): Evidence object
         variant (models.ForeignKey): Variant object
     """
-    content = models.TextField(null=True)
+    content = models.TextField(null=True, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     object = models.ForeignKey(Evidence, verbose_name='field', related_name='histories', on_delete=models.CASCADE, null=True, blank=True)

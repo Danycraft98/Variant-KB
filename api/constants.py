@@ -1,5 +1,6 @@
 # Constants
 BRANCH_CHOICES = [
+    ('no', 'No Disease'),
     ('gp', 'Germline Pathogenecity'),
     ('so', 'Somatic Oncogenecity')
 ]

@@ -1,21 +1,26 @@
+$(document).ready(function () {
+    $('.required').prop('required', function () {
+        return $(this).is(':visible');
+    });
+});
+
 function change_disease(element) {
-    let branch = element.value, div = document.getElementById(branch), other_divs;
+    let branch = element.value, div = document.querySelector('div[data-key="' + branch + '"]'), other_divs;
     if (branch === 'gp') {
-        other_divs = [document.getElementById('so'), document.getElementById('no')];
+        other_divs = [document.querySelector('div[data-key="so"]'), document.querySelector('div[data-key="no"]')];
     } else if (branch === 'so') {
-        other_divs = [document.getElementById('gp'), document.getElementById('no')];
+        other_divs = [document.querySelector('div[data-key="gp"]'), document.querySelector('div[data-key="no"]')];
     } else {
-        other_divs = [document.getElementById('gp'), document.getElementById('so')];
+        other_divs = [document.querySelector('div[data-key="gp"]'), document.querySelector('div[data-key="so"]')];
     }
 
     div.setAttribute('class', 'tab-pane fade show active empty-form');
     other_divs.forEach(function (element) {
         element.setAttribute('class', 'tab-pane fade empty-form');
     });
-    Object.values(document.querySelectorAll('input[name*="__prefix__-branch"]'))
-        .forEach(function (element) {
-            element.checked = element.value === branch;
-        });
+    Object.values(div.querySelectorAll('input[name*="__prefix__-branch"]')).forEach(function (element) {
+        element.checked = element.value === branch;
+    });
 }
 
 function add_evid(element) {
