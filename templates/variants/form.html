@@ -56,21 +56,21 @@
                     <a href='#' class='justify-content-end nav-link'>Add Interpretation</a>
                     <button type='submit' href='' class='justify-content-end nav-item nav-link'>Save</button>
                 </div>
-            </div>
 
-            <div class='tab-content' id='tab-content'>
-                {{ form.management_form }}
-                {{ form.non_form_errors }}
+                <div class='p-0 tab-content' id='tab-content'>
+                    {{ form.management_form }}
+                    {{ form.non_form_errors }}
 
-                {% with subform=form.empty_form %}
-                    {% for branch in branches %}
+                    {% with subform=form.empty_form %}
+                        {% for branch in branches %}
+                            {% include 'partials/_disease.html' %}
+                        {% endfor %}
+                    {% endwith %}
+
+                    {% for subform in form.forms %}
                         {% include 'partials/_disease.html' %}
                     {% endfor %}
-                {% endwith %}
-
-                {% for subform in form.forms %}
-                    {% include 'partials/_disease.html' %}
-                {% endfor %}
+                </div>
             </div>
         </form>
     </div>
