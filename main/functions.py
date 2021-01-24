@@ -19,49 +19,54 @@ def read_file(filename, **kwargs):
     return read_map[ext](filename, **kwargs)
 
 
-def create_disease(request, item, dx_values, other_values):
-    dx_id = dx_values.get('id')
+def create_disease(request, item, dx_values):
+    disease = dx_values.get('id', '')
     branch = dx_values.get('branch')
-    if dx_id and dx_id.isdigit():
-        dx = Disease.objects.filter(pk=dx_id)
+    if disease:
+        dx = Disease.objects.filter(pk=disease.id)
         old_dx = dict(dx.first().__dict__)
         dx.update(
             name=dx_values.get('name'), branch=branch, others=dx_values.get('others', ''),
             report=dx_values.get('report', ''), variant=item
         )
 
-        dx_id = dx.first()
-        if any(key in {k: None if old_dx[k] == dx_values[k] else dx_values[k] for k in dx_values} for key in dx_values.keys()):
-            History.objects.create(content='Updated Disease: ' + str(dx_id), user=request.user, timestamp=datetime.datetime.now(), variant=item)
+        if any(key in {k: None if k in old_dx and old_dx[k] == dx_values[k] else dx_values[k] for k in dx_values} for key in dx_values.keys()):
+            History.objects.create(content='Updated Disease: ' + str(disease), user=request.user, timestamp=datetime.datetime.now(), variant=item)
     else:
-        dx_id = Disease.objects.create(
+        disease = Disease.objects.create(
             name=dx_values.get('name'), branch=branch, others=dx_values.get('others', ''),
             report=dx_values.get('report', ''), variant=item
         )
-        History.objects.create(content='Added Disease: ' + str(dx_id), user=request.user, timestamp=datetime.datetime.now(), variant=item)
+        History.objects.create(content='Added Disease: ' + str(disease), user=request.user, timestamp=datetime.datetime.now(), variant=item)
+    return disease
 
-    if branch == 'so':
-        create_functional(request, dx_id, dx_values, other_values)
+
+def create_functional(item, func_values):
+    functional = func_values.pop('id')
+    [func_values.pop(k) for k in ['DELETE', 'disease']]
+    if functional:
+        func = Functional.objects.filter(pk=functional.id)
+        func.update(**func_values)
     else:
-        create_score(request, dx_id, dx_values, other_values)
+        functional = Functional.objects.create(**func_values, disease=item)
+    return functional
 
 
-def create_functional(request, item, func_values, other_values):
-    func_id = func_values.get('id')
-    if func_id and func_id.isdigit():
-        func_id = Functional.objects.filter(pk=func_id)
-        func_id.update(key=func_values.get('key', ''), value=func_values.get('value', ''))
+def create_score(item, score_values):
+    score = score_values.pop('id')
+    [score_values.pop(k) for k in ['DELETE', 'disease']]
+    print(score)
+    """if score:
+        sc = Score.objects.filter(pk=score.id)
+        sc.update(**score_values)
     else:
-        func_id = Functional.objects.create(key=func_values.get('key', ''), value=func_values.get('value', ''), disease=item)
-    create_evidence(request, [item, func_id], other_values)
-
-
-def create_score(request, item, score_values, other_values):
-    pass
+        score = Score.objects.create(**score_values, disease=item)
+    return score"""
 
 
 def create_evidence(request, items, evidence_values):
-    pass#print(dict(evidence_values))
+    evidence = evidence_values.get('id', '')
+    print(evidence)
     """for i, (e_id, source_type, source_id, statement) in enumerate(evidence_values):
         evid_dict = {'source_type': source_type, 'source_id': source_id, 'statement': statement}
 

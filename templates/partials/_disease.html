@@ -42,9 +42,7 @@
             </div>
         </div>
     </div>
-
-    <div id='{{ form.prefix }}div' class='card-body container collapse show {% if 'prefix' in subform.name.id_for_label %}empty-form{% endif %}'>
-        <!--{% if form.errors %}
+    <!--{% if form.errors %}
             {% for field in form %}
                 {% for error in field.errors %}
                     <div class="alert alert-danger">
@@ -59,8 +57,8 @@
             {% endfor %}
         {% endif %}-->
 
-        {% if subform.branch.value != 'no' or branch != 'no' %}
-
+     {% if subform.branch.value != 'no' or branch != 'no' %}
+        <div id='{{ form.prefix }}div' class='card-body container collapse show {% if 'prefix' in subform.name.id_for_label %}empty-form{% endif %}'>
             {{ subform.id }}
 
             <div class='row my-2'>
@@ -71,19 +69,20 @@
 
             {% if subform.branch.value == 'so' or branch == 'so' %}
 
-            {{ child_forms.0.management_form }}
-            {% for func in child_forms.0.forms %}
-                {% if forloop.counter0 == 0 %}
-                    <div class='row form-group my-2'>
-                        <div class='col-4'>{{ func.key.label }}</div>
-                        <div class='col-4'>{{ func.key }}</div>
-                        <div class='offset-md-1 col-3 pr-3'>
-                            <button type='button' class='btn btn-primary pull-right' onclick='add_func_cat(this)'>
-                                Add Functional Category
-                            </button>
+                {{ child_forms.0.management_form }}
+                {% for func in child_forms.0.forms %}
+                    {{ func.id }}
+                    {% if forloop.counter0 == 0 %}
+                        <div class='row form-group my-2'>
+                            <div class='col-4'>{{ func.key.label }}</div>
+                            <div class='col-4'>{{ func.key }}</div>
+                            <div class='offset-md-1 col-3 pr-3'>
+                                <button type='button' class='btn btn-primary pull-right' onclick='add_func_cat(this)'>
+                                    Add Functional Category
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                    </div>
+                        </div>
                     {% endif %}
 
                     <div id='func_cat'>
@@ -108,6 +107,7 @@
                             {{ subchild_forms.0.management_form }}
                             {% for evid in subchild_forms.0 %}
                                 <div id='form{{ evid.name }}' class='card-body container'>
+                                    {{ evid.id }}
                                     {% include 'partials/_evidence.html' %}
                                 </div>
                             {% endfor %}
@@ -179,88 +179,89 @@
                     <div class='col-4'>{{ subform.report.label }}</div>
                     <div class='col-4'>{{ subform.report }}</div>
                 </div>
-                </div>
+            </div>
 
-                {{ child_forms.1.management_form }}
-                {% for score in child_forms.1.forms %}
-                    <div id='score'>
-                        <div class='card-header justify-content-between' href='#' data-bs-toggle='collapse' data-bs-target='#d{{ form.name.id_for_label }}_score' aria-expanded='true'>
-                            <div class='h6 mr-auto my-2'>2015 ACMG Score</div>
+            {{ child_forms.1.management_form }}
+            {% for score in child_forms.1.forms %}
+                <div id='score'>
+                    <div class='card-header justify-content-between' href='#' data-bs-toggle='collapse' data-bs-target='#d{{ form.name.id_for_label }}_score' aria-expanded='true'>
+                        <div class='h6 mr-auto my-2'>2015 ACMG Score</div>
+                    </div>
+
+                    {{ score.id }}
+                    <div id='d{{ score.name.id_for_label }}_score' class='card-body container collapse show {% if 'prefix' in form.name.id_for_label %}empty-form{% endif %}'>
+                        {{ form.child_id }}
+                        <div class='row form-group my-2'>
+                            <div class='col-4'>{{ score.content.label }}</div>
+                            <div class='col-4'>{{ score.content }}</div>
                         </div>
 
-                        <div id='d{{ score.name.id_for_label }}_score' class='card-body container collapse show {% if 'prefix' in form.name.id_for_label %}empty-form{% endif %}'>
-                            {{ form.child_id }}
-                            <div class='row form-group my-2'>
-                                <div class='col-4'>{{ score.content.label }}</div>
-                                <div class='col-4'>{{ score.content }}</div>
-                            </div>
+                        <div class='row form-group my-2'>
+                            <div class='col-4'>{{ score.for_score.label }}</div>
+                            <div class='col-4'>{{ score.for_score }}</div>
+                        </div>
 
-                            <div class='row form-group my-2'>
-                                <div class='col-4'>{{ score.for_score.label }}</div>
-                                <div class='col-4'>{{ score.for_score }}</div>
-                            </div>
-
-                            <div class='row form-group my-2'>
-                                <div class='col-4'>{{ score.against_score.label }}</div>
-                                <div class='col-4'>{{ score.against_score }}</div>
-                            </div>
+                        <div class='row form-group my-2'>
+                            <div class='col-4'>{{ score.against_score.label }}</div>
+                            <div class='col-4'>{{ score.against_score }}</div>
                         </div>
                     </div>
-                {% endfor %}
+                </div>
+            {% endfor %}
 
-                <div id='score_items'>
-                    <div class='card-header border-top justify-content-between d-flex' href='#' data-bs-toggle='collapse' data-bs-target='#d{{ form.name.id_for_label }}_for_score' aria-expanded='true'>
-                        <div class='h6 mr-auto my-2'>For Pathogenicity</div>
-                    </div>
-
-                    <div id='d{{ form.name.id_for_label }}_for_score' class='card-body container collapse show {% if 'prefix' in form.name.id_for_label %}empty-form{% endif %}'>
-                        {{ subchild_forms.1.management_form }}
-                        {% for evid in subchild_forms.1.forms %}
-                            {% if 'P' in evid.key.value and 'B' not in evid.key.value %}
-                                <div class='row my-3'>
-                                    <div class='col-12'>
-                                        <input type='checkbox' id='{{ evid.key.id_for_label }}' name='{{ evid.key.name }}' value='{{ evid.key.value }}' onchange='select_evidence(this)' aria-label='{{ evid.key.value }}'/>
-                                        {{ evid.key.value }}: {{ evid.content.value }}
-                                    </div>
-                                </div>
-
-                                {% include 'partials/_evidence.html' %}
-                            {% endif %}
-                        {% endfor %}
-                    </div>
-
-                    <div class='card-header border-top justify-content-between d-flex' href='#' data-bs-toggle='collapse' data-bs-target='#d{{ score.name.id_for_label }}_against_score' aria-expanded='true'>
-                        <div class='h6 mr-auto my-2'>Against Pathogenicity</div>
-                    </div>
-
-                    <div id='d{{ form.name.id_for_label }}_for_score' class='card-body container collapse show {% if 'prefix' in form.name.id_for_label %}empty-form{% endif %}'>
-                        {{ subchild_forms.1.management_form }}
-                        {% for evid in subchild_forms.1.forms %}
-                            {% if 'B' in evid.key.value %}
-                                <div class='row my-3'>
-                                    <div class='col-12'>
-                                        <input type='checkbox' id='{{ evid.key.id_for_label }}' name='{{ evid.key.name }}' value='{{ evid.key.value }}' onchange='select_evidence(this)' aria-label='{{ evid.key.value }}'/>
-                                        {{ evid.key.value }}: {{ evid.content.value }}
-                                    </div>
-                                </div>
-
-                                {% include 'partials/_evidence.html' %}
-                            {% endif %}
-                        {% endfor %}
-                    </div>
+            <div id='score_items'>
+                <div class='card-header border-top justify-content-between d-flex' href='#' data-bs-toggle='collapse' data-bs-target='#d{{ form.name.id_for_label }}_for_score' aria-expanded='true'>
+                    <div class='h6 mr-auto my-2'>For Pathogenicity</div>
                 </div>
 
-            {% endif %}
+                <div id='d{{ form.name.id_for_label }}_for_score' class='card-body container collapse show {% if 'prefix' in form.name.id_for_label %}empty-form{% endif %}'>
+                    {{ subchild_forms.1.management_form }}
+                    {% for evid in subchild_forms.1.forms %}
+                        {% if 'P' in evid.key.value and 'B' not in evid.key.value %}
+                            <div class='row my-3'>
+                                <div class='col-12'>
+                                    <input type='checkbox' id='{{ evid.key.id_for_label }}' name='{{ evid.key.name }}' value='{{ evid.key.value }}' onchange='select_evidence(this)' aria-label='{{ evid.key.value }}'/>
+                                    {{ evid.key.value }}: {{ evid.content.value }}
+                                </div>
+                            </div>
 
-            <div id='d{{ subform.name.id_for_label }}_label' class='card-header container-fluid'>
-                <div class='row my-2'>
-                    <div class='h6 col-9 d-flex justify-content-start' href='#' data-bs-toggle='collapse' data-bs-target='#d{{ form.reviewed.id_for_label }}_dx' aria-expanded='true'>
-                        Review
-                    </div>
+                            {% include 'partials/_evidence.html' %}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
+                <div class='card-header border-top justify-content-between d-flex' href='#' data-bs-toggle='collapse' data-bs-target='#d{{ score.name.id_for_label }}_against_score' aria-expanded='true'>
+                    <div class='h6 mr-auto my-2'>Against Pathogenicity</div>
+                </div>
+
+                <div id='d{{ form.name.id_for_label }}_for_score' class='card-body container collapse show {% if 'prefix' in form.name.id_for_label %}empty-form{% endif %}'>
+                    {{ subchild_forms.1.management_form }}
+                    {% for evid in subchild_forms.1.forms %}
+                        {% if 'B' in evid.key.value %}
+                            <div class='row my-3'>
+                                <div class='col-12'>
+                                    <input type='checkbox' id='{{ evid.key.id_for_label }}' name='{{ evid.key.name }}' value='{{ evid.key.value }}' onchange='select_evidence(this)' aria-label='{{ evid.key.value }}'/>
+                                    {{ evid.key.value }}: {{ evid.content.value }}
+                                </div>
+                            </div>
+
+                            {% include 'partials/_evidence.html' %}
+                        {% endif %}
+                    {% endfor %}
                 </div>
             </div>
 
-            <div id='{{ report_form.0.prefix }}div' class='card-body container collapse show {% if 'prefix' in subform.name.id_for_label %}empty-form{% endif %}'>
+            {% endif %}
+
+        <div id='d{{ subform.name.id_for_label }}_label' class='card-header container-fluid'>
+            <div class='row my-2'>
+                <div class='h6 col-9 d-flex justify-content-start' href='#' data-bs-toggle='collapse' data-bs-target='#d{{ form.reviewed.id_for_label }}_dx' aria-expanded='true'>
+                    Review
+                </div>
+            </div>
+        </div>
+
+        <div id='{{ report_form.0.prefix }}div' class='card-body container collapse show {% if 'prefix' in subform.name.id_for_label %}empty-form{% endif %}'>
 
             <div class='form-group'>
                 {% for item, review in subform.reviewed.field.choices|zip_list:subform.reviewed %}

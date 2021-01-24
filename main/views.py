@@ -98,16 +98,16 @@ def variant(request, gene_name, protein):
         raise Http404('Variant does not exist')
 
     diseases = item.diseases.all()
-    form = DiseaseFormSet(request.POST or None, request.FILES or None)
-    if diseases.count() > 0:
-        form.initial = diseases.values()
-        form.extra = diseases.count()
+    functionals, scores = Functional.objects.filter(id=0), Score.objects.filter(id=0)
+    for disease in diseases:
+        functionals = functionals | Functional.objects.filter(disease=disease)
+        scores = scores | Score.objects.filter(disease=disease)
 
     forms = [
         DiseaseFormSet(request.POST or None, request.FILES or None),
 
-        FunctionalFormSet(request.POST or None, request.FILES or None),
-        ScoreFormSet(request.POST or None, request.FILES or None),
+        FunctionalFormSet(request.POST or None, request.FILES or None, initial=functionals.values()),
+        ScoreFormSet(request.POST or None, request.FILES or None, initial=scores.values()),
 
         EvidenceFormSet(request.POST or None, request.FILES or None),
         PathItemFormSet(request.POST or None, request.FILES or None, initial=PathItem.objects.all().values()),
@@ -117,11 +117,26 @@ def variant(request, gene_name, protein):
 
     if request.method == 'POST':
         all_not_valid = True
-        for main_form, child_form, subchild_form in zip(forms[0], forms[1], forms[3]):
-            print('Disease: ', main_form.errors, '\nChild:', child_form.errors)
-            if main_form.is_valid() and child_form.is_valid():
+        for main_form, child_form, subchild_form in zip([forms[0], forms[0]], forms[1:3], forms[3:5]):
+            #print('Disease: ', main_form.errors, '\nChild:', child_form.errors)
+            dx = None
+            if main_form.is_valid():
                 all_not_valid = False
-                print('Test')
+                dx = create_disease(request, item, main_form.cleaned_data)
+
+            if dx:
+                if dx.branch == 'so':
+                    if child_form[0].is_valid():
+                        create_functional(dx, dict(child_form[0].cleaned_data))
+
+                    #if subchild_form[0].is_valid():
+                    #    create_evidence(request, dx, dict(subchild_form[0].cleaned_data))
+
+                elif dx.branch == 'gp':
+                    if child_form[1].is_valid():
+                        create_score(dx, child_form[1].cleaned_data)
+
+                pass
 
         if all_not_valid:
             return HttpResponseRedirect(reverse('variant', args=(gene_name, protein)))
@@ -130,8 +145,8 @@ def variant(request, gene_name, protein):
 
     return render(request, 'variants/form.html', {
         'item': item, 'title': 'Edit - ' + item.protein,
-        'items': score_items, 'form': forms[0], 'branches': branches, 'reports': reports,
-        'child_forms': forms[1:3], 'subchild_forms': forms[3:5], 'report_form': forms[5]
+        'items': score_items, 'form': forms[0], 'child_forms': forms[1:3], 'subchild_forms': forms[3:5],
+        'report_form': forms[5], 'branches': branches, 'reports': reports
     })
 
 

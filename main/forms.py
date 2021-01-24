@@ -6,13 +6,14 @@ from api.constants import *
 from api.models import *
 
 __all__ = [
-    'DiseaseFormSet', 'ScoreFormSet', 'FunctionalFormSet', 'EvidenceFormSet', 'PathItemFormSet', 'ReportFormSet'
+    'DiseaseFormSet', 'ScoreFormSet', 'FunctionalFormSet', 'EvidenceFormSet',
+    'PathItemFormSet', 'ReportFormSet'
 ]
 
 
 # Base Forms------------------------------------------------------------------------------------------------------
 class BaseForm(forms.ModelForm):
-    
+
     def _clean_fields(self):
         for name, field in self.fields.items():
             if field.disabled:
@@ -57,7 +58,7 @@ class EvidenceForm(BaseForm):
     }))
     id = forms.CharField(required=False, widget=forms.HiddenInput())
     source_type = forms.ChoiceField(required=False, choices=TYPE_CHOICES, widget=forms.Select(attrs={
-        'class': 'form-select'
+        'class': 'form-control'
     }))
     source_id = forms.CharField(required=False, widget=forms.TextInput(attrs={
         'class': 'form-control',
@@ -101,14 +102,14 @@ DiseaseFormSet = modelformset_factory(
     form=DiseaseForm,
     fields='__all__',
     min_num=1,
-    extra=1,
+    extra=1
 )
 EvidenceFormSet = inlineformset_factory(
     Evidence,
     SubEvidence,
     form=EvidenceForm,
     min_num=1,
-    extra=1,
+    extra=1
 )
 ReportFormSet = modelformset_factory(
     Report,

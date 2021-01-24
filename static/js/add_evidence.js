@@ -139,6 +139,13 @@ function calculate_score(element) {
     //set_ACMG_class(dx_id)
 }
 
+function set_reviewed(element) {
+    const review_val = $('input[name="' + element.name + '"]:checked').last().val(), select_id = element.id.split('_').splice(0, 2).join('_');
+    Object.values(document.querySelectorAll('select[id*="' + select_id + '"] option')).forEach(function (element) {
+        element.selected = element.value === review_val;
+    });
+}
+
 function create_divider(element) {
     const elements = element.querySelectorAll('fieldset'), length = elements.length - 1;
     Object.values(elements).forEach(function (sub_element, index) {

@@ -366,6 +366,8 @@ class SubEvidence(models.Model):
         max_length=4,
         choices=EVID_SIG_CHOICES,
         default='Pred',
+        null=True,
+        blank=True
     )
     level = models.CharField(
         verbose_name='Evidence Level',
@@ -383,7 +385,9 @@ class SubEvidence(models.Model):
     clin_sig = models.CharField(
         verbose_name='Clinical Significance',
         choices=CLIN_SIG_CHOICES,
-        max_length=25
+        max_length=25,
+        null=True,
+        blank=True
     )
     drug_class = models.TextField(
         verbose_name='Drug/Drug Class/Dx',
@@ -393,7 +397,9 @@ class SubEvidence(models.Model):
     evid_rating = models.IntegerField(
         verbose_name='Evidence Rating',
         choices=EVID_RATING_CHOICES,
-        default=1
+        default=1,
+        null=True,
+        blank=True
     )
     evidence = models.ForeignKey(Evidence, related_name='subevidences', on_delete=models.CASCADE, null=True, blank=True)
     variant = models.ForeignKey(Variant, related_name='subevidences', on_delete=models.CASCADE, null=True, blank=True)
