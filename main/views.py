@@ -117,8 +117,7 @@ def variant(request, gene_name, protein):
 
     if request.method == 'POST':
         all_not_valid = True
-        for main_form, child_form, subchild_form in zip([forms[0], forms[0]], forms[1:3], forms[3:5]):
-            #print('Disease: ', main_form.errors, '\nChild:', child_form.errors)
+        for main_form in forms[0]:
             dx = None
             if main_form.is_valid():
                 all_not_valid = False
@@ -126,15 +125,15 @@ def variant(request, gene_name, protein):
 
             if dx:
                 if dx.branch == 'so':
-                    if child_form[0].is_valid():
-                        create_functional(dx, dict(child_form[0].cleaned_data))
+                    if forms[0].is_valid():
+                        create_functional(dx, dict(forms[0].cleaned_data))
 
                     #if subchild_form[0].is_valid():
                     #    create_evidence(request, dx, dict(subchild_form[0].cleaned_data))
 
                 elif dx.branch == 'gp':
-                    if child_form[1].is_valid():
-                        create_score(dx, child_form[1].cleaned_data)
+                    if forms[1].is_valid():
+                        create_score(dx, forms[1].cleaned_data)
 
                 pass
 
