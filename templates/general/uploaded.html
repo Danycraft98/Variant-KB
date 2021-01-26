@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load render_table from django_tables2 %}
+{% load custom_tags %}
+
+{% block content %}
+    <style>
+        table {
+            display: block;
+            overflow-x: auto;
+        }
+
+        td {
+            overflow: hidden;
+            height: 14px;
+            white-space: nowrap;
+        }
+    </style>
+
+    <div class='card shadow my-5'>
+        <!-- Page Heading -->
+        <form method='post' action='{% url 'upload' %}' onsubmit='return naCheck();'>
+            {% csrf_token %}
+            <label>
+                <input name='dict' value='{{ dict }}' hidden>
+            </label>
+
+            <div class='card-header d-flex flex-row align-items-center justify-content-between'>
+                <h5 class='text-primary'>{{ title }}</h5>
+                <div class='align-items-right'>
+                    <button class='btn btn-primary' type='submit'>Commit</button>
+                </div>
+            </div>
+
+            <!-- Page Body -->
+            <div class='card-body'>
+                {% if not is_empty.0 %}
+                    <h5>New Variants</h5>
+                    {{ tables.0 | safe }}
+                    <br/>
+                {% endif %}
+
+                {% if not is_empty.0 and not is_empty.1 %}
+                    <hr/>
+                    <br/>
+                {% endif %}
+
+                {% if not is_empty.1 %}
+                    <h5>Existing Variants</h5>
+                    {{ tables.1 | safe }}
+                {% endif %}
+            </div>
+        </form>
+    </div>
+
+    <link rel='stylesheet' href='//cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css'>
+{% endblock %}
+
+{% block script %}
+    <script>
+        $('.selectAll').click(function () {
+            $('input:checkbox').not(this).prop('checked', this.checked);
+        });
+
+        function toggle(source) {
+            Array.prototype.forEach.call(document.getElementsByName('add_or_update'), function (element) {
+                if (element.id === source.id) {
+                    element.checked = source.checked;
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            Array.prototype.forEach.call(document.getElementsByTagName('th'), function (element) {
+                if (!isNaN(element.innerText)) {
+                    element.setAttribute('style', 'min-width:40px');
+                    let check = document.createElement('INPUT');
+                    check.setAttribute('type', 'checkbox');
+                    if (element.parentElement.parentElement.parentElement.className.includes('new')) {
+                        check.setAttribute('id', 'new');
+                    } else {
+                        check.setAttribute('id', 'exist');
+                    }
+
+                    if (element.innerText === '') {
+                        check.setAttribute('onclick', 'toggle(this)')
+                    } else {
+                        check.setAttribute('value', element.parentElement.children[3].innerText);
+                        check.setAttribute('name', 'add_or_update');
+                    }
+                    element.innerText = '';
+                    element.appendChild(check);
+                }
+            });
+        });
+
+        let BreakException = {};
+        function naCheck() {
+            try {
+                Array.prototype.forEach.call(document.getElementsByName('add_or_update'), function (element) {
+                    if (element.checked && (element.parentElement.parentElement.children[3].innerText.includes('na') || element.parentElement.parentElement.children[9].innerText.includes('na'))) {
+                        alert('Variant with missing Gene name and/or Protein.');
+                        throw BreakException;
+                    }
+                });
+            } catch (e) {
+                return false;
+            }
+            return true;
+        }
+    </script>
+{% endblock %}

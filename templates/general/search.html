@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class='card shadow mx-auto my-5 ' style='width: 40%'>
+        <div class='card-header'>
+            <h5 class='mx-0 my-2 text-primary text-center'>
+                <i class='fa fa-search mx-2' style='font-size: smaller'></i>Search
+            </h5>
+        </div>
+        <div class='card-body mx-5 px-1'>
+            <form method='post' action=''>
+                {% csrf_token %}
+                <div class='mb-4'>
+                    Search by gene name or with variant field(s).
+                </div>
+
+                <div class='form-row mb-2'>
+                    <input type='text' class='form-control' id='name' name='name' placeholder='Name' aria-label='Name'>
+                </div>
+
+                <div class='form-row mb-2'>
+                    <input type='text' class='form-control' id='chromosome' name='chromosome' placeholder='Chromosome' aria-label='Chromosome'>
+                </div>
+
+                <div class='form-row mb-2'>
+                    <input type='text' class='form-control' id='cdna' name='cdna' placeholder='C.' aria-label='C.'>
+                </div>
+
+                <div class='form-row mb-2'>
+                    <input type='text' class='form-control' id='protein' name='protein' placeholder='P.' aria-label='P.'>
+                </div>
+
+                <div class='form-row mb-2'>
+                    <input type='text' class='form-control' id='ref' name='ref' placeholder='Ref' aria-label='Ref'>
+                </div>
+
+                <div class='form-row mb-2'>
+                    <input type='text' class='form-control' id='alt' name='alt' placeholder='Alt' aria-label='Alt'>
+                </div>
+
+                <div class='form-group row mt-4'>
+                    <div class='col-3'></div>
+                    <div class='col-6'>
+                        <button type='submit' class='btn btn-primary col-12 py-2'>Search</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        function set_search_type(id1, id2) {
+            const element = document.getElementById(id1 + '_btn');
+            if (element.disabled === false) {
+                element.disabled = true;
+                document.getElementById(id2 + '_btn').disabled = false;
+
+                document.getElementById(id1 + '_search').hidden = false;
+                document.getElementById(id2 + '_search').hidden = true;
+            }
+        }
+    </script>
+{% endblock %}
