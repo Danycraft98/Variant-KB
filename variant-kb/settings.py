@@ -25,6 +25,9 @@ SECRET_KEY = '0r%dj0ub-l26q=m#tpa$jfi5=21a)4a*m&^hc7@ki@n0^#ipo)'
 DEBUG = True
 ALLOWED_HOSTS = ["*"]
 
+# Set environment variables
+os.environ['DATABASE_URL'] = 'mysql://root:password@localhost:3306/variant_db'
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -93,7 +96,7 @@ WSGI_APPLICATION = 'variant-kb.wsgi.application'
 
 # Database
 DATABASES = {
-    'default': dj_database_url.config(default=os.environ['DATABASE_URL']),
+    'default': dj_database_url.config(default=os.environ.get('DATABASE_URL')),
 }
 
 # Password validation
