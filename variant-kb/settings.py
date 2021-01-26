@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
+import dotenv as env
 import os
 from os.path import dirname, join, realpath
 
@@ -24,15 +25,18 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 # Set environment variables
-#TODO: smtps is depreciated use submission?
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+env.load_dotenv(os.path.join(BASE_DIR, '.env'))
+
+# TODO: smtps is depreciated use submission?
 config = {
-    'BASE_DIR': os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-    'DATABASE_URL': 'mysql://root:password@localhost:3306/variant_db',
-    'DATE_FORMAT': 'N j, Y',
-    'LANGUAGE_CODE': 'en-us',
-    'SENDGRID_API_KEY': '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',
-    'SENDGRID_URL': 'smtps://irene.chae@uhn.ca:scMN4244scMN4244@smtp.sendgrid.net:587',
-    'TIME_ZONE': 'UTC'
+    'BASE_DIR': BASE_DIR,
+    # 'DATABASE_URL': os.getenv('DATABASE_URL'),
+    'DATE_FORMAT': os.getenv('DATE_FORMAT'),
+    'LANGUAGE_CODE': os.getenv('LANGUAGE_CODE'),
+    'SENDGRID_API_KEY': os.getenv('SENDGRID_API_KEY'),
+    'SENDGRID_URL': os.getenv('SENDGRID_URL'),
+    'TIME_ZONE': os.getenv('TIME_ZONE'),
 }
 
 for key, value in config.items():
