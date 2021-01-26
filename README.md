@@ -6,7 +6,7 @@ Check out the [Getting Started with Python on Heroku](https://devcenter.heroku.c
 
 ## Running Locally
 
-Make sure you have Python 3.9.1. To push to Heroku, you'll need to install the [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli), as well as [Postgres](https://devcenter.heroku.com/articles/heroku-postgresql#local-setup).
+Make sure you have Python 3.9.1 and mysql installed.
 
 ```sh
 $ git clone https://github.com/Danycraft98/Variant-KB.git
@@ -15,7 +15,9 @@ $ cd Variant-KB
 $ python3 -m venv variant-kb
 $ pip install -r requirements.txt
 
-$ createdb variant_db
+$ mysql -u <username> -p
+$ <password>
+$ create database variant_db;
 
 $ python manage.py migrate
 
@@ -26,13 +28,14 @@ Your app should now be running on [localhost:5000](http://localhost:5000/).
 
 ## Deploying to Heroku
 
-```sh
-$ heroku create
-$ git push heroku main
+ To push to Heroku, you'll need to install the [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli).
 
-$ heroku run python manage.py migrate
+```sh
+$ heroku create variant-kb
+$ git push heroku main
 $ heroku open
 ```
+
 or
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
