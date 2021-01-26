@@ -6,7 +6,7 @@ Check out the [Getting Started with Python on Heroku](https://devcenter.heroku.c
 
 ## Running Locally
 
-Make sure you have Python 3.9.1 and mysql installed.
+Make sure you have Python 3.9.1 and mysql installed. Also, you must comment out all "django_heroku" in setting.py (there should be two lines)
 
 ```sh
 $ git clone https://github.com/Danycraft98/Variant-KB.git
@@ -20,8 +20,7 @@ $ <password>
 $ create database variant_db;
 
 $ python manage.py migrate
-
-$ heroku local
+$ python manage.py runserver
 ```
 
 Your app should now be running on [localhost:5000](http://localhost:5000/).
