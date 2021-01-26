@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
+import dj_database_url
 from os.path import dirname, join, realpath
 
 from django.core.files.uploadhandler import MemoryFileUploadHandler, TemporaryFileUploadHandler
