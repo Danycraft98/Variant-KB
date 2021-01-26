@@ -92,9 +92,8 @@ TEMPLATES = [
 WSGI_APPLICATION = 'variant-kb.wsgi.application'
 
 # Database
-DATABASE_URL = 'mysql://root:password@localhost:3306/variant_db'
 DATABASES = {
-    'default': dj_database_url.config(default=DATABASE_URL),
+    'default': dj_database_url.config(default=os.environ['DATABASE_URL']),
 }
 
 # Password validation
