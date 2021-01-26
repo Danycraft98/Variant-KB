@@ -6,21 +6,29 @@
             </div>
 
             {% if 'Statement' in field.label %}
+
                 <div class='col-5'>
                     <textarea class='form-control' id='{{ field.id_for_label }}' name='{{ evid.prefix }}-statement' aria-label='{{ field.label }}'></textarea>
                 </div>
+
             {% else %}
+
                 <div class='col-4'>
                     {% if 'id' in field.label %}
+
                         <input class='form-control' id='{{ field.id_for_label }}' name='{{ evid.prefix }}-source_id' aria-label='{{ field.label }}'/>
+
                     {% else %}
+
                         <select class='form-select' id='{{ field.id_for_label }}' name='{{ evid.prefix }}-source_type' aria-label='{{ field.label }}'>
                             {% for item in field %}
                                 <option value='{{ item.key }}'>{{ item }}</option>
                             {% endfor %}
                         </select>
+
                     {% endif %}
                 </div>
+
             {% endif %}
 
             {% if 'Type' in field.label %}

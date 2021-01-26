@@ -1,30 +1,18 @@
 $(document).ready(function () {
+    $("input[type='text'], input[type='number'], textarea").addClass('form-control');
+    $("select").addClass('form-select');
+
     $('.required').prop('required', function () {
         return $(this).is(':visible');
     });
 });
 
 function change_disease(main_elem) {
-    let branch = main_elem.value, div = document.querySelector('div[data-key="' + branch + '"]'), other_divs;
-    if (branch === 'gp') {
-        other_divs = [document.querySelector('div[data-key="so"]'), document.querySelector('div[data-key="no"]')];
-    } else if (branch === 'so') {
-        other_divs = [document.querySelector('div[data-key="gp"]'), document.querySelector('div[data-key="no"]')];
-    } else {
-        other_divs = [document.querySelector('div[data-key="gp"]'), document.querySelector('div[data-key="so"]')];
-    }
+    const branch = main_elem.value, div = $("div[data-key='" + branch + "']"), other_divs = $("div[data-key!='" + branch + "']")
 
-    div.setAttribute('class', 'tab-pane fade show active empty-form');
-    console.log(div)
-    other_divs.forEach(function (element) {
-        console.log(element)
-        element.setAttribute('class', 'tab-pane fade empty-form');
-    });
-
-    Object.values(div.querySelectorAll('select[id*="branch"] option')).forEach(function (element) {
-        element.selected = element.value === branch;
-    });
-
+    div.addClass('show active');
+    other_divs.removeClass('show active');
+    div.find('select[id*="branch"]').val(branch);
     document.getElementById('empty_link').setAttribute('href', '#' + div.id);
 }
 
@@ -51,7 +39,12 @@ function select_evidence(element, prefix) {
     calculate_score(element, prefix);
 }
 
-//TODO: Fix calculation
+/* PVS = 10; PS = 7; PM = 2; PP = 1
+ * P:  12-14, 17; LP: 6, 9, 11, 12
+ * ==================================
+ * BA = 16; BS = 8; BP = 1
+ * B:  16; LB: 2, 9
+ */
 function calculate_score(element, prefix) {
     let forScore, againstScore, score_label, checkboxes;
     checkboxes = document.getElementsByName(element.name);
@@ -67,124 +60,35 @@ function calculate_score(element, prefix) {
     });
 
     if (forScore > 11) {
-        forScore = 'Path';
-    } else if (forScore > 5){
-        forScore = 'Likely Path';
+        forScore = 'Pathogenic';
+    } else if (forScore > 5) {
+        forScore = 'Likely Pathogenic';
     } else {
         forScore = 'Uncertain';
     }
 
     if (againstScore > 15) {
         againstScore = 'Benign';
-    } else if (againstScore > 1){
+    } else if (againstScore > 1) {
         againstScore = 'Likely Benign';
     } else {
         againstScore = 'Uncertain';
     }
     $('#id_' + prefix + '-for_score').val(forScore);
     $('#id_' + prefix + '-against_score').val(againstScore);
-}
+    const acmgClass = $('#id_' + prefix + '-content');
 
-
-function calculate_score_(element) {
-    const checkboxes = document.getElementsByName(element.name), dict = {};
-    let l_path, path, l_benign, check_id, forScore, againstScore, benign = false;
-    for (let i = 0; i < checkboxes.length; i++) {
-        if (checkboxes[i].checked) {
-            check_id = checkboxes[i].id.split('_')[1].replace(/\d/g, '');
-            if (dict[check_id]) {
-                dict[check_id]++;
-            } else {
-                dict[check_id] = 1;
-            }
+    if (forScore.includes('Pathogenic')) {
+        if (againstScore === 'Uncertain') {
+            acmgClass.val(forScore);
+        } else if (againstScore.includes('Benign')) {
+            acmgClass.val( 'VUS');
         }
-    }
-
-    if (dict["PVS"]) {
-        if (dict["PS"]) {
-            path = true;
-        } else if (dict["PM"]) {
-            if (dict["PM"] >= 2) {
-                path = true;
-            } else if (dict["PP"]) {
-                path = true;
-            } else {
-                l_path = true
-            }
-        } else if (dict["PP"]) {
-            if (dict["PP"] >= 2) {
-                path = true;
-            }
-        }
-    } else if (dict["PS"]) {
-        if (dict["PS"] >= 2) {
-            path = true;
-        } else if (dict["PM"]) {
-            if (dict["PM"] >= 3) {
-                path = true;
-            } else if (dict["PM"] === 2) {
-                if (dict["PP"] >= 2) {
-                    path = true;
-                } else {
-                    l_path = true
-                }
-            } else if (dict["PM"] === 1) {
-                if (dict["PP"] >= 4) {
-                    path = true;
-                } else {
-                    l_path = true;
-                }
-            }
-        } else {
-            if (dict["PP"] >= 2) {
-                l_path = true;
-            }
-        }
-    } else if (dict["PM"]) {
-        if (dict["PM"] >= 3) {
-            l_path = true;
-        } else if (dict["PM"] === 2) {
-            if (dict["PP"] >= 2) {
-                l_path = true;
-            }
-        } else if (dict["PM"] === 1) {
-            if (dict["PP"] >= 4) {
-                l_path = true;
-            }
-        }
-    }
-    if (path) {
-        forScore = "Pathogenic"
-    } else if (l_path) {
-        forScore = "Likely Pathogenic"
+    } else if (againstScore.includes('Benign')) {
+        acmgClass.val( againstScore);
     } else {
-        forScore = "Uncertain"
+        acmgClass.val( 'Uncertain');
     }
-    //document.getElementById(dx_id + "_forScore").setAttribute("value", forScore);
-
-    if (dict["BA"]) {
-        benign = true;
-    } else if (dict["BS"]) {
-        if (dict["BS"] >= 2) {
-            benign = true;
-        } else if (dict["BP"]) {
-            l_benign = true;
-        }
-    } else if (dict["BP"]) {
-        if (dict["BP"] >= 2) {
-            l_benign = true;
-        }
-    }
-    if (benign) {
-        againstScore = "Benign"
-    } else if (l_benign) {
-        againstScore = "Likely Benign"
-    } else {
-        againstScore = "Uncertain"
-    }
-    console.log(forScore, againstScore);
-    //document.getElementById(dx_id + "_againstScore").setAttribute("value", againstScore);
-    //set_ACMG_class(dx_id)
 }
 
 function set_reviewed(element) {
@@ -216,24 +120,6 @@ function collapse(element) {
         element.innerHTML = element.innerHTML.replace('Expand', 'Collapse');
     } else {
         element.innerHTML = element.innerHTML.replace('Collapse', 'Expand');
-    }
-}
-
-function set_ACMG_class(dx_id) {
-    const forScore = document.getElementById(dx_id + "_forScore").value;
-    const againstScore = document.getElementById(dx_id + "_againstScore").value;
-    const acmg_class = document.getElementById(dx_id + "_acmg");
-
-    if (forScore.includes('Pathogenic')) {
-        if (againstScore === 'Uncertain') {
-            acmg_class.setAttribute("value", forScore);
-        } else if (againstScore.includes('Benign')) {
-            acmg_class.setAttribute("value", 'VUS');
-        }
-    } else if (againstScore.includes('Benign')) {
-        acmg_class.setAttribute("value", againstScore);
-    } else {
-        acmg_class.setAttribute("value", 'Uncertain');
     }
 }
 
