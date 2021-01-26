@@ -5,6 +5,7 @@ django-heroku>=0.3.1
 # Django Packages -------------------
 Django>=3.1.5
 dj-database-url>=0.5.0
+dj-email-url>=1.0.2
 django-cors-headers>=3.7.0
 django-nested-formset
 django-tables2>=2.3.4
