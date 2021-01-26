@@ -11,16 +11,13 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
+from os.path import dirname, join, realpath
+
 import dj_database_url
 import dj_email_url
 from os.path import dirname, join, realpath
 
 from django.core.files.uploadhandler import MemoryFileUploadHandler, TemporaryFileUploadHandler
-
-import django_heroku
-
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SECRET_KEY = '0r%dj0ub-l26q=m#tpa$jfi5=21a)4a*m&^hc7@ki@n0^#ipo)'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -28,15 +25,18 @@ ALLOWED_HOSTS = ['*']
 
 # Set environment variables
 #TODO: smtps is depreciated use submission?
-os.environ = {
+config = {
     'BASE_DIR': os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
     'DATABASE_URL': 'mysql://root:password@localhost:3306/variant_db',
     'DATE_FORMAT': 'N j, Y',
     'LANGUAGE_CODE': 'en-us',
     'SENDGRID_API_KEY': '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',
-    # 'SENDGRID_URL': 'smtps://irene.chae@uhn.ca:scMN4244scMN4244@smtp.sendgrid.net:587',
+    'SENDGRID_URL': 'smtps://irene.chae@uhn.ca:scMN4244scMN4244@smtp.sendgrid.net:587',
     'TIME_ZONE': 'UTC'
 }
+
+for key, value in config.items():
+    os.environ[key] = value
 
 SECRET_KEY = '0r%dj0ub-l26q=m#tpa$jfi5=21a)4a*m&^hc7@ki@n0^#ipo)'
 
@@ -52,7 +52,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'hello',
     'django_tables2',
     'rest_framework',
 ]
