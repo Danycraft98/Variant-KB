@@ -88,25 +88,21 @@ Make sure to find the container ID of the rk_lims_image container.
 
 ### Useful Commands
 
-Create Migration files
-$ Python manage.py makemigrations
+Create Migration files<br/>
+`$ Python manage.py makemigrations`
 
-Load Migrations (Make sure the database is created before executing the command)
-$ Python manage.py migrate
+Load Migrations (Make sure the database is created before executing the command)<br/>
+`$ Python manage.py migrate`
 
-Create Super User
-$ Python manage.py createsuperuser
+Create Super User<br/>
+`$ Python manage.py createsuperuser`
 
 ### Server Database Schema Import
-From local to Mordor:
-$ scp -P 10022 variant_db_<latest_schema_date>.sql <username>@192.168.198.99:/mnt/work1/users/home/<username>
+From local to Mordor:<br/>
+`$ scp -P 10022 variant_db_<latest_schema_date>.sql <username>@192.168.198.99:/mnt/work1/users/home/<username>`
 
-From Mordor to database server:
-$ scp -P 10022 /mnt/work1/users/home/<username>/variant_db_<latest_schema_date>.sql <username>@node12:/home/<username>
+From Mordor to database server:<br/>
+`$ scp -P 10022 /mnt/work1/users/home/<username>/variant_db_<latest_schema_date>.sql <username>@node12:/home/<username>`
 
-Updating the database:
-$ mysql -u <username> -p variant_db < variant_db_<latest_schema_date>.sql
-
-
-
-
+Updating the database:<br/>
+`$ mysql -u <username> -p variant_db < variant_db_<latest_schema_date>.sql`
