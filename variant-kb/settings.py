@@ -26,7 +26,7 @@ DEBUG = True
 ALLOWED_HOSTS = ["*"]
 
 # Set environment variables
-os.environ['DATABASE_URL'] = 'mysql://root:password@localhost:3306/variant_db'
+# os.environ['DATABASE_URL'] = 'mysql://root:password@localhost:3306/variant_db'
 
 # Application definition
 
