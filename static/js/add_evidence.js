@@ -38,8 +38,54 @@ function add_evid(element) {
     form_elem_clone.insertAfter(form_elem);
 }
 
+function select_evidence(element, prefix) {
+    console.log(document.getElementById(element.id + '_evid'), element.checked === true);
+    document.getElementById(element.id + '_evid').disabled = element.checked === true;
+
+    document.querySelectorAll("[id^='" + element.id + "_']").forEach(function (item, index) {
+        if (index > 7) {
+            calculate_score(element, prefix);
+        }
+    });
+    calculate_score(element, prefix);
+}
+
 //TODO: Fix calculation
-function calculate_score(element) {
+function calculate_score(element, prefix) {
+    let forScore, againstScore, score_label, checkboxes;
+    checkboxes = document.getElementsByName(element.name);
+    forScore = againstScore = 0;
+    Object.values(checkboxes).forEach(function (elem) {
+        if (elem.checked) {
+            score_label = elem.getAttribute('aria-label');
+            if (score_label.includes('P') && !score_label.includes('B'))
+                forScore += parseInt(elem.value);
+            else
+                againstScore += parseInt(elem.value);
+        }
+    });
+
+    if (forScore > 11) {
+        forScore = 'Path';
+    } else if (forScore > 5){
+        forScore = 'Likely Path';
+    } else {
+        forScore = 'Uncertain';
+    }
+
+    if (againstScore > 15) {
+        againstScore = 'Benign';
+    } else if (againstScore > 1){
+        againstScore = 'Likely Benign';
+    } else {
+        againstScore = 'Uncertain';
+    }
+    $('#id_' + prefix + '-for_score').val(forScore);
+    $('#id_' + prefix + '-against_score').val(againstScore);
+}
+
+
+function calculate_score_(element) {
     const checkboxes = document.getElementsByName(element.name), dict = {};
     let l_path, path, l_benign, check_id, forScore, againstScore, benign = false;
     for (let i = 0; i < checkboxes.length; i++) {
@@ -113,8 +159,7 @@ function calculate_score(element) {
     } else {
         forScore = "Uncertain"
     }
-    console.log(element);
-    //document.getElementById(dx_id + "_for_score").setAttribute("value", forScore);
+    //document.getElementById(dx_id + "_forScore").setAttribute("value", forScore);
 
     if (dict["BA"]) {
         benign = true;
@@ -136,7 +181,8 @@ function calculate_score(element) {
     } else {
         againstScore = "Uncertain"
     }
-    //document.getElementById(dx_id + "_against_score").setAttribute("value", againstScore);
+    console.log(forScore, againstScore);
+    //document.getElementById(dx_id + "_againstScore").setAttribute("value", againstScore);
     //set_ACMG_class(dx_id)
 }
 
@@ -172,31 +218,19 @@ function collapse(element) {
     }
 }
 
-function select_evidence(element) {
-    console.log(document.getElementById(element.id + '_evid'), element.checked === true);
-    document.getElementById(element.id + '_evid').disabled = element.checked === true;
-
-    document.querySelectorAll("[id^='" + element.id + "_']").forEach(function (item, index) {
-        if (index > 7) {
-            calculate_score(element);
-        }
-    });
-    calculate_score(element);
-}
-
 function set_ACMG_class(dx_id) {
-    const for_score = document.getElementById(dx_id + "_for_score").value;
-    const against_score = document.getElementById(dx_id + "_against_score").value;
+    const forScore = document.getElementById(dx_id + "_forScore").value;
+    const againstScore = document.getElementById(dx_id + "_againstScore").value;
     const acmg_class = document.getElementById(dx_id + "_acmg");
 
-    if (for_score.includes('Pathogenic')) {
-        if (against_score === 'Uncertain') {
-            acmg_class.setAttribute("value", for_score);
-        } else if (against_score.includes('Benign')) {
+    if (forScore.includes('Pathogenic')) {
+        if (againstScore === 'Uncertain') {
+            acmg_class.setAttribute("value", forScore);
+        } else if (againstScore.includes('Benign')) {
             acmg_class.setAttribute("value", 'VUS');
         }
-    } else if (against_score.includes('Benign')) {
-        acmg_class.setAttribute("value", against_score);
+    } else if (againstScore.includes('Benign')) {
+        acmg_class.setAttribute("value", againstScore);
     } else {
         acmg_class.setAttribute("value", 'Uncertain');
     }

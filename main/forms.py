@@ -2,7 +2,6 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import inlineformset_factory, modelformset_factory
 
-from api.constants import *
 from api.models import *
 
 __all__ = [
@@ -85,13 +84,18 @@ class ReportForm(BaseForm):
         return self.cleaned_data
 
 
-DiseaseFormSet = modelformset_factory(
+class DiseaseFormSet(modelformset_factory(
     Disease,
     form=DiseaseForm,
     fields='__all__',
     min_num=1,
     extra=1
-)
+)):
+
+    def get_queryset(self):
+        return super(DiseaseFormSet, self).get_queryset().order_by('branch')
+
+
 EvidenceFormSet = modelformset_factory(
     Evidence,
     form=EvidenceForm,
@@ -156,6 +160,7 @@ class PathItemForm(BaseForm):
         'class': 'form-check-input',
         'value': 'False'
     }))
+    value = forms.CharField(required=False, widget=forms.HiddenInput())
     content = forms.CharField(required=False, widget=forms.TextInput(attrs={
         'class': 'form-control',
     }))

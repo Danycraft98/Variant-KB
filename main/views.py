@@ -102,6 +102,7 @@ def variant(request, gene_name, protein):
     for disease in diseases:
         functionals = functionals | Functional.objects.filter(disease=disease)
         scores = scores | Score.objects.filter(disease=disease)
+    gp_count = item.diseases.filter(branch='gp').count()
 
     forms = [
         DiseaseFormSet(request.POST or None, request.FILES or None),
@@ -128,8 +129,8 @@ def variant(request, gene_name, protein):
                     if forms[0].is_valid():
                         create_functional(dx, dict(forms[0].cleaned_data))
 
-                    #if subchild_form[0].is_valid():
-                    #    create_evidence(request, dx, dict(subchild_form[0].cleaned_data))
+                    # if subchild_form[0].is_valid():
+                    #     create_evidence(request, dx, dict(subchild_form[0].cleaned_data))
 
                 elif dx.branch == 'gp':
                     if forms[1].is_valid():
@@ -143,7 +144,7 @@ def variant(request, gene_name, protein):
     return render(request, 'variants/form.html', {
         'item': item, 'title': 'Edit - ' + item.protein,
         'items': score_items, 'form': forms[0], 'child_forms': forms[1:3], 'subchild_forms': forms[3:5],
-        'report_form': forms[5], 'branches': branches, 'reports': reports
+        'report_form': forms[5], 'branches': branches, 'reports': reports, 'gp_count': gp_count
     })
 
 

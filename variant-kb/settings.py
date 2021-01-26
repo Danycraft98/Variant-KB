@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_tables2',
     'rest_framework',
+    'mathfilters'
 ]
 
 MIDDLEWARE = [
