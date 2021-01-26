@@ -60,15 +60,15 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'variant-kb.urls'
-DATETIME_FORMAT = DATE_FORMAT = os.environ.get('DATE_FORMAT', '')
+DATETIME_FORMAT = DATE_FORMAT = os.environ.get('DATE_FORMAT', 'N j, Y')
 
 # User & Email Settings
 AUTH_USER_MODEL = 'accounts.User'
 LOGIN_REDIRECT_URL = '/'
-# EMAIL = {
-#     'default': dj_email_url.config(default=os.environ.get('SENDGRID_URL', '')),
-# }
-# EMAIL_HOST_PASSWORD = os.environ.get('SENDGRID_API_KEY')
+EMAIL = {
+    'default': dj_email_url.config(default=os.environ.get('SENDGRID_URL', 'smtps://irene.chae@uhn.ca:scMN4244scMN4244@smtp.sendgrid.net:587')),
+}
+# EMAIL_HOST_PASSWORD = os.environ.get('SENDGRID_API_KEY', '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')
 
 
 # Templates
@@ -92,7 +92,7 @@ WSGI_APPLICATION = 'variant-kb.wsgi.application'
 
 # Database
 DATABASES = {
-    'default': dj_database_url.config(default=os.environ.get('DATABASE_URL')),
+    'default': dj_database_url.config(default=os.environ.get('DATABASE_URL', 'mysql://root:password@localhost:3306/variant_db')),
 }
 
 
@@ -108,9 +108,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # Internationalization
-LANGUAGE_CODE = os.environ.get('LANGUAGE_CODE', '')
+LANGUAGE_CODE = os.environ.get('LANGUAGE_CODE', 'en-us')
 
-TIME_ZONE = os.environ.get('TIME_ZONE', '')
+TIME_ZONE = os.environ.get('TIME_ZONE', 'UTC')
 
 USE_I18N = True
 
