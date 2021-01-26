@@ -1,0 +1,34 @@
+# Heroky Package -------------------
+gunicorn>=20.0.4
+django-heroku>=0.3.1
+
+# Django Packages -------------------
+Django>=3.1.5
+django-cors-headers>=3.6.0
+django-nested-formset
+django-tables2>=2.3.4
+djangorestframework>=3.12.2
+
+# Other Packages --------------------
+asgiref>=3.3.1
+cairocffi>=1.2.0
+CairoSVG>=2.5.1
+cffi>=1.14.4
+cssselect2>=0.4.1
+defusedxml>=0.6.0
+html5lib>=1.1
+mysqlclient>=2.0.3
+numpy>=1.19.5
+openpyxl>=3.0.6
+pandas>=1.2.0
+Pillow>=8.1.0
+pycparser>=2.20
+Pyphen>=0.10.0
+python-dateutil>=2.8.1
+pytz>=2020.5
+six>=1.15.0
+sqlparse>=0.4.1
+tinycss2>=1.1.0
+WeasyPrint>=52.2
+webencodings>=0.5.1
+xlrd>=2.0.1
