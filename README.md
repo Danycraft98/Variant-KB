@@ -1,7 +1,7 @@
 # Variant-KB -- Server Configuration (Everything You Need)
 
 The following repository contains all files required to spin up the Variant-DB web-app on UHN servers. As of writing this readme, currently Ian's lab will
-be using the web-app. The Variant-KB web-app helps store and access Genes and Variants as well as their relevant information. The web-app is python based (python 3.9.1) and uses Django as the main framework.<br/>
+be using the web-app. The Variant-KB web-app helps store and access Genes and Variants as well as their relevant information. The web-app is python based (python 3.9.1) and uses Django as the main framework. You can view the demo [Here](https://variant-kb.herokuapp.com/)<br/>
 
 The application can easily be deployed to Heroku, which you can find more informations at [Getting Started with Python on Heroku](https://devcenter.heroku.com/articles/getting-started-with-python).
 
