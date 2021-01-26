@@ -15,7 +15,9 @@ function change_disease(main_elem) {
     }
 
     div.setAttribute('class', 'tab-pane fade show active empty-form');
+    console.log(div)
     other_divs.forEach(function (element) {
+        console.log(element)
         element.setAttribute('class', 'tab-pane fade empty-form');
     });
 
@@ -39,8 +41,7 @@ function add_evid(element) {
 }
 
 function select_evidence(element, prefix) {
-    console.log(document.getElementById(element.id + '_evid'), element.checked === true);
-    document.getElementById(element.id + '_evid').disabled = element.checked === true;
+    document.getElementById(element.id + '_evid').disabled = element.checked !== true;
 
     document.querySelectorAll("[id^='" + element.id + "_']").forEach(function (item, index) {
         if (index > 7) {

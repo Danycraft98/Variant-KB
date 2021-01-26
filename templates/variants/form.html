@@ -58,17 +58,21 @@
                 </div>
 
                 <div class='p-0 tab-content' id='tab-content'>
-                    {{ form.management_form }}
-                    {{ form.non_form_errors }}
+                    <div id='management_forms'>
+                        {{ form.management_form }}
+                        {{ form.non_form_errors }}
 
-                    {{ child_forms.0.management_form }}
-                    {{ child_forms.1.management_form }}
-                    {{ subchild_forms.0.management_form }}
-                    {{ subchild_forms.1.management_form }}
-                    {{ report_form.management_form }}
+                        {{ child_forms.0.management_form }}
+                        {{ child_forms.1.management_form }}
+                        {{ subchild_forms.0.management_form }}
+                        {{ subchild_forms.1.management_form }}
+                        {{ report_form.management_form }}
+                    </div>
 
                     {% with subform=form.empty_form %}
-                        {% include 'partials/_disease.html' %}
+                        {% for branch in branches %}
+                            {% include 'partials/_disease.html' %}
+                        {% endfor %}
                     {% endwith %}
 
                     {% for subform in form.forms %}

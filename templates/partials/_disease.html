@@ -1,10 +1,10 @@
 {% load custom_tags mathfilters %}
 
 
-<div class='tab-pane fade {% if subform|is_empty_form %}show active empty-form{% endif %}' {% if branch %}data-key='{{ branch }}'{% endif %} id='{{ subform.prefix }}-div{{ forloop.counter0 }}' role='tabpanel' aria-labelledby='{{ subform.prefix }}-tab'>
+<div class='tab-pane fade {% if subform|is_empty_form %}{% if branch == 'no' %}show active{% endif %} empty-form{% endif %}' {% if branch %}data-key='{{ branch }}'{% endif %} id='{{ subform.prefix }}-div{{ forloop.counter0 }}' role='tabpanel' aria-labelledby='{{ subform.prefix }}-tab'>
     {{ subform.management_form }}
 
-    <div id='{{ subform.prefix }}label' class='card-header container-fluid row m-0'>
+    <div id='{{ subform.prefix }}-label' class='card-header container-fluid row m-0'>
         <div class='h6 col-8 d-flex justify-content-start my-2'>
             {% if subform|is_empty_form %}[Disease] / [Status]{% else %}{{ subform.name.value }} / {{ subform.reviewed|data_verbose }}{% endif %}
         </div>
@@ -25,7 +25,7 @@
     </div>
 
     <div id='{{ subform.prefix }}-div' class='card-body container {% if subform|is_empty_form %}empty-form{% endif %}'>
-        {% if subform.branch.value != 'no' %}
+        {% if subform.branch.value != 'no' %}{# or branch != 'no' %} #}
             {{ subform.id }}
 
             <div class='row my-2'>
@@ -149,7 +149,7 @@
                     </div>
                 </div>
 
-            {% elif subform.branch.value == 'gp' %}
+            {% elif subform.branch.value == 'gp'  %}
 
                 {% with index=forloop.counter0 %}
 

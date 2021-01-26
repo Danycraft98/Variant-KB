@@ -89,7 +89,7 @@ def variant(request, gene_name, protein):
 
     if not request.user.is_staff:
         messages.warning(request, 'You are not authorized to edit variants.')
-        return HttpResponseRedirect(reverse('gene', args=[gene_name]))
+        return HttpResponseRedirect(reverse('variant_text', args=[gene_name, protein]))
 
     try:
         item = Variant.objects.get(gene__name=gene_name, protein=protein)
