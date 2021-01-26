@@ -91,15 +91,8 @@ TEMPLATES = [
 WSGI_APPLICATION = 'variant-kb.wsgi.application'
 
 # Database
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'variant_db',
-        'USER': 'root',
-        'PASSWORD': 'password',
-        'HOST': 'localhost',
-        'PORT': '3306',
-    }
+DATABASES['default'] = dj_database_url.config(
+    default='mysql://root:password@localhost:3306/variant_db',
 }
 
 # Password validation
