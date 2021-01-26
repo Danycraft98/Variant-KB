@@ -11,7 +11,7 @@ class SimpleTest(TestCase):
 
     def test_details(self):
         # Create an instance of a GET request.
-        request = self.factory.get("/")
+        request = self.factory.get('/')
         request.user = AnonymousUser()
 
         # Test my_view() as if it were deployed at /customer/details

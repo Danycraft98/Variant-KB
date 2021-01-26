@@ -4,7 +4,7 @@ django-heroku>=0.3.1
 
 # Django Packages -------------------
 Django>=3.1.5
-django-cors-headers>=3.6.0
+django-cors-headers>=3.7.0
 django-nested-formset
 django-tables2>=2.3.4
 djangorestframework>=3.12.2
@@ -20,7 +20,7 @@ html5lib>=1.1
 mysqlclient>=2.0.3
 numpy>=1.19.5
 openpyxl>=3.0.6
-pandas>=1.2.0
+pandas>=1.2.1
 Pillow>=8.1.0
 pycparser>=2.20
 Pyphen>=0.10.0
