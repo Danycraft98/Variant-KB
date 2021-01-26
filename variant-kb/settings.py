@@ -36,7 +36,7 @@ config = {
     'LANGUAGE_CODE': os.getenv('LANGUAGE_CODE'),
     'SENDGRID_API_KEY': os.getenv('SENDGRID_API_KEY'),
     'SENDGRID_URL': os.getenv('SENDGRID_URL'),
-    'TIME_ZONE': os.getenv('TIME_ZONE'),
+    'TIME_ZONE': os.getenv('TIME_ZONE')
 }
 
 for key, value in config.items():

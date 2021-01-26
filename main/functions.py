@@ -22,7 +22,6 @@ def read_file(filename, **kwargs):
 def create_disease(request, item, dx_values):
     disease = dx_values.get('id', '')
     branch = dx_values.get('branch')
-    """
     if disease:
         dx = Disease.objects.filter(pk=disease.id)
         old_dx = dict(dx.first().__dict__)
@@ -39,7 +38,6 @@ def create_disease(request, item, dx_values):
             report=dx_values.get('report', ''), variant=item
         )
         History.objects.create(content='Added Disease: ' + str(disease), user=request.user, timestamp=datetime.datetime.now(), variant=item)
-    """
     return disease
 
 
