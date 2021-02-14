@@ -43,53 +43,7 @@ class Gene(models.Model):
 
 
 class Variant(models.Model):
-    """
-    A class used to represent a Variant object
-
-    Attributes:
-        genome_build (models.CharField): Gemone Build
-        chr (models.CharField): Chromosome
-        start (models.CharField): Chromosome start index
-        end (models.CharField): Chromosome end index
-        ref (models.CharField): Chromosome ref sequence
-        alt (models.CharField): Chromosome alf sequence
-        transcript (models.CharField): Variant transcript
-        cdna (models.CharField): cDNA
-        protein (models.CharField): Variant protein
-            consequence (models.CharField): Variant Consequence (?)
-        exonic_function (models.CharField): Variant Exonic Function
-        content (models.TextField): Variant-Descriptive Report
-        germline_content (models.TextField): Variant-Germline Report
-
-        af (models.CharField): AF
-        af_popmax (models.CharField): AF_popmax
-        cosmic70 (models.CharField): COSMIC70
-        clinvar (models.CharField): CLINVAR
-        insilicodamaging (models.CharField): InSilicoDamaging
-        insilicobenign (models.CharField): InSilicoBenign
-        polyphen2_hdiv_pred (models.CharField): Polyphen2_HDIV_pred
-        polyphen2_hvar_pred (models.CharField): Polyphen2_HVAR_pred
-        sift_pred (models.CharField): SIFT_pred
-        mutationtaster_pred (models.CharField): MutationTaster_pred
-        mutationassessor_pred (models.CharField): MutationAssessor_pred
-        provean_pred (models.CharField): PROVEAN_pred
-            lrt_pred (models.CharField): PROVEAN_pred?
-        tcga (models.CharField): TCGA#occurances
-        oncokb (models.CharField): oncoKB
-        oncokb_pmids (models.CharField): oncoKB_PMIDs'
-        watson (models.CharField): Watson
-        watson_pmids (models.CharField): Watson_PMIDs
-        qci (models.CharField): QCI
-        qci_pmids (models.CharField): QCI_PMIDs
-        jaxckb (models.CharField): JaxCKB
-        jaxckb_pmids (models.CharField): JaxCKB_PMIDs
-        pmkb (models.CharField): PMKB
-        pmkb_citations (models.CharField): PMKB_citations
-        civic (models.CharField): CIViC
-        google (models.CharField): Google Link
-        alamut (models.CharField): Alamut Link
-        gene (models.ForeignKey): Gene object
-    """
+    """ A class used to represent a Variant object """
     genome_build = models.CharField(verbose_name='genome build', max_length=10, null=True, blank=True)
     chr = models.CharField(verbose_name='Chromosome', max_length=6, null=True, blank=True)
     start = models.CharField(max_length=10, null=True, blank=True)
@@ -164,7 +118,7 @@ class Variant(models.Model):
     civic = models.CharField(verbose_name='CIViC', max_length=50, null=True, blank=True)
     google = models.CharField(max_length=100, null=True, blank=True)
     alamut = models.CharField(max_length=70, null=True, blank=True)
-    gene = models.ForeignKey(Gene, related_name='variants', on_delete=models.CASCADE, null=True, blank=True)
+    gene = models.ForeignKey(Gene, related_name='variants', on_delete=models.CASCADE)
 
     def __str__(self):
         """
@@ -176,28 +130,14 @@ class Variant(models.Model):
 
 
 class CancerHotspot(models.Model):
-    """
-    A class used to represent a Cancer hotspot object
-
-    Attributes:
-        hotspot (models.CharField): Cancer hotspot name
-        count (models.IntegerField): Cancer hotspot count value
-        variant (models.ForeignKey): Variant object
-    """
+    """ A class used to represent a Cancer hotspot object """
     hotspot = models.CharField(max_length=70, null=True, blank=True)
     count = models.IntegerField(default=1, null=True, blank=True)
-    variant = models.ForeignKey(Variant, related_name='hotspots', on_delete=models.CASCADE, null=True, blank=True)
+    variant = models.ForeignKey(Variant, related_name='hotspots', on_delete=models.CASCADE)
 
 
 class PathItem(models.Model):
-    """
-    A class used to represent a Path item object
-
-    Attributes:
-        key (models.CharField): Path item name
-        value (models.IntegerField): Path item score value
-        content (models.CharField): Path item description
-    """
+    """ A class used to represent a Path item object """
     key = models.CharField(max_length=5, null=True, blank=True)
     content = models.CharField(max_length=75, null=True, blank=True)
     value = models.IntegerField(default=0, null=True, blank=True)
@@ -212,28 +152,12 @@ class PathItem(models.Model):
 
 
 class Disease(models.Model):
-    """
-    A class used to represent a Disease object
-
-    Attributes:
-        name (models.CharField): Disease name
-        branch (models.CharField): Disease branch
-        others (models.CharField): Disease tier
-        report (models.CharField): Disease report
-        variant (models.ForeignKey): Variant object
-        reviewed (models.CharField): Disease reviewed status
-        reviewed_date (models.DateTimeField): Disease reviewed date
-        review_user (models.ForeignKey): Disease review user
-        meta_reviewed_date (models.DateTimeField): Disease meta-reviewed date
-        meta_review_user (models.ForeignKey): Disease meta-reviewe user
-        approved_date (models.DateTimeField): Disease approved date
-        approve_user (models.ForeignKey): Disease approve user
-    """
+    """ A class used to represent a Disease object """
     name = models.CharField(max_length=20)
     branch = models.CharField(choices=BRANCH_CHOICES, max_length=2, default='no')
     others = models.CharField(choices=TIER_CHOICES, max_length=20, null=True, blank=True)
     report = models.CharField(verbose_name='Germline Report', max_length=20, null=True, blank=True)
-    variant = models.ForeignKey(Variant, related_name='diseases', on_delete=models.CASCADE, null=True, blank=True)
+    variant = models.ForeignKey(Variant, related_name='diseases', on_delete=models.CASCADE)
     reviewed = models.CharField(choices=REVIEWED_CHOICES, max_length=1, default='n')
     reviewed_date = models.DateTimeField('reviewed date', null=True, blank=True)
     review_user = models.ForeignKey(User, related_name='reviewed_variants', on_delete=models.CASCADE, null=True, blank=True)
@@ -252,19 +176,11 @@ class Disease(models.Model):
 
 
 class Score(models.Model):
-    """
-    A class used to represent a Score object
-
-    Attributes:
-        for_score (models.CharField): Score ACMG for score
-        against_score (models.CharField): Score ACMG against score
-        content (models.CharField): Score ACMG classification
-        disease (models.OneToOneField): Disease object
-    """
-    for_score = models.CharField(verbose_name='For Pathogenicity', max_length=20, null=True, blank=True)
-    against_score = models.CharField(verbose_name='Against Pathogenicity', max_length=20, null=True, blank=True)
-    content = models.CharField(verbose_name='ACMG Classification', max_length=100, null=True, blank=True)
-    disease = models.OneToOneField(Disease, on_delete=models.CASCADE, related_name='score', null=True, blank=True)
+    """ A class used to represent a Score object """
+    for_score = models.CharField(verbose_name='For Pathogenicity', max_length=20)
+    against_score = models.CharField(verbose_name='Against Pathogenicity', max_length=20)
+    content = models.CharField(verbose_name='ACMG Classification', max_length=100)
+    disease = models.OneToOneField(Disease, on_delete=models.CASCADE, related_name='score')
 
     def __str__(self):
         """
@@ -276,28 +192,10 @@ class Score(models.Model):
 
 
 class Functional(models.Model):
-    """
-    A class used to represent a Functional object
-
-    Attributes:
-        key (models.CharField): Functional Significance
-        value (models.CharField): Functional Category
-        disease (models.OneToOneField): Disease object
-    """
-    key = models.CharField(
-        verbose_name='Functional Significance',
-        choices=FUNC_SIG_CHOICES, max_length=20,
-        null=True,
-        blank=True
-    )
-    value = models.CharField(
-        verbose_name='Functional Class',
-        choices=FUNC_CAT_CHOICES,
-        max_length=20,
-        null=True,
-        blank=True
-    )
-    disease = models.ForeignKey(Disease, related_name='functionals', on_delete=models.CASCADE, null=True, blank=True)
+    """ A class used to represent a Functional object """
+    key = models.CharField(verbose_name='Functional Significance', choices=FUNC_SIG_CHOICES, max_length=20)
+    value = models.CharField(verbose_name='Functional Class', choices=FUNC_CAT_CHOICES, max_length=20)
+    disease = models.ForeignKey(Disease, related_name='functionals', on_delete=models.CASCADE)
 
     def __str__(self):
         """
@@ -309,17 +207,7 @@ class Functional(models.Model):
 
 
 class Evidence(models.Model):
-    """
-    A class used to represent a Evidence object
-
-    Attributes:
-        item (models.ForeignKey): PathItem object
-        functional (models.ForeignKey): Functional object
-        disease (models.ForeignKey): Disease object
-        source_type (models.CharField): Evidence source type
-        source_id (models.CharField): Evidence source ID
-        statement (models.CharField): Evidence statement
-    """
+    """ A class used to represent a Evidence object """
     item = models.ForeignKey(PathItem, on_delete=models.CASCADE, null=True, blank=True)
     functional = models.ForeignKey(Functional, related_name='evidences', on_delete=models.CASCADE, null=True, blank=True)
     disease = models.ForeignKey(Disease, related_name='evidences', on_delete=models.CASCADE, null=True, blank=True)
@@ -331,7 +219,7 @@ class Evidence(models.Model):
         blank=True
     )
     source_id = models.CharField(max_length=20, null=True, blank=True)
-    statement = models.TextField(null=True)
+    statement = models.TextField(null=True, blank=True, default='')
 
     def __str__(self):
         """
@@ -348,19 +236,7 @@ class Evidence(models.Model):
 
 
 class SubEvidence(models.Model):
-    """
-    A class used to represent a SubEvidence object
-
-    Attributes:
-        evid_sig (models.CharField): Evidence Significance
-        level (models.CharField): Evidence Level
-        evid_dir (models.CharField): Evidence Direction
-        clin_sig (models.CharField): Clinial Significance
-        drug_class (models.CharField): Drug/Drug Class/Dx
-        evid_rating (models.CharField): Evidence Rating
-        evidence (models.ForeignKey): Evidence object
-        variant (models.ForeignKey): Variant object
-    """
+    """ A class used to represent a SubEvidence object """
     evid_sig = models.CharField(
         verbose_name='Evidence Significance',
         max_length=4,
@@ -430,16 +306,7 @@ class Report(models.Model):
 
 
 class History(models.Model):
-    """
-    A class used to represent a History object
-
-    Attributes:
-        content (models.CharField): History content
-        timestamp (models.CharField): History timestamp
-        user (models.ForeignKey): User object
-        object (models.ForeignKey): Evidence object
-        variant (models.ForeignKey): Variant object
-    """
+    """ A class used to represent a History object """
     content = models.TextField(null=True, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)

@@ -1,6 +1,26 @@
 from django import template
 
+from api.constants import TYPE_CHOICES
+
 register = template.Library()
+
+
+@register.filter
+def get_fields(arg_dict, evid_type=None):
+    labels = {'Id': 'id', 'Source type': 'source_type', 'Source id': 'source_id', 'Statement': 'statement'}
+    return_list = [{'label': key} for key in labels]
+    [item.update({'value': arg.__dict__.get(label, '')})
+        for item, label in zip(return_list, labels.values()) for arg in arg_dict
+        if hasattr(arg, label) and (
+             (evid_type == 'func' and arg.functional) or (not evid_type and not arg.functional and not arg.item)
+        )
+     ]
+    [item.update({'value': arg.__dict__.get(label, ''), 'item': arg.item.key})
+        for item, label in zip(return_list, labels.values()) for arg in arg_dict
+        if hasattr(arg, label) and (evid_type == 'item' and arg.item)
+     ]
+    return_list[1]['cust_choices'] = TYPE_CHOICES
+    return return_list
 
 
 @register.filter
@@ -24,7 +44,19 @@ def is_empty_form(form):
 
 
 @register.filter
-def data_verbose(input_field):
-    data = input_field.data
+def equals(arg1, arg2):
+    return arg1 == arg2
+
+
+@register.filter
+def data_verbose(input_field, attr):
+    value = input_field.value()
     field = input_field.field
-    return hasattr(field, 'choices') and dict(field.choices).get(data,'') or data
+    if not isinstance(attr, str):
+        return all(dx.name not in value for dx in attr)
+    return hasattr(field, attr) and dict(field.choices).get(value, '') or value
+
+
+@register.filter
+def evidence_exist(evids, pathitem):
+    return any(pathitem == e.item.key for e in evids)

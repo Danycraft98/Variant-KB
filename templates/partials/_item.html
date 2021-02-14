@@ -1,0 +1,15 @@
+{% load custom_tags %}
+
+{% with prefix=subform.prefix|add:'-'|add:evid.prefix %}
+    <div class='row my-3 col-12 form-check'>
+        <input class='form-check-input' type='checkbox' id='id_{{ prefix }}-key' name='{{ prefix }}-key' value='{{ evid.value.value }}' onchange='select_evidence(this, "{{ child_forms.1.0.prefix }}")' {% if exists %}checked{% endif %}/>
+        <input type='hidden' name='{{ prefix }}-key_val' value='{{ evid.key.value }}'/>
+        <label class='form-check-label' for='id_{{ prefix }}-key'>{{ evid.key.value }}: {{ evid.content.value }}</label>
+    </div>
+
+    {% with evid=evids|get_fields:'item' %}
+        <fieldset id='id_{{ prefix }}-key_evid' disabled>
+            {% include 'partials/_evidence.html' %}
+        </fieldset>
+    {% endwith %}
+{% endwith %}

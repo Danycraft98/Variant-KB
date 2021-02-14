@@ -57,70 +57,67 @@
                             </div>
                         </div>
 
-                        <div class='card-body container'>
-                            <div class='row my-2'>
-                                <div class='col-4'>Disease Name</div>
-                                <div class='col-8'>{{ disease.name }}</div>
-                            </div>
+                        <div class='card-body container pb-0'>
+                            <dl class='row my-2'>
+                                <dt class='col-4'>Disease Name</dt>
+                                <dd class='col-8'>{{ disease.name }}</dd>
+                            </dl>
+                        </div>
 
-                            {% if disease.branch == 'so' %}
+                        {% if disease.branch == 'so' %}
 
-                                {% if disease.functionals.count > 0 %}
-                                    {% for func in disease.functionals.all %}
+                            {% if disease.functionals.count > 0 %}
+                                {% for func in disease.functionals.all %}
 
-                                        {% if forloop.counter0 == 0 %}
-                                            <div class='row form-group my-2'>
-                                                <div class='col-4'>Functional Significance</div>
-                                                <div class='col-8'>{{ func.key }}</div>
-                                            </div>
+                                    {% if forloop.counter0 == 0 %}
+                                        <div class='card-body container pt-0'>
+                                            <dl class='row'>
+                                                <dt class='col-4'>Functional Significance</dt>
+                                                <dd class='col-8'>{{ func.key }}</dd>
+                                            </dl>
                                         </div>
-                                        {% endif %}
+                                    {% endif %}
 
-                                        <div id='func_cat'>
-                                            <div class='card-header border-top justify-content-between d-flex'>
-                                                <div class='h6 mr-auto my-2'>
-                                                    Functional Evidences
-                                                </div>
-                                            </div>
-
-                                            <div class='func_evid d{{ form.name.id_for_label }}_func'>
-                                                <div id='form{{ form.name }}' class='card-body container border-bottom'>
-                                                    <div class='row form-group my-2'>
-                                                        <div class='col-4'>Functional Category</div>
-                                                        <div class='col-8'>{{ func.value }}</div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            {% for evid in func.evidences.all %}
-                                                <div id='form{{ evid.name }}' class='card-body container'>
-                                                    <div class='col-4'>Source Type</div>
-                                                    <div class='col-4'>{{ evid.get_source_type_display }}</div>
-                                                </div>
-
-                                                <div id='form{{ evid.name }}' class='card-body container'>
-                                                    <div class='col-4'>Source ID</div>
-                                                    <div class='col-4'>{{ evid.source_id }}</div>
-                                                </div>
-
-                                                <div id='form{{ evid.name }}' class='card-body container'>
-                                                    <div class='col-4'>Statement</div>
-                                                    <div class='col-4'>{{ evid.statement }}</div>
-                                                </div>
-                                            {% endfor %}
+                                    <div id='func_cat'>
+                                        <div class='card-header border-top justify-content-between d-flex'>
+                                            <div class='h6 mr-auto my-2'>Functional Evidences</div>
                                         </div>
 
-                                    {% endfor %}
-                                {% else %}
+                                        <div class='func_evid d{{ form.name.id_for_label }}_func'>
+                                            <div id='form{{ form.name }}' class='card-body container border-bottom'>
+                                                <dl class='row'>
+                                                    <dt class='col-4'>Functional Category</dt>
+                                                    <dd class='col-8'>{{ func.value }}</dd>
+                                                </dl>
+                                            </div>
+                                        </div>
+
+                                        {% for evid in func.evidences.all %}
+                                            <div id='form{{ evid.name }}' class='card-body container'>
+                                                <dl class='row'>
+                                                    <dt class='col-4'>Source Type</dt>
+                                                    <dd class='col-8'>{{ evid.get_source_type_display }}</dd>
+
+                                                    <dt class='col-4'>Source ID</dt>
+                                                    <dd class='col-8'>{{ evid.source_id }}</dd>
+
+                                                    <dt class='col-4'>Statement</dt>
+                                                    <dd class='col-8'>{{ evid.statement }}</dd>
+                                                </dl>
+                                            </div>
+                                        {% endfor %}
                                     </div>
-                                {% endif %}
 
-                            {% else %}
+                                {% endfor %}
+                            {% endif %}
 
-                                <div class='row form-group my-2'>
-                                    <div class='col-4'>Germline Clinical Report</div>
-                                    <div class='col-4'>{{ disease.report }}</div>
-                                </div>
+                        {% else %}
+
+                            <div class='card-body container pt-0'>
+                                <dl class='row form-group my-2'>
+                                    <dt class='col-4'>Germline Clinical Report</dt>
+                                    <dd class='col-4'>{{ disease.report }}</dd>
+                                </dl>
                             </div>
 
                             <div id='score'>
@@ -129,108 +126,60 @@
                                 </div>
 
                                 <div id='score' class='card-body container'>
-                                    <div class='row form-group my-2'>
-                                        <div class='col-4'>ACMG Classification</div>
-                                        <div class='col-4'>{{ disease.score.content }}</div>
-                                    </div>
+                                    <dl class='row form-group my-2'>
+                                        <dt class='col-4'>ACMG Classification</dt>
+                                        <dd class='col-8'>{{ disease.score.content }}</dd>
 
-                                    <div class='row form-group my-2'>
-                                        <div class='col-4'>For Pathogenicity</div>
-                                        <div class='col-4'>{{ disease.score.for_score }}</div>
-                                    </div>
+                                        <dt class='col-4'>For Pathogenicity</dt>
+                                        <dd class='col-8'>{{ disease.score.for_score }}</dd>
 
-                                    <div class='row form-group my-2'>
-                                        <div class='col-4'>Against Pathogenicity</div>
-                                        <div class='col-4'>{{ disease.score.for_score }}</div>
-                                    </div>
+                                        <dt class='col-4'>Against Pathogenicity</dt>
+                                        <dd class='col-8'>{{ disease.score.against_score }}</dd>
+                                    </dl>
                                 </div>
                             </div>
 
                             <div id='score_items'>
-                                {% regroup disease.evidences.all by item as dict_items %}
+                                {% regroup disease.evidences.all by item.key.0 as dict_items %}
+
                                 <div class='card-header border-top justify-content-between d-flex'>
-                                    <div class='h6 mr-auto my-2'>For Pathogenicity</div>
+                                    <div class='h6 mr-auto my-2'>
+                                        {% if form.grouper == 'P' %}For{% else %}Against{% endif %} Pathogenicity
+                                    </div>
                                 </div>
 
                                 <div id='for_score' class='card-body container'>
                                     {% for set in dict_items %}
 
-                                        {% if 'P' in set.grouper.key and 'B' not in set.grouper.key %}
 
-                                            <div class='row my-3'>
-                                                <div class='col-12'>
-                                                    {{ set.grouper.key }}: {{ set.grouper.content }}
-                                                </div>
-                                            </div>
+                                        <strong class='row my-3 col-12'>
+                                            {{ set.list.0.item }}: {{ set.list.0.item.content }}
+                                        </strong>
 
-                                            {% for evid in set.list %}
-                                                <div id='form{{ evid.name }}' class='card-body container'>
-                                                    <div class='col-4'>Source Type</div>
-                                                    <div class='col-4'>{{ evid.get_source_type_display }}</div>
-                                                </div>
+                                        {% for evid in set.list %}
+                                            <dl class='row form-group my-2'>
+                                                <dt class='col-4'>Source Type</dt>
+                                                <dd class='col-8'>{{ evid.get_source_type_display }}</dd>
 
-                                                <div id='form{{ evid.name }}' class='card-body container'>
-                                                    <div class='col-4'>Source ID</div>
-                                                    <div class='col-4'>{{ evid.source_id }}</div>
-                                                </div>
+                                                <dt class='col-4'>Source ID</dt>
+                                                <dd class='col-8'>{{ evid.source_id }}</dd>
 
-                                                <div id='form{{ evid.name }}' class='card-body container'>
-                                                    <div class='col-4'>Statement</div>
-                                                    <div class='col-4'>{{ evid.statement }}</div>
-                                                </div>
-                                            {% endfor %}
-
-                                        {% endif %}
-
-                                    {% endfor %}
-                                </div>
-
-                                <div class='card-header border-top justify-content-between d-flex'>
-                                    <div class='h6 mr-auto my-2'>Against Pathogenicity</div>
-                                </div>
-
-                                <div id='against_score' class='card-body container'>
-                                    {% for set in dict_items %}
-
-                                        {% if 'B' in set.grouper.key %}
-
-                                            <div class='row my-3'>
-                                                <div class='col-12'>
-                                                    {{ set.grouper.key }}: {{ set.grouper.content }}
-                                                </div>
-                                            </div>
-
-                                            {% for evid in set.list %}
-                                                <div id='form{{ evid.name }}' class='card-body container'>
-                                                    <div class='col-4'>Source Type</div>
-                                                    <div class='col-4'>{{ evid.get_source_type_display }}</div>
-                                                </div>
-
-                                                <div id='form{{ evid.name }}' class='card-body container'>
-                                                    <div class='col-4'>Source ID</div>
-                                                    <div class='col-4'>{{ evid.source_id }}</div>
-                                                </div>
-
-                                                <div id='form{{ evid.name }}' class='card-body container'>
-                                                    <div class='col-4'>Statement</div>
-                                                    <div class='col-4'>{{ evid.statement }}</div>
-                                                </div>
-                                            {% endfor %}
-
-                                        {% endif %}
+                                                <dt class='col-4'>Statement</dt>
+                                                <dd class='col-8'>{{ evid.statement }}</dd>
+                                            </dl>
+                                        {% endfor %}
 
                                     {% endfor %}
                                 </div>
                             </div>
 
-                            {% endif %}
+                        {% endif %}
                     </div>
 
                 {% endfor %}
             </div>
         </div>
     </div>
-</div>
 {% endblock %}
 
 {% block script %}

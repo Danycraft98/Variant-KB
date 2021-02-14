@@ -8,17 +8,6 @@ a {
     opacity: 0;
 }
 
-input[type=checkbox] + label {
-    font-style: italic;
-}
-
-input[type=checkbox]:checked + label {
-    background-color: #6c757d;
-    color: white;
-    font-style: normal;
-    font-weight: bold;
-}
-
 .collapser {
     cursor: pointer;
 }

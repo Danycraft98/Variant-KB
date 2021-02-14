@@ -1,20 +1,114 @@
-$(document).ready(function () {
-    $("input[type='text'], input[type='number'], textarea").addClass('form-control');
-    $("select").addClass('form-select');
-
-    $('.required').prop('required', function () {
-        return $(this).is(':visible');
-    });
+$('form').submit(function(e) {
+    $(':disabled').each(function(e) {
+        $(this).removeAttr('disabled');
+    })
 });
 
-function change_disease(main_elem) {
-    const branch = main_elem.value, div = $("div[data-key='" + branch + "']"), other_divs = $("div[data-key!='" + branch + "']")
 
-    div.addClass('show active');
-    other_divs.removeClass('show active');
-    div.find('select[id*="branch"]').val(branch);
-    document.getElementById('empty_link').setAttribute('href', '#' + div.id);
+Array.prototype.remove = function() {
+    let what, a = arguments, L = a.length, ax;
+    while (L && this.length) {
+        what = a[--L];
+        while ((ax = this.indexOf(what)) !== -1) {
+            this.splice(ax, 1);
+        }
+    }
+    return this;
+};
+
+
+$(document).ready(function () {
+    $(":input:not([class*='form-control'], [type='hidden'], [role='tab'])").addClass('form-control');
+    $('select, button, :checkbox, :radio').removeClass('form-control');
+    $('select').addClass('form-select');
+
+    const element = document.getElementsByName('key')[0]
+    calculate_score(element, 'score-' + element.id.split('-')[1]);
+
+    change_required();
+});
+
+
+function change_required() {
+    $(":input:not([name='csrfmiddlewaretoken'], [name*='FORMS'])")
+        .attr('value', function () {
+            const element = $(this)
+            if (!element.val()) {
+                if (this.name.includes('name')) return '';
+                else if (!element.is(':visible')) return '';
+            }
+        })
+        .prop('required', function () {
+            return $(this).is(':visible')
+        });
 }
+
+
+function change_disease(main_elem) {
+    const div_id = main_elem.id.split('-').slice(0, 2).join('-');
+    let branch = main_elem.value,
+        current = $('[id*=' + div_id + ']'),
+        div = $("[data-key='" + branch + "']"),
+        cloneDiv = div.clone(),
+        index = main_elem.id.split('-')[1],
+        other_branch = ['no', 'gp', 'so'];
+
+    other_branch.remove(branch);
+    other_branch.forEach(function(elem) {
+        $("[data-key='" + elem + "']").remove();
+    })
+    current.removeClass('show active');
+    cloneDiv.addClass('show active');
+    cloneDiv.find(':input,label,div').each(function () {
+        let elem = $(this)
+        if (elem.attr('for')) elem.attr('for', elem.attr('for').replace('__prefix__', index.toString()));
+        if (elem.attr('id')) elem.attr('id', elem.attr('id').replace('__prefix__', index.toString()));
+        if (elem.attr('name')) elem.attr('name', elem.attr('name').replace('__prefix__', index.toString()));
+        if (elem.attr('class')) elem.removeClass('empty-form');
+    })
+    cloneDiv.attr('id', cloneDiv.attr('id').replace('__prefix__', index.toString()));
+    cloneDiv.removeClass('empty-form');
+
+    cloneDiv.find('select[id*="branch"]').val(branch).attr('disabled', '');
+    cloneDiv.attr('id', '');
+    div.parent().append(cloneDiv);
+}
+
+
+function add_disease(main_elem) {
+    let nav_tab = $(main_elem).parent().prev().find('[hidden]').first();
+    nav_tab.removeAttr('hidden');
+    nav_tab.val('New Interpretation');
+}
+
+
+function add_item(element) {
+    const form_elem = $('#' + element.id + '_div'),
+        form_elems = $("[id*='" + element.id + "_div']"),
+        form_idx = form_elems.length.toString();
+    let regex, return_str;
+    if (form_elem.attr('id') && form_elem.attr('id').includes('cat')) {
+        regex = /s-\d+/g;
+        return_str = 's-' + form_idx;
+    } else {
+        regex = /d-\d+/g;
+        return_str = 'd-' + form_idx;
+    }
+
+    const form_elem_clone = form_elem.clone();
+    form_elem_clone.attr('id', form_elem_clone.attr('id').replace(regex, return_str));
+
+    const inputs = form_elem_clone.find(':input');
+    inputs.attr('id', inputs.attr('id').replace(regex, return_str));
+
+    const divs = form_elem_clone.find('div[id]');
+    if (divs.attr('id'))
+        if (return_str.includes('d-')) divs.attr('id', divs.attr('id').replace(regex, return_str + '_div'));
+        else divs.attr('id', divs.attr('id').replace(regex, return_str));
+
+    form_elem_clone.insertAfter(form_elems.last());
+}
+
 
 function add_evid(element) {
     const form_elem = $(element.parentElement.parentElement.nextElementSibling);
@@ -28,9 +122,9 @@ function add_evid(element) {
     form_elem_clone.insertAfter(form_elem);
 }
 
+
 function select_evidence(element, prefix) {
     document.getElementById(element.id + '_evid').disabled = element.checked !== true;
-
     document.querySelectorAll("[id^='" + element.id + "_']").forEach(function (item, index) {
         if (index > 7) {
             calculate_score(element, prefix);
@@ -38,6 +132,7 @@ function select_evidence(element, prefix) {
     });
     calculate_score(element, prefix);
 }
+
 
 /* PVS = 10; PS = 7; PM = 2; PP = 1
  * P:  12-14, 17; LP: 6, 9, 11, 12
@@ -51,7 +146,7 @@ function calculate_score(element, prefix) {
     forScore = againstScore = 0;
     Object.values(checkboxes).forEach(function (elem) {
         if (elem.checked) {
-            score_label = elem.getAttribute('aria-label');
+            score_label = elem.nextElementSibling.innerText;
             if (score_label.includes('P') && !score_label.includes('B'))
                 forScore += parseInt(elem.value);
             else
@@ -74,22 +169,19 @@ function calculate_score(element, prefix) {
     } else {
         againstScore = 'Uncertain';
     }
+
     $('#id_' + prefix + '-for_score').val(forScore);
     $('#id_' + prefix + '-against_score').val(againstScore);
-    const acmgClass = $('#id_' + prefix + '-content');
 
+    const acmgClass = $('#id_' + prefix + '-content');
     if (forScore.includes('Pathogenic')) {
-        if (againstScore === 'Uncertain') {
-            acmgClass.val(forScore);
-        } else if (againstScore.includes('Benign')) {
-            acmgClass.val( 'VUS');
-        }
-    } else if (againstScore.includes('Benign')) {
-        acmgClass.val( againstScore);
-    } else {
-        acmgClass.val( 'Uncertain');
-    }
+        if (againstScore === 'Uncertain') acmgClass.val(forScore);
+        else if (againstScore.includes('Benign')) acmgClass.val('VUS');
+
+    } else if (againstScore.includes('Benign')) acmgClass.val(againstScore);
+    else acmgClass.val('Uncertain');
 }
+
 
 function set_reviewed(element) {
     const review_val = $('input[name="' + element.name + '"]:checked').last().val(), select_id = element.id.split('_').splice(0, 2).join('_');
@@ -97,6 +189,7 @@ function set_reviewed(element) {
         element.selected = element.value === review_val;
     });
 }
+
 
 function create_divider(element) {
     const elements = element.querySelectorAll('fieldset'), length = elements.length - 1;
@@ -109,11 +202,13 @@ function create_divider(element) {
     });
 }
 
+
 function copyReport(item) {
     Array.prototype.forEach.call(document.getElementsByName(item.name), function (element) {
         element.value = item.value;
     });
 }
+
 
 function collapse(element) {
     if (element.innerText.includes("Expand")) {
@@ -122,6 +217,7 @@ function collapse(element) {
         element.innerHTML = element.innerHTML.replace('Collapse', 'Expand');
     }
 }
+
 
 function tierChange(element, options, result) {
     const selected = element.options[element.selectedIndex].value;
@@ -164,6 +260,7 @@ function tierChange(element, options, result) {
     }
 }
 
+
 function updateHeader(element) {
     const dx_id = element.id.split('_')[0],
         dx_label = document.getElementById(dx_id + '_label');
@@ -179,6 +276,7 @@ function updateHeader(element) {
     replace_text = dx_label.innerText.split(/[/-]+/)[2]
     dx_label.innerText = dx_label.innerText.replace(replace_text, ' ' + dx_review);
 }
+
 
 function updateMsg() {
     const checkboxes = document.querySelectorAll('input[name="review"]:checked');

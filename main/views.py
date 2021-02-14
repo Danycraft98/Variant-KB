@@ -1,4 +1,5 @@
 import json
+import re
 from urllib import parse
 
 from django.contrib import messages
@@ -84,7 +85,6 @@ def gene(request, gene_name):
 
 @login_required
 def variant(request, gene_name, protein):
-    branches = ['no', 'so', 'gp']
     reports = ['Gene-Descriptive', 'Variant-Descriptive', 'Gene-Disease', 'Variant-Disease', 'Gene-Germline Implications', 'Variant-Germline Implications']
 
     if not request.user.is_staff:
@@ -98,6 +98,11 @@ def variant(request, gene_name, protein):
         raise Http404('Variant does not exist')
 
     diseases = item.diseases.all()
+    if len(diseases) < 1:
+        queryset = Disease.objects.none()
+    else:
+        queryset = diseases
+
     functionals, scores = Functional.objects.filter(id=0), Score.objects.filter(id=0)
     for disease in diseases:
         functionals = functionals | Functional.objects.filter(disease=disease)
@@ -105,36 +110,31 @@ def variant(request, gene_name, protein):
     gp_count = item.diseases.filter(branch='gp').count()
 
     forms = [
-        DiseaseFormSet(request.POST or None, request.FILES or None),
+        DiseaseFormSet(request.POST or None, request.FILES or None, queryset=queryset, prefix='dx'),
 
-        FunctionalFormSet(request.POST or None, request.FILES or None, initial=functionals.values()),
-        ScoreFormSet(request.POST or None, request.FILES or None, initial=scores.values()),
+        FunctionalFormSet(request.POST or None, request.FILES or None, initial=functionals.values(), prefix='func'),
+        ScoreFormSet(request.POST or None, request.FILES or None, initial=scores.values(), prefix='score'),
 
-        EvidenceFormSet(request.POST or None, request.FILES or None),
-        PathItemFormSet(request.POST or None, request.FILES or None, initial=PathItem.objects.all().values()),
-
-        ReportFormSet(request.POST or None, request.FILES or None),
+        PathItemFormSet(request.POST or None, request.FILES or None, initial=PathItem.objects.all().values(), prefix='item'),
+        ReportFormSet(request.POST or None, request.FILES or None, 'report'),
     ]
 
+    switch_dict, i = {'so': [1, Functional, None, 0], 'gp': [2, Score, 3, 0]}, 0
     if request.method == 'POST':
         all_not_valid = True
         for main_form in forms[0]:
-            dx = None
-            if main_form.is_valid():
+            if main_form.is_valid() and main_form.cleaned_data.get('branch', 'no') != 'no':
                 all_not_valid = False
                 dx = create_disease(request, item, dict(main_form.cleaned_data))
+                child_info = switch_dict.get(dx.branch)
+                if not child_info:
+                    continue
 
-            if dx:
-                if dx.branch == 'so':
-                    if forms[0].is_valid():
-                        create_functional(dx, dict(forms[0].cleaned_data))
-
-                    # if subchild_form[0].is_valid():
-                    #     create_evidence(request, dx, dict(subchild_form[0].cleaned_data))
-
-                elif dx.branch == 'gp':
-                    if forms[1].is_valid():
-                        create_score(dx, dict(forms[1].cleaned_data))
+                for child_form in forms[child_info[0]]:
+                    if child_form.is_valid():
+                        child = create_child(child_info[1], dx, dict(child_form.cleaned_data))
+                        sub_child = create_evidence(request, dx, child, 'dx-' + str(i) + '-', child_info[3])
+                        child_info[3] += 1
 
         if all_not_valid:
             return HttpResponseRedirect(reverse('variant', args=(gene_name, protein)))
@@ -142,9 +142,10 @@ def variant(request, gene_name, protein):
         return HttpResponseRedirect(reverse('variant_text', args=(gene_name, protein)))
 
     return render(request, 'variants/form.html', {
-        'item': item, 'title': 'Edit - ' + item.protein,
-        'items': score_items, 'form': forms[0], 'child_forms': forms[1:3], 'subchild_forms': forms[3:5],
-        'report_form': forms[5], 'branches': branches, 'reports': reports, 'gp_count': gp_count
+        'item': item, 'title': 'Edit - ' + item.protein, 'items': score_items, 'form': forms[0],
+        'child_forms': forms[1:3], 'subchild_forms': forms[3], 'report_form': forms[4], 'reports': reports,
+        'empty_forms': [{'branch': 'no', 'empty': True, 'prefix': 'dx'}, {'branch': 'so', 'empty': True, 'prefix': 'dx'}, {'branch': 'gp', 'empty': True, 'prefix': 'dx'}],
+        'gp_count': gp_count, 'evids': [evid for dx in diseases for evid in dx.evidences.all()]
     })
 
 

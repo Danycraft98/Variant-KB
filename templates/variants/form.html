@@ -2,7 +2,6 @@
 {% load custom_tags static %}
 
 
-
 {% block content %}
     <div class='page-header mt-4 d-flex flex-row align-items-center justify-content-between border-bottom'>
         <h3>{{ title }}</h3>
@@ -13,57 +12,57 @@
     </div>
 
     <div class='card my-5'>
-        <form action='{% url 'variant' item.gene.name item.protein %}' method='POST'>
+        <form id='save_form' action='{% url 'variant' item.gene.name item.protein %}' method='POST' class='container-fluid m-0 p-0 row'>
             {% csrf_token %}
 
-            <div class='container-fluid m-0 p-0 row'>
-                <div class='nav nav-tabs col-9 d-flex justify-content-start' id='nav-tab' role='tablist'>
-                    {% with subform=form.empty_form %}
-                        {% if subform|is_empty_form %}
-                            <a class='empty-form nav-link active' id='empty_link' href='#{{ subform.prefix }}-div0' data-bs-toggle='tab' role='tab' aria-controls='nav-new' aria-selected='true'>New Interpretation</a>
-                        {% endif %}
-                    {% endwith %}
+            <div class='nav nav-tabs col-9 d-flex justify-content-start' id='nav-tab' role='tablist' onclick='change_required()'>
+                {% with subform=form.empty_form %}
+                    <input class='empty-form nav-item nav-link py-auto active' id='empty_link' type='button' value='New Interpretation' href='#prefix' data-bs-toggle='tab' role='tab' aria-controls='nav-new' aria-selected='true'>
+                {% endwith %}
 
-                    {% for subform in form.forms %}
-                        {% if subform.name.value %}
-                            <a class='nav-link' href='#{{ subform.prefix }}-div{{ forloop.counter0 }}' data-bs-toggle='tab' role='tab' aria-controls='nav-{{ subform.prefix }}' aria-selected='false'>
-                                {{ subform.branch.value | upper }} Disease: {{ subform.name.value }}
-                            </a>
-                        {% endif %}
-                    {% endfor %}
+                {% for subform in form.forms %}
+                    <input class='nav-item nav-link py-auto' type='button' value='{{ subform.branch.value | upper }} Disease: {{ subform.name.value }}' href='#id_{{ subform.prefix }}-div{{ forloop.counter0 }}' data-bs-toggle='tab' role='tab' aria-controls='nav-{{ subform.prefix }}'
+                           aria-selected='false' {% if subform.branch.value == 'no' %}hidden{% endif %}>
+                {% endfor %}
+            </div>
+
+            <div class='nav nav-tabs col-3 d-flex justify-content-end p-0 form-inline' id='nav-tab' role='tablist'>
+                <input class='nav-item nav-link py-auto' type='button' value='Add Interpretation' role='tab' onclick='add_disease(this)'>
+                <input class='nav-item nav-link py-auto' type='submit' value='Save' role='tab'>
+            </div>
+
+            <div class='p-0 tab-content' id='tab-content'>
+                <div id='management_forms'>
+                    {{ form.management_form }}
+                    {{ form.non_form_errors }}
+
+                    {{ child_forms.0.management_form }}
+                    {{ child_forms.1.management_form }}
+                    {{ subchild_forms.0.management_form }}
+                    {{ subchild_forms.1.management_form }}
+                    {{ report_form.management_form }}
                 </div>
 
-                <div class='nav nav-tabs col-3 d-flex justify-content-end p-0' id='nav-tab' role='tablist'>
-                    <a href='#' class='justify-content-end nav-link'>Add Interpretation</a>
-                    <button type='submit' href='' class='justify-content-end nav-item nav-link'>Save</button>
-                </div>
-
-                <div class='p-0 tab-content' id='tab-content'>
-                    <div id='management_forms'>
-                        {{ form.management_form }}
-                        {{ form.non_form_errors }}
-
-                        {{ child_forms.0.management_form }}
-                        {{ child_forms.1.management_form }}
-                        {{ subchild_forms.0.management_form }}
-                        {{ subchild_forms.1.management_form }}
-                        {{ report_form.management_form }}
+                <fieldset id='prefix' class='tab-pane fade show active'>
+                    <div class='card-header container-fluid row m-0'>
+                        <div class='h6 col-8 d-flex justify-content-start my-2'>No New Disease</div>
                     </div>
+                </fieldset>
 
+                {% for elem in empty_forms %}
                     {% with subform=form.empty_form %}
-                        {% for branch in branches %}
-                            {% include 'partials/_disease.html' %}
-                        {% endfor %}
-                    {% endwith %}
-
-                    {% for subform in form.forms %}
                         {% include 'partials/_disease.html' %}
-                    {% endfor %}
-                </div>
+                    {% endwith %}
+                {% endfor %}
+
+                {% for subform in form.forms %}
+                    {% include 'partials/_disease.html' %}
+                {% endfor %}
             </div>
         </form>
     </div>
 {% endblock %}
+
 
 {% block script %}
     <script src='{% static 'js/add_evidence.js' %}'></script>

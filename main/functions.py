@@ -20,53 +20,71 @@ def read_file(filename, **kwargs):
 
 
 def create_disease(request, item, dx_values):
-    disease = dx_values.get('id', '')
-    branch = dx_values.get('branch')
+    disease = dx_values.pop('id', '')
     if disease:
-        dx = Disease.objects.filter(pk=disease.id)
+        dx = Disease.objects.filter(id=disease.id)
         old_dx = dict(dx.first().__dict__)
-        dx.update(
-            name=dx_values.get('name'), branch=branch, others=dx_values.get('others', ''),
-            report=dx_values.get('report', ''), variant=item
-        )
+        dx.update(**dx_values, variant=item)
 
         if any(key in {k: None if k in old_dx and old_dx[k] == dx_values[k] else dx_values[k] for k in dx_values} for key in dx_values.keys()):
             History.objects.create(content='Updated Disease: ' + str(disease), user=request.user, timestamp=datetime.datetime.now(), variant=item)
+
     else:
-        disease = Disease.objects.create(
-            name=dx_values.get('name'), branch=branch, others=dx_values.get('others', ''),
-            report=dx_values.get('report', ''), variant=item
-        )
+        disease = Disease.objects.create(**dx_values, variant=item)
         History.objects.create(content='Added Disease: ' + str(disease), user=request.user, timestamp=datetime.datetime.now(), variant=item)
     return disease
 
 
-def create_functional(item, func_values):
-    functional = func_values.pop('id')
-    [func_values.pop(k) for k in ['DELETE', 'disease']]
-    if functional:
-        func = Functional.objects.filter(pk=functional.id)
-        func.update(**func_values)
+def create_child(model_class, dx, values):
+    [values.pop(key, '') for key in ['DELETE', 'disease']]
+    item = values.pop('id', None)
+    if all(not values.get(key) or values.get(key) == '' for key in values):
+        return None
+
+    if item:
+        item_filter = model_class.objects.filter(pk=item.id)
+        item_filter.update(**values)
     else:
-        functional = Functional.objects.create(**func_values, disease=item)
-    return functional
+        item = model_class.objects.create(**values, disease=dx)
+    print('item: ', item)
+    return item
 
 
-def create_score(item, score_values):
-    score = score_values.pop('id')
-    # [score_values.pop(k) for k in ['DELETE', 'disease']]
-    print(score)
-    """if score:
-        sc = Score.objects.filter(pk=score.id)
-        sc.update(**score_values)
+def create_evidence(request, dx, child, dx_prefix, i):
+    item_dict = {'Functional': 'func1-', 'Score': 'item-'}
+    key = child.__class__.__name__
+    item = item_dict.get(key, '')
+    prefix = dx_prefix + item + str(i)
+    if key == 'Functional':
+        other = {'functional': child}
+    elif request.POST.get(prefix + '-key_val', '') != '':
+        other = {'item': PathItem.objects.get(key=request.POST.get(prefix + '-key_val', ''))}
     else:
-        score = Score.objects.create(**score_values, disease=item)
-    return score"""
+        other = None
 
+    for evid_id, s_type, s_id, stmt in zip(
+            request.POST.getlist(prefix + '-evid-0-id', []),
+            request.POST.getlist(prefix + '-evid-0-source_type', []),
+            request.POST.getlist(prefix + '-evid-0-source_id', []),
+            request.POST.getlist(prefix + '-evid-0-statement', [])
+    ):
+        if all(not key or key == '' for key in [s_type, stmt]):
+            continue
 
-def create_evidence(request, items, evidence_values):
-    evidence = evidence_values.get('id', '')
-    print(evidence)
+        main_evid_dict = {'source_type': s_type, 'source_id': s_id, 'statement': stmt}
+        if evid_id:
+            evidence = Evidence.objects.get(pk=evid_id)
+            old_evidence = dict(evidence.__dict__)
+            comp_result = {k: None if old_evidence[k] == main_evid_dict[k] else main_evid_dict[k] for k in main_evid_dict}
+            Evidence.objects.filter(pk=evidence.id).update(**main_evid_dict)
+        else:
+            evidence = Evidence.objects.create(disease=dx, **main_evid_dict, **other)
+
+        sub_evid_dict = {
+            'level': None, 'evid_sig': None,
+            'evid_dir': None, 'clin_sig': None,
+            'drug_class': None, 'evid_rating': None
+        }
     """for i, (e_id, source_type, source_id, statement) in enumerate(evidence_values):
         evid_dict = {'source_type': source_type, 'source_id': source_id, 'statement': statement}
 

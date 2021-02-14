@@ -5,46 +5,9 @@ import datetime
 from api.models import *
 
 __all__ = [
-    'add_evidence', 'GeneTable', 'GeneCardTable', 'VariantTable', 'VariantCardTable',
+    'GeneTable', 'GeneCardTable', 'VariantTable', 'VariantCardTable',
     'DiseaseTable', 'DiseaseCardTable', 'HistoryTable'
 ]
-
-
-def add_evidence(request, prefix, dx_id, variant, item=None):
-    for i, (e_id, source_type, source_id, statement) in enumerate(zip(request.POST.getlist(prefix + '_id'), request.POST.getlist(prefix + '_st'), request.POST.getlist(prefix + '_s'), request.POST.getlist(prefix + '_e'))):
-        evid_dict = {'source_type': source_type, 'source_id': source_id, 'statement': statement}
-
-        comp_result = None
-        if e_id.isdigit():
-            is_update = True
-            evidence = Evidence.objects.get(pk=e_id)
-            old_evidence = dict(evidence.__dict__)
-            comp_result = {k: None if old_evidence[k] == evid_dict[k] else evid_dict[k] for k in evid_dict}
-            Evidence.objects.filter(pk=e_id).update(**evid_dict)
-        else:
-            is_update = False
-            sub_item = Evidence.objects.create(disease=dx_id, **evid_dict)
-            if item.__class__.__name__ == 'PathItem':
-                Evidence.objects.filter(pk=sub_item.pk).update(item=item)
-            elif item.__class__.__name__ == 'Functional':
-                Evidence.objects.filter(pk=sub_item.pk).update(functional=item)
-            evidence = Evidence.objects.get(pk=sub_item.pk)
-
-        if request.POST.getlist(prefix + '_sig'):
-            form_dict = {
-                'level': request.POST.getlist(prefix + '_level')[i], 'evid_sig': request.POST.getlist(prefix + '_sig')[i],
-                'evid_dir': request.POST.getlist(prefix + '_dir')[i], 'clin_sig': request.POST.getlist(prefix + '_clin_sig')[i],
-                'drug_class': request.POST.getlist(prefix + '_drug')[i], 'evid_rating': request.POST.getlist(prefix + '_rating')[i]
-            }
-
-            if evidence.subevidences.count() > 0:
-                evidence.subevidences.update(**form_dict, evidence=evidence)
-
-            else:
-                SubEvidence.objects.create(**form_dict, evidence=evidence)
-
-        if (is_update and any(comp_result[key] for key in evid_dict.keys())) or not is_update:
-            History.objects.create(content=statement, object=evidence, user=request.user, timestamp=datetime.datetime.now(), variant=variant)
 
 
 # Index Mini Card Tables
