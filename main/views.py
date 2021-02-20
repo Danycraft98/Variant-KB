@@ -112,8 +112,8 @@ def variant(request, gene_name, protein):
     forms = [
         DiseaseFormSet(request.POST or None, request.FILES or None, queryset=queryset, prefix='dx'),
 
-        FunctionalFormSet(request.POST or None, request.FILES or None, initial=functionals.values(), prefix='func'),
-        ScoreFormSet(request.POST or None, request.FILES or None, initial=scores.values(), prefix='score'),
+        FunctionalFormSet(request.POST or None, request.FILES or None, queryset=functionals, prefix='func'),
+        ScoreFormSet(request.POST or None, request.FILES or None, queryset=scores, prefix='score'),
 
         PathItemFormSet(request.POST or None, request.FILES or None, initial=PathItem.objects.all().values(), prefix='item'),
         ReportFormSet(request.POST or None, request.FILES or None, 'report'),

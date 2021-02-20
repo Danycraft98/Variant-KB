@@ -29,6 +29,14 @@
                     {% endif %}
                 </div>
 
+                <div class='offset-md-3 col-1'>
+                    {% if 'Source type' in field.label %}
+                        <button type='button' class='btn btn-primary' id='' onclick='add_item(this)'>
+                            <i class='fa fa-plus'></i>
+                        </button>
+                    {% endif %}
+                </div>
+
             {% endif %}
 
             {% if 'Type' in field.label %}

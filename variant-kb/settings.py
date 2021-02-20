@@ -4,7 +4,7 @@ from os.path import dirname, join, realpath
 
 import dj_database_url
 import dj_email_url
-import django_heroku
+# import django_heroku
 from os.path import dirname, join, realpath
 
 from django.core.files.uploadhandler import MemoryFileUploadHandler, TemporaryFileUploadHandler
@@ -134,4 +134,4 @@ FILE_UPLOAD_HANDLERS = (
     'django.core.files.uploadhandler.TemporaryFileUploadHandler'
 )
 
-django_heroku.settings(locals())
+# django_heroku.settings(locals())

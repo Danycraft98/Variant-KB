@@ -2,6 +2,13 @@ a {
     text-decoration: none !important
 }
 
+.back-to-top {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    display: none;
+}
+
 .hidden {
     position: absolute;
     visibility: hidden;

@@ -49,14 +49,14 @@
                     </div>
                 </fieldset>
 
+                {% for subform in form.forms %}
+                    {% include 'partials/_disease.html' %}
+                {% endfor %}
+
                 {% for elem in empty_forms %}
                     {% with subform=form.empty_form %}
                         {% include 'partials/_disease.html' %}
                     {% endwith %}
-                {% endfor %}
-
-                {% for subform in form.forms %}
-                    {% include 'partials/_disease.html' %}
                 {% endfor %}
             </div>
         </form>
