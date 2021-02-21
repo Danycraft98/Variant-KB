@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django_tables2',
     'rest_framework',
     'mathfilters'
@@ -125,6 +126,8 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(os.environ.get('BASE_DIR', ''), 'static'),
 ]
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Upload Settings
 UPLOADS_PATH = join(dirname(realpath(__file__)), 'static/uploads/')
