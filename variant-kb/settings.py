@@ -122,6 +122,8 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
+STATIC_ROOT = '/staticfiles/'
+
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(os.environ.get('BASE_DIR', ''), 'static'),
