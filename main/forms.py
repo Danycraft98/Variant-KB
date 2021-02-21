@@ -170,12 +170,10 @@ ScoreFormSet = inlineformset_factory(
     Score,
     form=ScoreForm,
     min_num=1,
-    extra=1
 )
 PathItemFormSet = modelformset_factory(
     PathItem,
     form=PathItemForm,
     fields='__all__',
-    min_num=29,
-    extra=29
+    min_num=29
 )

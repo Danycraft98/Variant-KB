@@ -2,13 +2,13 @@
 
 {% with prefix=subform.prefix|add:'-'|add:evid.prefix %}
     <a class='row my-0 col-12 form-check' href="#id_{{ prefix }}-key_evid" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapseExample">
-        <input class='form-check-input' type='checkbox' id='id_{{ prefix }}-key' name='{{ prefix }}-key' value='{{ evid.value.value }}' onchange='select_evidence(this, "{{ child_forms.1.0.prefix }}")' {% if exists %}checked{% endif %}/>
+        <input class='form-check-input' type='checkbox' id='id_{{ prefix }}-key' name='{{ prefix }}-key' value='{{ evid.value.value }}' aria-label="{{ form.grouper }}" onchange='select_evidence(this, "{{ child_forms.1.0.prefix }}")' {% if exists %}checked{% endif %}/>
         <input type='hidden' name='{{ prefix }}-key_val' value='{{ evid.key.value }}'/>
         <label class='form-check-label' for='id_{{ prefix }}-key'>{{ evid.key.value }}: {{ evid.content.value }}</label>
     </a>
 
     {% with evid=evids|get_fields:'item' %}
-        <fieldset class='collapse' id='id_{{ prefix }}-key_evid' disabled>
+        <fieldset class='collapse{% if exists %} show{% endif %}' id='id_{{ prefix }}-key_evid' {% if not exists %}disabled{% endif %}>
             {% include 'partials/_evidence.html' %}
         </fieldset>
     {% endwith %}

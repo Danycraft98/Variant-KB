@@ -46,7 +46,6 @@ def create_child(model_class, dx, values):
         item_filter.update(**values)
     else:
         item = model_class.objects.create(**values, disease=dx)
-    print('item: ', item)
     return item
 
 

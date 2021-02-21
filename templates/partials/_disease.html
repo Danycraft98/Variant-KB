@@ -5,7 +5,7 @@
           {% if elem.empty and not subform.name|data_verbose:item.diseases.all %}style='display:none;'{% endif %}>
     <div id='id_{{ subform.prefix }}-label' class='card-header container-fluid row m-0'>
         <div class='h6 col-8 d-flex justify-content-start my-2'>
-            {% if elem.empty  %}[Disease] / [Status]{% else %}{{ subform.name.value }} / {{ subform.reviewed|data_verbose:'choices' }}{% endif %}
+            {% if elem.empty %}[Disease] / [Status]{% else %}{{ subform.name.value }} / {{ subform.reviewed|data_verbose:'choices' }}{% endif %}
         </div>
 
         <div class='col-4 d-flex justify-content-end form-check-inline mr-0'>
@@ -23,9 +23,8 @@
 
             {% with index=forloop.counter|sub:gp_count %}
                 {% with func=child_forms.0.forms|get_index:index %}
-
                     {{ func.id }}
-                    <div id='{{ subform.prefix }}-div' class='card-body container {% if elem.empty  %}empty-form{% endif %}'>
+                    <div id='{{ subform.prefix }}-div' class='card-body container {% if elem.empty %}empty-form{% endif %}'>
                         {{ subform.id }}
                         <div class='row my-2'>
                             <div class='col-4'>{{ subform.name.label }}</div>
@@ -36,9 +35,6 @@
                         <div class='row form-group my-2'>
                             <div class='col-4'>{{ func.key.label }}</div>
                             <div class='col-4'>{{ func.key }}</div>
-                            <div class='offset-md-1 col-3 pr-3'>
-                                <button type='button' id='{{ func.prefix }}_cat{{ index }}' class='btn btn-primary pull-right' onclick='add_item(this)'>Add Functional Category</button>
-                            </div>
                         </div>
                     </div>
 
@@ -47,7 +43,7 @@
                             <div class='h6 mr-auto my-auto'>Functional Evidences</div>
 
                             <div class='ml-auto'>
-                                <button type='button' class='btn btn-primary' id='{{ func.prefix }}_evid-{{ index }}' onclick='add_item(this)'>Add Functional Evidences</button>
+                                <button type='button' class='btn btn-primary' id='{{ func.prefix }}_cat{{ index }}' onclick='add_item(this, true)'>Add Functional Category</button>
                             </div>
                         </div>
 
@@ -147,7 +143,7 @@
 
             {% with index=forloop.counter0 %}
 
-                <div id='{{ subform.prefix }}-div' class='card-body container {% if elem.empty  %}empty-form{% endif %}'>
+                <div id='{{ subform.prefix }}-div' class='card-body container {% if elem.empty %}empty-form{% endif %}'>
                     {{ subform.id }}
                     <div class='row my-2'>
                         <div class='col-4'>{{ subform.name.label }}</div>
@@ -188,22 +184,11 @@
                     {% for evid in form.list %}
 
                         <div class='card-body container pt-0 pb-3'>
+                            {% if evids|evidence_exist:evid.key.value %}
 
-                            {% if not 'prefix' in subform.name.id_for_label %}
-
-                                {% if evids|evidence_exist:evid.key.value %}
-
-                                    {% for e in evids %}
-                                        {% with exists=evid.key.value|equals:e.item.key %}
-                                            {% include 'partials/_item.html' %}
-                                        {% endwith %}
-                                    {% endfor %}
-
-                                {% else %}
-
+                                {% with exists=True %}
                                     {% include 'partials/_item.html' %}
-
-                                {% endif %}
+                                {% endwith %}
 
                             {% else %}
 

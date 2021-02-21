@@ -107,13 +107,13 @@ def variant(request, gene_name, protein):
     for disease in diseases:
         functionals = functionals | Functional.objects.filter(disease=disease)
         scores = scores | Score.objects.filter(disease=disease)
-    gp_count = item.diseases.filter(branch='gp').count()
+    gp_count = item.diseases.filter(branch='gp').count() if item.diseases.filter(branch='gp').count() else 1
 
     forms = [
         DiseaseFormSet(request.POST or None, request.FILES or None, queryset=queryset, prefix='dx'),
 
-        FunctionalFormSet(request.POST or None, request.FILES or None, queryset=functionals, prefix='func'),
-        ScoreFormSet(request.POST or None, request.FILES or None, queryset=scores, prefix='score'),
+        FunctionalFormSet(request.POST or None, request.FILES or None, initial=functionals.values(), prefix='func'),
+        ScoreFormSet(request.POST or None, request.FILES or None, initial=scores.values(), prefix='score'),
 
         PathItemFormSet(request.POST or None, request.FILES or None, initial=PathItem.objects.all().values(), prefix='item'),
         ReportFormSet(request.POST or None, request.FILES or None, 'report'),
@@ -131,7 +131,9 @@ def variant(request, gene_name, protein):
                     continue
 
                 for child_form in forms[child_info[0]]:
+                    print(child_form.errors)
                     if child_form.is_valid():
+                        print(child_form.cleaned_data)
                         child = create_child(child_info[1], dx, dict(child_form.cleaned_data))
                         sub_child = create_evidence(request, dx, child, 'dx-' + str(i) + '-', child_info[3])
                         child_info[3] += 1

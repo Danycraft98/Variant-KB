@@ -193,8 +193,8 @@ class Score(models.Model):
 
 class Functional(models.Model):
     """ A class used to represent a Functional object """
-    key = models.CharField(verbose_name='Functional Significance', choices=FUNC_SIG_CHOICES, max_length=20)
-    value = models.CharField(verbose_name='Functional Class', choices=FUNC_CAT_CHOICES, max_length=20)
+    key = models.CharField(verbose_name='Functional Significance', choices=FUNC_SIG_CHOICES, max_length=20, blank=True, null=True)
+    value = models.CharField(verbose_name='Functional Class', choices=FUNC_CAT_CHOICES, max_length=20, blank=True, null=True)
     disease = models.ForeignKey(Disease, related_name='functionals', on_delete=models.CASCADE)
 
     def __str__(self):

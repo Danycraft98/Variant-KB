@@ -96,6 +96,13 @@ legend {
     float: none;
 }
 
+.sticky {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
 .table > :not(caption) > tr > td {
     border-bottom: grey 1px !important;
 }

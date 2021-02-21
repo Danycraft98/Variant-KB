@@ -1,11 +1,11 @@
-$('form').submit(function(e) {
-    $(':disabled').each(function(e) {
+$('form').submit(function (e) {
+    $(':disabled').each(function (e) {
         $(this).removeAttr('disabled');
     })
 });
 
 
-Array.prototype.remove = function() {
+Array.prototype.remove = function () {
     let what, a = arguments, L = a.length, ax;
     while (L && this.length) {
         what = a[--L];
@@ -24,8 +24,6 @@ $(document).ready(function () {
 
     const element = document.getElementsByName('key')[0]
     calculate_score(element, 'score-' + element.id.split('-')[1]);
-
-    change_required();
 });
 
 
@@ -54,7 +52,7 @@ function change_disease(main_elem) {
         other_branch = ['no', 'gp', 'so'];
 
     other_branch.remove(branch);
-    other_branch.forEach(function(elem) {
+    other_branch.forEach(function (elem) {
         $("[data-key='" + elem + "']").remove();
     })
     current.removeClass('show active');
@@ -82,31 +80,12 @@ function add_disease(main_elem) {
 }
 
 
-function add_item(element) {
-    const form_elem = $('#' + element.id + '_div'),
-        form_elems = $("[id*='" + element.id + "_div']"),
-        form_idx = form_elems.length.toString();
-    let regex, return_str;
-    if (form_elem.attr('id') && form_elem.attr('id').includes('cat')) {
-        regex = /s-\d+/g;
-        return_str = 's-' + form_idx;
-    } else {
-        regex = /d-\d+/g;
-        return_str = 'd-' + form_idx;
-    }
-
-    const form_elem_clone = form_elem.clone();
-    form_elem_clone.attr('id', form_elem_clone.attr('id').replace(regex, return_str));
-
-    const inputs = form_elem_clone.find(':input');
-    inputs.attr('id', inputs.attr('id').replace(regex, return_str));
-
-    const divs = form_elem_clone.find('div[id]');
-    if (divs.attr('id'))
-        if (return_str.includes('d-')) divs.attr('id', divs.attr('id').replace(regex, return_str + '_div'));
-        else divs.attr('id', divs.attr('id').replace(regex, return_str));
-
-    form_elem_clone.insertAfter(form_elems.last());
+function add_item(element, is_cat=false) {
+    let jq_elem = $(element.parentElement.parentElement);
+    if (is_cat) jq_elem = jq_elem.next();
+    const elem_clone = jq_elem.clone();
+    elem_clone.find(':input').val('').removeClass('disabled');
+    jq_elem.parent().append(elem_clone);
 }
 
 
@@ -146,29 +125,21 @@ function calculate_score(element, prefix) {
     forScore = againstScore = 0;
     Object.values(checkboxes).forEach(function (elem) {
         if (elem.checked) {
-            score_label = elem.nextElementSibling.innerText;
-            if (score_label.includes('P') && !score_label.includes('B'))
-                forScore += parseInt(elem.value);
-            else
-                againstScore += parseInt(elem.value);
+            score_label = elem.getAttribute('aria-label')
+            console.log(score_label, elem.getAttribute('aria-label'));
+            if (score_label === 'P') forScore += parseInt(elem.value);
+            else againstScore += parseInt(elem.value);
         }
     });
 
-    if (forScore > 11) {
-        forScore = 'Pathogenic';
-    } else if (forScore > 5) {
-        forScore = 'Likely Pathogenic';
-    } else {
-        forScore = 'Uncertain';
-    }
+    if (forScore > 11) forScore = 'Pathogenic';
+    else if (forScore > 5) forScore = 'Likely Pathogenic';
+    else forScore = 'Uncertain';
 
-    if (againstScore > 15) {
-        againstScore = 'Benign';
-    } else if (againstScore > 1) {
-        againstScore = 'Likely Benign';
-    } else {
-        againstScore = 'Uncertain';
-    }
+
+    if (againstScore > 15) againstScore = 'Benign';
+    else if (againstScore > 1) againstScore = 'Likely Benign';
+    else againstScore = 'Uncertain';
 
     $('#id_' + prefix + '-for_score').val(forScore);
     $('#id_' + prefix + '-against_score').val(againstScore);
@@ -177,7 +148,6 @@ function calculate_score(element, prefix) {
     if (forScore.includes('Pathogenic')) {
         if (againstScore === 'Uncertain') acmgClass.val(forScore);
         else if (againstScore.includes('Benign')) acmgClass.val('VUS');
-
     } else if (againstScore.includes('Benign')) acmgClass.val(againstScore);
     else acmgClass.val('Uncertain');
 }

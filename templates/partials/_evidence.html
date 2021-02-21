@@ -1,52 +1,59 @@
-{% for field in evid %}
+{% with index2=forloop.counter0 %}
+    {{ index2 }}
 
-    {% if 'Source' in field.label or 'Statement' in field.label %}
-        <div class='row my-2'>
-            <div class='col-4'>{{ field.label }}</div>
-            {% if 'Statement' in field.label %}
+    {% for field in evid %}
 
-                <div class='col-5'>
-                    <textarea class='form-control' id='id_{{ prefix }}-evid-0-statement' name='{{ prefix }}-evid-0-statement' aria-label='Statement'>{% if field.value and exists %}{{ field.value }}{% endif %}</textarea>
-                </div>
+        {% if 'Source' in field.label or 'Statement' in field.label %}
+            <div class='row my-2'>
+                <div class='col-4'>{{ field.label }}</div>
+                {% if 'Statement' in field.label %}
 
+                    <div class='col-5'>
+                        <textarea class='form-control' id='id_{{ prefix }}-evid-0-statement' name='{{ prefix }}-evid-0-statement' aria-label='Statement'>{% if field.value and exists %}{{ field.value }}{% endif %}</textarea>
+                    </div>
 
-            {% else %}
+                {% else %}
 
-                <div class='col-4'>
-                    {% if 'Source id' in field.label %}
+                    <div class='col-4'>
+                        {% if 'Source id' in field.label %}
 
-                        <input id='id_{{ prefix }}-evid-0-source_id' name='{{ prefix }}-evid-0-source_id' aria-label='Source id' value='{% if field.value and exists %}{{ field.value }}{% endif %}'/>
+                            <input id='id_{{ prefix }}-evid-0-source_id' name='{{ prefix }}-evid-0-source_id' aria-label='Source id' value='{% if field.value and exists %}{{ field.value }}{% endif %}'/>
 
-                    {% else %}
+                        {% else %}
 
-                        <select class='form-select' id='id_{{ prefix }}-evid-0-source_type' name='{{ prefix }}-evid-0-source_type' aria-label='Source type'>
-                            <option value=''>---------</option>
-                            {% for item in field.cust_choices %}
-                                <option value='{{ item.0 }}' {% if field.value and exists or exists is not None and field.value == item.0 %}selected{% endif %}>{{ item.1 }}</option>
-                            {% endfor %}
-                        </select>
+                            <select class='form-select' id='id_{{ prefix }}-evid-0-source_type' name='{{ prefix }}-evid-0-source_type' aria-label='Source type'>
+                                <option value=''>---------</option>
+                                {% for item in field.cust_choices %}
+                                    <option value='{{ item.0 }}' {% if field.value and exists or exists is not None and field.value == item.0 %}selected{% endif %}>{{ item.1 }}</option>
+                                {% endfor %}
+                            </select>
 
-                    {% endif %}
-                </div>
+                        {% endif %}
+                    </div>
 
-                <div class='offset-md-3 col-1'>
-                    {% if 'Source type' in field.label %}
-                        <button type='button' class='btn btn-primary' id='' onclick='add_item(this)'>
-                            <i class='fa fa-plus'></i>
-                        </button>
-                    {% endif %}
-                </div>
+                    <div class='offset-md-3 col-1 btn-group'>
+                        {% if 'Source type' in field.label %}
+                            <button type='button' class='btn btn-primary' id='' onclick='add_item(this.parentElement)'>
+                                <i class='fa fa-plus'></i>
+                            </button>
+                            <button type='button' class='btn btn-primary {% if not index2 %}disabled{% endif %}' id='' onclick='$(this.parentElement.parentElement.parentElement).remove()'>
+                                <i class='fa fa-trash-o'></i>
+                            </button>
+                        {% endif %}
+                    </div>
 
-            {% endif %}
+                {% endif %}
 
-            {% if 'Type' in field.label %}
-                <div class='offset-md-2 col-2'>{{ evid.DELETE }}</div>
-            {% endif %}
-        </div>
+                {% if 'Type' in field.label %}
+                    <div class='offset-md-2 col-2'>{{ evid.DELETE }}</div>
+                {% endif %}
+            </div>
 
-    {% else %}
+        {% else %}
 
-        <input type='hidden' id='id_{{ prefix }}-evid-0-{{ field.label|lower }}' name='{{ prefix }}-evid-0-{{ field.label|lower }}' aria-label='{{ field.label }}' value='{% if field.value %}{{ field.value }}{% endif %}'/>
+            <input type='hidden' id='id_{{ prefix }}-evid-0-{{ field.label|lower }}' name='{{ prefix }}-evid-0-{{ field.label|lower }}' aria-label='{{ field.label }}' value='{% if field.value %}{{ field.value }}{% endif %}'/>
 
-    {% endif %}
-{% endfor %}
+        {% endif %}
+    {% endfor %}
+
+{% endwith %}
