@@ -105,6 +105,10 @@ ReportFormSet = modelformset_factory(
 class FunctionalForm(BaseForm):
     prefix = 'func'
     id = forms.CharField(required=False, widget=forms.HiddenInput())
+    value = forms.ChoiceField(choices=[], widget=forms.Select(attrs={
+        'class': 'form-select',
+        'onchange': "tierChange(this, ['Benign', 'None'], 'Tier IV')"
+    }))
 
     class Meta:
         model = Functional
