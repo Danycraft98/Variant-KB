@@ -191,16 +191,12 @@ function collapse(element) {
 
 function tierChange(element, options, result) {
     const selected = element.options[element.selectedIndex].value, dx_id = element.id.split('-')[1];  // id_dx-1-others
-    const selectElement = $('#id_dx-' + dx_id + '-others');
-    const tier = document.getElementById(element.id.split('_').slice(0, 1).join('_') + '_tier_collapse');
-    const selectedTrue = (selected === options[0] || selected === options[1]);
+    const selectElement = $('#id_dx-' + dx_id + '-others'), selectedTrue = (selected === options[0] || selected === options[1]);
     if (selectedTrue) {
         selectElement.val(result);
         selectElement.attr('readonly', '');
-        tier.innerText = tier.innerText.split('- ')[0] + '- ' + result;
-    } else {
-        selectElement.removeAttr('readonly');
-    }
+    } else selectElement.removeAttr('readonly');
+
 
     let evid_id = element.id.split('_').slice(0, 1).join('_') + '_etype2'
     const btn = document.getElementById(evid_id);
