@@ -191,8 +191,7 @@ function collapse(element) {
 
 function tierChange(element, options, result) {
     const selected = element.options[element.selectedIndex].value;
-    let select_id = element.id.split('_').slice(0, 1).join('_') + '_others';
-    const selectElement = document.getElementById(select_id);
+    const selectElement = document.getElementById(element.id.split('_').slice(0, 1).join('_') + '_others');
     const tier = document.getElementById(element.id.split('_').slice(0, 1).join('_') + '_tier_collapse');
     const selectedTrue = (selected === options[0] || selected === options[1]);
     if (selectedTrue) {
