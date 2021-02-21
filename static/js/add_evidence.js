@@ -80,7 +80,7 @@ function add_disease(main_elem) {
 }
 
 
-function add_item(element, is_cat=false) {
+function add_item(element, is_cat = false) {
     let jq_elem = $(element.parentElement.parentElement);
     if (is_cat) jq_elem = jq_elem.next();
     const elem_clone = jq_elem.clone();
@@ -197,31 +197,12 @@ function tierChange(element, options, result) {
         selectElement.attr('readonly', '');
     } else selectElement.removeAttr('readonly');
 
-
-    let evid_id = element.id.split('_').slice(0, 1).join('_') + '_etype2'
-    const btn = document.getElementById(evid_id);
-    let index = 1, div = 'Test';
-    while (div) {
-        div = document.getElementById(evid_id + '_' + index.toString());
-        if (result === 'Tier IV' && selectedTrue) {
-            btn.setAttribute('disabled', '');
-            if (div) {
-                div.querySelectorAll("[id^='" + evid_id + "']").forEach(function (element) {
-                    if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
-                        element.value = '';
-                    }
-                })
-                div.setAttribute('hidden', '');
-                div.setAttribute('disabled', '');
-            }
-        } else {
-            btn.removeAttribute('disabled');
-            if (div) {
-                div.removeAttribute('hidden');
-                div.removeAttribute('disabled');
-            }
-        }
-        index++;
+    const evid_div = $('#item-0_evid');
+    if (result === 'Tier IV' && selectedTrue) {
+        evid_div.attr('disabled', '');
+        evid_div.find(':input').val('');
+    } else {
+        evid_div.removeAttr('disabled');
     }
 }
 
