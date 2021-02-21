@@ -2,7 +2,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import inlineformset_factory, modelformset_factory
 
-from api.constants import REVIEWED_CHOICES
+from api.constants import REVIEWED_CHOICES, TIER_CHOICES
 from api.models import *
 
 __all__ = [
@@ -105,7 +105,7 @@ ReportFormSet = modelformset_factory(
 class FunctionalForm(BaseForm):
     prefix = 'func'
     id = forms.CharField(required=False, widget=forms.HiddenInput())
-    value = forms.ChoiceField(choices=[], widget=forms.Select(attrs={
+    others = forms.ChoiceField(choices=TIER_CHOICES, widget=forms.Select(attrs={
         'class': 'form-select',
         'onchange': "tierChange(this, ['Benign', 'None'], 'Tier IV')"
     }))
