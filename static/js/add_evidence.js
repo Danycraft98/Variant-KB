@@ -22,8 +22,8 @@ $(document).ready(function () {
     $('select, button, :checkbox, :radio').removeClass('form-control');
     $('select').addClass('form-select');
 
-    const element = document.getElementsByName('key')[0]
-    calculate_score(element, 'score-' + element.id.split('-')[1]);
+    const element = $("[name*='key']")[0]
+    calculate_score(element, 'score-' + element.attr('id').split('-')[1]);
 });
 
 
