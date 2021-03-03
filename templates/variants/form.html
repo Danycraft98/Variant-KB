@@ -17,12 +17,11 @@
 
             <div class='nav nav-tabs col-9 d-flex justify-content-start' id='nav-tab' role='tablist' onclick='change_required()'>
                 {% with subform=form.empty_form %}
-                    <input class='empty-form nav-item nav-link py-auto active' id='empty_link' type='button' value='New Interpretation' href='#prefix' data-bs-toggle='tab' role='tab' aria-controls='nav-new' aria-selected='true'>
+                    <a class='empty-form nav-item nav-link py-auto active' id='empty_link' type='button' href='#prefix' data-bs-toggle='tab' role='tab' aria-controls='nav-new' aria-selected='true' {% if dx_num %}hidden{% endif %}>New Interpretation</a>
                 {% endwith %}
 
                 {% for subform in form.forms %}
-                    <input class='nav-item nav-link py-auto' type='button' value='{{ subform.branch.value | upper }} Disease: {{ subform.name.value }}' href='#id_{{ subform.prefix }}-div{{ forloop.counter0 }}' data-bs-toggle='tab' role='tab' aria-controls='nav-{{ subform.prefix }}'
-                           aria-selected='false' {% if subform.branch.value == 'no' %}hidden{% endif %}>
+                    <a class='nav-item nav-link py-auto' type='button' href='#id_{{ subform.prefix }}-div{{ forloop.counter0 }}' data-bs-toggle='tab' role='tab' aria-controls='nav-{{ subform.prefix }}' aria-selected='false' {% if subform.branch.value == 'no' %}hidden{% endif %}>{{ subform.branch.value | upper }} Disease: {{ subform.name.value }}</a>
                 {% endfor %}
             </div>
 
@@ -45,7 +44,9 @@
 
                 <fieldset id='prefix' class='tab-pane fade show active'>
                     <div class='card-header container-fluid row m-0'>
-                        <div class='h6 col-8 d-flex justify-content-start my-2'>No New Disease</div>
+                        <div class='h6 col-8 d-flex justify-content-start my-2'>
+                            {% if dx_num %}No Disease Selected{% else %}No New Disease{% endif %}
+                        </div>
                     </div>
                 </fieldset>
 
@@ -65,7 +66,6 @@
 
 
 {% block script %}
-    <script src='{% static 'js/add_evidence.js' %}'></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery.formset/1.2.2/jquery.formset.min.js' integrity='sha512-ltwjKsDTo3hW/wV66ZaEkf2wOAFxmg7rWM76J8kOcYKLSKy44WBYO/BFaNNH3NGDS8BSz3meB9wtSnm41oL+pA==' crossorigin='anonymous'></script>
     <script>
         $(':input').removeAttr('required');

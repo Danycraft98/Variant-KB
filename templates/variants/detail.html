@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load custom_tags %}
 {% load static %}
 
 {% block content %}
@@ -111,6 +112,26 @@
                                 {% endfor %}
                             {% endif %}
 
+                            <div id='act_div'>
+                                <div class='card-header border-top justify-content-between d-flex'>
+                                    <div class='h6 mr-auto my-2'>Actionability Evidences</div>
+                                </div>
+                                {% for evid in disease.evidences|get_act_dx %}
+                                    <div id='form{{ evid.name }}' class='card-body container'>
+                                        <dl class='row'>
+                                            <dt class='col-4'>Source Type</dt>
+                                            <dd class='col-8'>{{ evid.get_source_type_display }}</dd>
+
+                                            <dt class='col-4'>Source ID</dt>
+                                            <dd class='col-8'>{{ evid.source_id }}</dd>
+
+                                            <dt class='col-4'>Statement</dt>
+                                            <dd class='col-8'>{{ evid.statement }}</dd>
+                                        </dl>
+                                    </div>
+                                {% endfor %}
+                            </div>
+
                         {% else %}
 
                             <div class='card-body container pt-0'>
@@ -180,8 +201,4 @@
             </div>
         </div>
     </div>
-{% endblock %}
-
-{% block script %}
-    <script src='{% static 'js/add_evidence.js' %}'></script>
 {% endblock %}

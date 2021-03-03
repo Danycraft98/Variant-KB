@@ -50,17 +50,13 @@ def create_child(model_class, dx, values):
 
 
 def create_evidence(request, dx, child, dx_prefix, i):
-    item_dict = {'Functional': 'func1-', 'Score': 'item-'}
-    key = child.__class__.__name__
-    item = item_dict.get(key, '')
-    prefix = dx_prefix + item + str(i)
-    if key == 'Functional':
-        other = {'functional': child}
-    elif request.POST.get(prefix + '-key_val', '') != '':
-        other = {'item': PathItem.objects.get(key=request.POST.get(prefix + '-key_val', ''))}
-    else:
-        other = None
-
+    item_dict = {
+        'Functional': (dx_prefix + 'func-' + str(i), {'functional': child}),
+        'Score': (dx_prefix + 'item-' + str(i), {
+            'item': PathItem.objects.get(key=request.POST.get(dx_prefix + 'item-' + str(i) + '-key_val', '')) if child.__class__.__name__ == 'Score' else None
+        })
+    }
+    prefix, other = item_dict.get(child.__class__.__name__, (dx_prefix[:-1], {}))
     for evid_id, s_type, s_id, stmt in zip(
             request.POST.getlist(prefix + '-evid-0-id', []),
             request.POST.getlist(prefix + '-evid-0-source_type', []),

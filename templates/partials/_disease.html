@@ -3,8 +3,8 @@
 
 <fieldset class='tab-pane fade' {% if elem.empty %}data-key='{{ elem.branch }}'{% endif %} id='id_{{ subform.prefix }}-div{{ forloop.counter0 }}' aria-labelledby='{{ subform.prefix }}-tab'
           {% if elem.empty and not subform.name|data_verbose:item.diseases.all %}style='display:none;'{% endif %}>
-    <div id='id_{{ subform.prefix }}-label' class='card-header container-fluid row m-0'>
-        <div class='h6 col-8 d-flex justify-content-start my-2'>
+    <div class='card-header container-fluid row m-0'>
+        <div id='id_{{ subform.prefix }}-label' class='h6 col-8 d-flex justify-content-start my-2'>
             {% if elem.empty %}[Disease] / [Status]{% else %}{{ subform.name.value }} / {{ subform.reviewed|data_verbose:'choices' }}{% endif %}
         </div>
 
@@ -56,7 +56,7 @@
                             </div>
 
                             <div id='{{ func.prefix }}_evid-{{ index }}_div' class='card-body container'>
-                                {% with prefix=subform.prefix|add:func.prefix evid=evids|get_fields:'func' exists=True %}
+                                {% with prefix=subform.prefix|add:'-'|add:func.prefix evid=evids|get_fields:'func' exists=True %}
                                     {% include 'partials/_evidence.html' %}
                                 {% endwith %}
                             </div>
@@ -85,8 +85,7 @@
                     {% with index=forloop.counter|sub:gp_count %}
                         {% with evid=subchild_forms.0.forms|get_index:index %}
                             <div id='inner_form{{ forloop.counter }}' class='card-body container {% if 'prefix' in form.name.id_for_label %}empty-form{% endif %}'>
-                                {# subform.prefix|add:... #}
-                                {% with prefix=evid.prefix evid=evids|get_fields exists=True %}
+                                {% with prefix=subform.prefix evid=evids|get_fields exists=True %}
                                     {% include 'partials/_evidence.html' %}
                                 {% endwith %}
 
@@ -177,27 +176,28 @@
                 {% regroup subchild_forms.forms by key.value.0 as sorted_forms %}
 
                 {% for form in sorted_forms %}
-                    <div class='card-header border-top h6 mr-auto my-2'>
-                        {% if form.grouper == 'P' %}For{% else %}Against{% endif %} Pathogenicity
-                    </div>
-
-                    {% for evid in form.list %}
-
-                        <div class='card-body container pt-0 pb-3'>
-                            {% if evids|evidence_exist:evid.key.value %}
-
-                                {% with exists=True %}
-                                    {% include 'partials/_item.html' %}
-                                {% endwith %}
-
-                            {% else %}
-
-                                {% include 'partials/_item.html' %}
-
-                            {% endif %}
+                    {% if forloop.counter0 < 2 %}
+                        <div class='card-header border-top h6 mr-auto my-2'>
+                            {% if form.grouper == 'P' %}For{% else %}Against{% endif %} Pathogenicity
                         </div>
 
-                    {% endfor %}
+                        {% for evid in form.list %}
+
+                            <div class='card-body container pt-0 pb-3'>
+                                {% if evid and evids|evidence_exist:evid.key.value %}
+
+                                    {% with exists=True %}
+                                        {% include 'partials/_item.html' %}
+                                    {% endwith %}
+
+                                {% else %}
+                                    {% include 'partials/_item.html' %}
+                                {% endif %}
+                            </div>
+
+                        {% endfor %}
+
+                    {% endif %}
 
                 {% endfor %}
             </div>

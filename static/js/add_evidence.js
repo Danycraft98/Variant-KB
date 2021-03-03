@@ -1,8 +1,57 @@
-$('form').submit(function (e) {
+$(document).ready(function () {
+    $(window).scroll(function () {
+        if ($(this).scrollTop() > 50) {
+            $('#back-to-top').fadeIn();
+        } else {
+            $('#back-to-top').fadeOut();
+        }
+    });
+    // scroll body to 0px on click
+    $('#back-to-top').click(function () {
+        $('body,html').animate({scrollTop: 0}, 400);
+        return false;
+    });
+
+    $(":input:not([class*='form-control'], [type='hidden'], [role='tab'], select, button, :checkbox, :radio)").addClass('form-control');
+    $('select').addClass('form-select');
+
+    const element = document.getElementsByName('key')[0];
+    //calculate_score(element, 'score-' + element.id.split('-')[1]);
+
+    const dx_names = $("input[name^='dx'][name$='name']");
+    if (dx_names) dx_names.attr('oninput', 'set_header(this)');
+});
+
+function set_header(element) {
+    let dx_id = element.id.slice(0, -4),
+        dx_label = $('#' + dx_id + 'label'),
+        dx_review = $('input[id*="' + dx_id + 'reviewed"]:checked');
+
+    if (dx_review.length > 1) dx_review = dx_review.last().text();
+    else dx_review = 'Not Reviewed';
+    dx_label.text(element.value + ' / ' + dx_review)
+}
+
+function collapse(element) {
+    if (element.innerText.includes("Expand")) {
+        element.innerHTML = element.innerHTML.replace('Expand', 'Collapse');
+    } else {
+        element.innerHTML = element.innerHTML.replace('Collapse', 'Expand');
+    }
+}
+
+$('#file').on('change', function () {
+    const fileName = $(this).val();
+    $(this).next('.custom-file-label').html(fileName.replace(/^.*[\\\/]/, ''));
+});
+
+$("form:not([action='/upload/'])").submit(function (e) {
     $(':disabled').each(function (e) {
         $(this).removeAttr('disabled');
     })
 });
+
+//new bootstrap.Modal(document.getElementById('uploadModal')).show();
 
 
 Array.prototype.remove = function () {
@@ -15,16 +64,6 @@ Array.prototype.remove = function () {
     }
     return this;
 };
-
-
-$(document).ready(function () {
-    $(":input:not([class*='form-control'], [type='hidden'], [role='tab'])").addClass('form-control');
-    $('select, button, :checkbox, :radio').removeClass('form-control');
-    $('select').addClass('form-select');
-
-    const element = document.getElementsByName('key')[0]
-    calculate_score(element, 'score-' + element.id.split('-')[1]);
-});
 
 
 function change_required() {
@@ -74,13 +113,18 @@ function change_disease(main_elem) {
 
 
 function add_disease(main_elem) {
-    let nav_tab = $(main_elem).parent().prev().find('[hidden]').first();
-    nav_tab.removeAttr('hidden');
-    nav_tab.val('New Interpretation');
+    let tab_div = $(main_elem).parent().prev();
+    tab_div.find('[hidden]')
+        .first().removeAttr('hidden')
+        .tab('show').val('New Interpretation');
+
+    tab_div.children().first()
+        .removeClass('active')
+        .attr('hidden', '');
 }
 
 
-function add_item(element, is_cat=false) {
+function add_item(element, is_cat = false) {
     let jq_elem = $(element.parentElement.parentElement);
     if (is_cat) jq_elem = jq_elem.next();
     const elem_clone = jq_elem.clone();
@@ -126,7 +170,7 @@ function calculate_score(element, prefix) {
     Object.values(checkboxes).forEach(function (elem) {
         if (elem.checked) {
             score_label = elem.getAttribute('aria-label')
-            console.log(score_label, elem.getAttribute('aria-label'));
+            // console.log(score_label, elem.getAttribute('aria-label'));
             if (score_label === 'P') forScore += parseInt(elem.value);
             else againstScore += parseInt(elem.value);
         }
@@ -135,7 +179,6 @@ function calculate_score(element, prefix) {
     if (forScore > 11) forScore = 'Pathogenic';
     else if (forScore > 5) forScore = 'Likely Pathogenic';
     else forScore = 'Uncertain';
-
 
     if (againstScore > 15) againstScore = 'Benign';
     else if (againstScore > 1) againstScore = 'Likely Benign';
@@ -150,14 +193,6 @@ function calculate_score(element, prefix) {
         else if (againstScore.includes('Benign')) acmgClass.val('VUS');
     } else if (againstScore.includes('Benign')) acmgClass.val(againstScore);
     else acmgClass.val('Uncertain');
-}
-
-
-function set_reviewed(element) {
-    const review_val = $('input[name="' + element.name + '"]:checked').last().val(), select_id = element.id.split('_').splice(0, 2).join('_');
-    Object.values(document.querySelectorAll('select[id*="' + select_id + '"] option')).forEach(function (element) {
-        element.selected = element.value === review_val;
-    });
 }
 
 
@@ -180,41 +215,29 @@ function copyReport(item) {
 }
 
 
-function collapse(element) {
-    if (element.innerText.includes("Expand")) {
-        element.innerHTML = element.innerHTML.replace('Expand', 'Collapse');
-    } else {
-        element.innerHTML = element.innerHTML.replace('Collapse', 'Expand');
-    }
-}
-
-
 function tierChange(element, options, result) {
-    const selected = element.options[element.selectedIndex].value;
-    let select_id = element.id.split('_').slice(0, 1).join('_') + '_others';
-    const selectElement = document.getElementById(select_id);
-    const tier = document.getElementById(element.id.split('_').slice(0, 1).join('_') + '_tier_collapse');
-    const selectedTrue = (selected === options[0] || selected === options[1]);
+    let selected = element.options[element.selectedIndex].value,
+        select_id = element.id.split('_').slice(0, 1).join('_') + '_others',
+        selectElement = document.getElementById(select_id),
+        tier = document.getElementById(element.id.split('_').slice(0, 1).join('_') + '_tier_collapse'),
+        selectedTrue = (selected === options[0] || selected === options[1]);
+
     if (selectedTrue) {
         selectElement.value = result;
         selectElement.setAttribute('readonly', '');
         tier.innerText = tier.innerText.split('- ')[0] + '- ' + result;
-    } else {
-        selectElement.removeAttribute('readonly');
-    }
+    } else selectElement.removeAttribute('readonly');
 
-    let evid_id = element.id.split('_').slice(0, 1).join('_') + '_etype2'
-    const btn = document.getElementById(evid_id);
-    let index = 1, div = 'Test';
+    let evid_id = element.id.split('_').slice(0, 1).join('_') + '_etype2',
+        index = 1, div = 'Test',
+        btn = document.getElementById(evid_id);
     while (div) {
         div = document.getElementById(evid_id + '_' + index.toString());
         if (result === 'Tier IV' && selectedTrue) {
             btn.setAttribute('disabled', '');
             if (div) {
                 div.querySelectorAll("[id^='" + evid_id + "']").forEach(function (element) {
-                    if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
-                        element.value = '';
-                    }
+                    if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') element.value = '';
                 })
                 div.setAttribute('hidden', '');
                 div.setAttribute('disabled', '');
@@ -228,23 +251,6 @@ function tierChange(element, options, result) {
         }
         index++;
     }
-}
-
-
-function updateHeader(element) {
-    const dx_id = element.id.split('_')[0],
-        dx_label = document.getElementById(dx_id + '_label');
-    let dx_review = document.querySelector('input[name="' + dx_id + '_review"][type="checkbox"]');
-    let replace_text = dx_label.innerText.split(/[/-]+/)[1]
-    dx_label.innerText = dx_label.innerText.replace(replace_text, ' ' + element.value + ' ');
-
-    if (dx_review !== null) {
-        dx_review = dx_review.nextElementSibling.innerHTML;
-    } else {
-        dx_review = 'No Review';
-    }
-    replace_text = dx_label.innerText.split(/[/-]+/)[2]
-    dx_label.innerText = dx_label.innerText.replace(replace_text, ' ' + dx_review);
 }
 
 

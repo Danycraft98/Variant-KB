@@ -166,8 +166,7 @@ class PathItemForm(BaseForm):
 
 
 ScoreFormSet = inlineformset_factory(
-    Disease,
-    Score,
+    Disease, Score,
     form=ScoreForm,
     min_num=1,
 )

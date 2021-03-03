@@ -1,5 +1,4 @@
 import json
-import re
 from urllib import parse
 
 from django.contrib import messages
@@ -36,8 +35,17 @@ def search(request):
             except Gene.DoesNotExist:
                 pass
         else:
-            search_query = {key: value for key, value in search_query.items() if value != ''}
-            search_query.pop('csrfmiddlewaretoken')
+            protein = search_query.get('protein', '')
+            protein_dict = {
+                'A': 'Ala', 'R': 'Arg', 'N': 'Asn', 'D': 'Asp', 'C': 'Cys', 'Q': 'Gln', 'E': 'Glu',
+                'G': 'Gly', 'H': 'His', 'I': 'Ile', 'L': 'Leu', 'K': 'Lys', 'M': 'Met', 'F': 'Phe',
+                'P': 'Pro', 'S': 'Ser', 'T': 'Thr', 'W': 'Trp', 'Y': 'Tyr', 'V': 'Val', 'B': 'Asx',
+                'Z': 'Glx', 'J': 'Xle', 'U': 'Sec', 'O': 'Pyl', 'X':  'Unk', 'fs': 'Ter'
+            }
+            search_query['protein'] = protein_dict[protein] if protein in protein_dict else protein
+            search_query = {
+                key: value for key, value in search_query.items() if value != '' and key != 'csrfmiddlewaretoken'
+            }
             return redirect('/variants?' + parse.urlencode(search_query))
         return render(request, 'general/search.html', {'title': 'List of Genes'})
     return render(request, 'general/search.html', {'title': 'List of Genes'})
@@ -55,6 +63,80 @@ def account_request(request):
         )
         return render(request, 'general/request.html', {'title': 'List of Genes'})
     return render(request, 'general/request.html', {'title': 'List of Genes'})
+
+
+@login_required
+def upload(request):
+    exists_dict = {'yes': [], 'no': []}
+    if 'dict' not in request.POST:
+        with open(request.FILES.get('file').name, "wb+") as file:
+            file.write(request.FILES.get('file').file.getbuffer())
+        raw_data = read_file(request.FILES.get('file').name, dtype=str, header=20)
+        raw_data.fillna('na', inplace=True)
+        default_header = list(raw_data.columns)
+        [default_header.remove(key) for key in ['IGV', 'UCSC Genome Browser', 'HGMD']]
+        raw_data = raw_data.rename(columns=str.lower)
+
+    else:
+        raw_data = pandas.DataFrame.from_records(json.loads(request.POST.get('dict')))
+        default_header = list(raw_data.columns)
+        [default_header.remove(key) for key in ['igv', 'ucsc genome browser', 'hgmd']]
+        raw_data.rename(columns={'exonicfunc.uhnclggene': 'exonic_function'}, inplace=True)
+
+    for _, row in raw_data.iterrows():
+        if 'chr' not in row:
+            continue
+
+        gene_name = row.get('gene')
+        [row.pop(key) for key in ['igv', 'ucsc genome browser', 'hgmd']]
+        exist_variants = Variant.objects.filter(gene__name=gene_name, protein=row.get('protein'))
+        count = exist_variants.count()
+        if 'add_or_update' in request.POST and row.get('protein') in request.POST.getlist('add_or_update'):
+            row['tcga'] = row.pop('tcga#occurances')
+            raw_cancerhotspot = str(row.pop('cancerhotspots')).split('|')
+            row.pop('gene')
+
+            try:
+                gene_item = Gene.objects.get(name=gene_name)
+            except Gene.DoesNotExist:
+                gene_item = Gene.objects.create(name=gene_name, pub_date=datetime.datetime.now())
+
+            if 'consequence' in row or count == 0:
+                variant1 = Variant.objects.create(gene=gene_item, **row)
+                History.objects.create(content='Upload', user=request.user, timestamp=datetime.datetime.now(), variant=variant1)
+            else:
+                exist_variants.update(**row)
+                variant1 = exist_variants.first()
+                History.objects.create(content='Updated', user=request.user, timestamp=datetime.datetime.now(), variant=variant1)
+
+            for hotspot in raw_cancerhotspot:
+                if hotspot == 'na':
+                    break
+                values = hotspot.split(':')
+                cancer = CancerHotspot.objects.create(hotspot=values[0], variant=variant1)
+                if len(values) > 1:
+                    cancer.count = int(values[1])
+                    cancer.save()
+        else:
+            if 'consequence' in row or count == 0:
+                exists_dict['no'].append(row)
+            else:
+                exists_dict['yes'].append(row)
+    if 'dict' in request.POST:
+        return HttpResponseRedirect(reverse('index'))
+    else:
+        new = pandas.DataFrame.from_records(exists_dict['no'])
+        exist = pandas.DataFrame.from_records(exists_dict['yes'])
+        if not new.empty:
+            new.columns = default_header
+            new = new[['Chr', 'cDNA', 'Protein', 'Transcript', 'Start', 'End', 'Ref', 'Alt', default_header[5]] + default_header[9:]].rename(columns={"Chr": "Chromosome", "cDNA": "C.", 'Protein': 'P.'})
+        if not exist.empty:
+            exist.columns = default_header
+            exist = exist[['Chr', 'cDNA', 'Protein', 'Transcript', 'Start', 'End', 'Ref', 'Alt', default_header[5]] + default_header[9:]].rename(columns={"Chr": "Chromosome", "cDNA": "C.", 'Protein': 'P.'})
+
+        exist_html = exist.to_html(classes='exist table table-bordered table-hover', justify='left')
+        new_html = new.to_html(classes='new table table-bordered table-hover', justify='left')
+        return render(request, 'general/uploaded.html', {'tables': (new_html, exist_html), 'is_empty': (new.empty, exist.empty), 'dict': raw_data.to_json(), 'title': 'Uploads'})
 
 
 @login_required
@@ -133,7 +215,6 @@ def variant(request, gene_name, protein):
                 for child_form in forms[child_info[0]]:
                     print(child_form.errors)
                     if child_form.is_valid():
-                        print(child_form.cleaned_data)
                         child = create_child(child_info[1], dx, dict(child_form.cleaned_data))
                         sub_child = create_evidence(request, dx, child, 'dx-' + str(i) + '-', child_info[3])
                         child_info[3] += 1
@@ -147,82 +228,8 @@ def variant(request, gene_name, protein):
         'item': item, 'title': 'Edit - ' + item.protein, 'items': score_items, 'form': forms[0],
         'child_forms': forms[1:3], 'subchild_forms': forms[3], 'report_form': forms[4], 'reports': reports,
         'empty_forms': [{'branch': 'no', 'empty': True, 'prefix': 'dx'}, {'branch': 'so', 'empty': True, 'prefix': 'dx'}, {'branch': 'gp', 'empty': True, 'prefix': 'dx'}],
-        'gp_count': gp_count, 'evids': [evid for dx in diseases for evid in dx.evidences.all()]
+        'gp_count': gp_count, 'evids': [evid for dx in diseases for evid in dx.evidences.all()], 'dx_num': len(diseases)
     })
-
-
-@login_required
-def upload(request):
-    exists_dict = {'yes': [], 'no': []}
-    if 'dict' not in request.POST:
-        with open(request.FILES.get('file').name, "wb+") as file:
-            file.write(request.FILES.get('file').file.getbuffer())
-        raw_data = read_file(request.FILES.get('file').name, dtype=str, header=20)
-        raw_data.fillna('na', inplace=True)
-        default_header = list(raw_data.columns)
-        [default_header.remove(key) for key in ['IGV', 'UCSC Genome Browser', 'HGMD']]
-        raw_data = raw_data.rename(columns=str.lower)
-
-    else:
-        raw_data = pandas.DataFrame.from_records(json.loads(request.POST.get('dict')))
-        default_header = list(raw_data.columns)
-        [default_header.remove(key) for key in ['igv', 'ucsc genome browser', 'hgmd']]
-        raw_data.rename(columns={'exonicfunc.uhnclggene': 'exonic_function'}, inplace=True)
-
-    for _, row in raw_data.iterrows():
-        if 'chr' not in row:
-            continue
-
-        gene_name = row.get('gene')
-        [row.pop(key) for key in ['igv', 'ucsc genome browser', 'hgmd']]
-        exist_variants = Variant.objects.filter(gene__name=gene_name, protein=row.get('protein'))
-        count = exist_variants.count()
-        if 'add_or_update' in request.POST and row.get('protein') in request.POST.getlist('add_or_update'):
-            row['tcga'] = row.pop('tcga#occurances')
-            raw_cancerhotspot = str(row.pop('cancerhotspots')).split('|')
-            row.pop('gene')
-
-            try:
-                gene_item = Gene.objects.get(name=gene_name)
-            except Gene.DoesNotExist:
-                gene_item = Gene.objects.create(name=gene_name, pub_date=datetime.datetime.now())
-
-            if 'consequence' in row or count == 0:
-                variant1 = Variant.objects.create(gene=gene_item, **row)
-                History.objects.create(content='Upload', user=request.user, timestamp=datetime.datetime.now(), variant=variant1)
-            else:
-                exist_variants.update(**row)
-                variant1 = exist_variants.first()
-                History.objects.create(content='Updated', user=request.user, timestamp=datetime.datetime.now(), variant=variant1)
-
-            for hotspot in raw_cancerhotspot:
-                if hotspot == 'na':
-                    break
-                values = hotspot.split(':')
-                cancer = CancerHotspot.objects.create(hotspot=values[0], variant=variant1)
-                if len(values) > 1:
-                    cancer.count = int(values[1])
-                    cancer.save()
-        else:
-            if 'consequence' in row or count == 0:
-                exists_dict['no'].append(row)
-            else:
-                exists_dict['yes'].append(row)
-    if 'dict' in request.POST:
-        return HttpResponseRedirect(reverse('index'))
-    else:
-        new = pandas.DataFrame.from_records(exists_dict['no'])
-        exist = pandas.DataFrame.from_records(exists_dict['yes'])
-        if not new.empty:
-            new.columns = default_header
-            new = new[['Chr', 'cDNA', 'Protein', 'Transcript', 'Start', 'End', 'Ref', 'Alt', default_header[5]] + default_header[9:]].rename(columns={"Chr": "Chromosome", "cDNA": "C.", 'Protein': 'P.'})
-        if not exist.empty:
-            exist.columns = default_header
-            exist = exist[['Chr', 'cDNA', 'Protein', 'Transcript', 'Start', 'End', 'Ref', 'Alt', default_header[5]] + default_header[9:]].rename(columns={"Chr": "Chromosome", "cDNA": "C.", 'Protein': 'P.'})
-
-        exist_html = exist.to_html(classes='exist table table-bordered table-hover', justify='left')
-        new_html = new.to_html(classes='new table table-bordered table-hover', justify='left')
-        return render(request, 'general/uploaded.html', {'tables': (new_html, exist_html), 'is_empty': (new.empty, exist.empty), 'dict': raw_data.to_json(), 'title': 'Uploads'})
 
 
 @login_required
@@ -231,7 +238,17 @@ def variant_text(request, gene_name, protein):
         item = Variant.objects.get(protein=protein, gene__name=gene_name)
     except Variant.DoesNotExist:
         raise Http404('Variant does not exist')
-    return render(request, 'variants/detail.html', {'item': item, 'title': 'Detail - ' + item.protein})
+    return render(request, 'variants/detail.html', {'item': item, 'title': 'Detail - ' + item.protein, })
+
+
+@login_required
+def history(request, gene_name, protein):
+    try:
+        item = Variant.objects.get(gene__name=gene_name, protein=protein)
+        histories = HistoryTable([h for h in item.history.all()])
+    except Variant.DoesNotExist:
+        raise Http404('Variant does not exist')
+    return render(request, 'variants/index.html', {'item': item, 'table': histories, 'title': 'History - ' + item.protein})
 
 
 @login_required
@@ -260,12 +277,3 @@ def exported(request, gene_name, protein):
         response = HttpResponse(pdf, content_type='application/pdf')
         response['Content-Disposition'] = "attachment; filename=report.pdf"
         return response
-
-
-def history(request, gene_name, protein):
-    try:
-        item = Variant.objects.get(gene__name=gene_name, protein=protein)
-        histories = HistoryTable([h for h in item.history.all()])
-    except Variant.DoesNotExist:
-        raise Http404('Variant does not exist')
-    return render(request, 'variants/index.html', {'item': item, 'table': histories, 'title': 'History - ' + item.protein})

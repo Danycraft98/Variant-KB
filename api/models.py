@@ -290,7 +290,7 @@ class SubEvidence(models.Model):
 
 
 class Report(models.Model):
-    name = models.CharField(max_length=40)
+    report_name = models.CharField(max_length=40)
     content = models.TextField(null=True)
     gene = models.ForeignKey(Gene, related_name='reports', on_delete=models.CASCADE, null=True, blank=True)
     variant = models.ForeignKey(Variant, related_name='reports', on_delete=models.CASCADE, null=True, blank=True)
