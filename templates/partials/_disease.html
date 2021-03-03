@@ -74,7 +74,7 @@
                     <button type='button' id='{{ subform.prefix }}_evid{{ forloop.counter }}' class='ml-auto btn btn-primary' onclick='add_evid(this)'>Add Actionability Evidences</button>
                 </div>
 
-                <div id='{{ subchild_forms.0.prefix }}_evid' class='act_evid collapse show'>
+                <fieldset id='{{ subchild_forms.0.prefix }}_evid' class='act_evid collapse show'>
                     <div class='card-body container {% if 'prefix' in subform.name.id_for_label %}empty-form{% endif %} border-bottom'>
                         <div class='row form-group my-2'>
                             <div class='col-4'>{{ subform.others.label }}</div>
@@ -135,7 +135,7 @@
                             </div>
                         {% endwith %}
                     {% endwith %}
-                </div>
+                </fieldset>
             </div>
 
         {% elif subform.branch.value == 'gp' or elem.branch == 'gp' %}

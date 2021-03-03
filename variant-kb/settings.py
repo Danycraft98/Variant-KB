@@ -58,6 +58,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'variant-kb.urls'
@@ -121,10 +122,14 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
+STATIC_ROOT = '/staticfiles/'
+
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(os.environ.get('BASE_DIR', ''), 'static'),
 ]
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Upload Settings
 UPLOADS_PATH = join(dirname(realpath(__file__)), 'static/uploads/')

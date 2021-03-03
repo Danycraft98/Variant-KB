@@ -2,7 +2,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import inlineformset_factory, modelformset_factory
 
-from api.constants import REVIEWED_CHOICES
+from api.constants import REVIEWED_CHOICES, FUNC_SIG_CHOICES
 from api.models import *
 
 __all__ = [
@@ -43,13 +43,9 @@ class BaseForm(forms.ModelForm):
 
 class DiseaseForm(BaseForm):
     prefix = 'dx'
-    reviewed = forms.MultipleChoiceField(
-        label='Reviewed Status',
-        initial='n', choices=REVIEWED_CHOICES,
-        widget=forms.CheckboxSelectMultiple(
-            attrs={'class': 'form-check-inline'}
-        )
-    )
+    reviewed = forms.MultipleChoiceField(label='Reviewed Status', initial='n', choices=REVIEWED_CHOICES, widget=forms.CheckboxSelectMultiple(
+        attrs={'class': 'form-check-inline'}
+    ))
 
     class Meta:
         model = Disease
@@ -105,6 +101,10 @@ ReportFormSet = modelformset_factory(
 class FunctionalForm(BaseForm):
     prefix = 'func'
     id = forms.CharField(required=False, widget=forms.HiddenInput())
+    value = forms.ChoiceField(choices=FUNC_SIG_CHOICES, widget=forms.Select(attrs={
+        'class': 'form-select',
+        'onchange': "tierChange(this, ['Benign', 'None'], 'Tier IV')"
+    }))
 
     class Meta:
         model = Functional
