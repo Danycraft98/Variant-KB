@@ -45,7 +45,6 @@ function copy() {
         const copyText = document.getElementById(element.id.replace('_', '-'));
         if (element.checked === true) {
             /* Copy the text inside the text field to another field */
-            console.log(element.value);
             report_str += copyText.value + '\n\n';
         }
     });

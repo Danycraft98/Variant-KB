@@ -2,21 +2,17 @@ a {
     text-decoration: none !important
 }
 
+.back-to-top {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    display: none;
+}
+
 .hidden {
     position: absolute;
     visibility: hidden;
     opacity: 0;
-}
-
-input[type=checkbox] + label {
-    font-style: italic;
-}
-
-input[type=checkbox]:checked + label {
-    background-color: #6c757d;
-    color: white;
-    font-style: normal;
-    font-weight: bold;
 }
 
 .collapser {
@@ -98,6 +94,13 @@ legend {
     padding: 0 10px;
     border-bottom: none;
     float: none;
+}
+
+.sticky {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 1;
 }
 
 .table > :not(caption) > tr > td {

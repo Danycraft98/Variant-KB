@@ -24,9 +24,9 @@
                         <button type='button' class='btn btn-primary' data-bs-toggle='modal' data-bs-target='#uploadModal'>Upload</button>
                     </li>
                     {% if user.is_authenticated %}
-                        <div class="btn-group">
+                        <div class='btn-group'>
                             <a class='nav-link dropdown-toggle my-auto' data-bs-toggle='dropdown' href='#' role='button' aria-expanded='false'>{{ user.get_username }}</a>
-                            <div class="dropdown-menu dropdown-menu-end">
+                            <div class='dropdown-menu dropdown-menu-end'>
                                 <a class='dropdown-item' href='{% url 'profile' user.id %}'>Profile</a>
                                 <a class='dropdown-item' href='{% url 'logout' %}?next={{ request.path }}'>Logout</a>
                             </div>
@@ -54,8 +54,9 @@
             <form method='post' action='{% url 'upload' %}' enctype='multipart/form-data'>
                 {% csrf_token %}
                 <div class='modal-body px-5'>
-                    <div class='custom-file text-sm'>
-                        <input type='file' accept='.xls,.xlsx,.csv' class='custom-file-input form-control' id='file' name='file' required>
+                    <div class='mb-3'>
+                        <label for='formFile' class='form-label'>Variant Spreadsheet</label>
+                        <input class='form-control' type='file' accept='.xls,.xlsx,.csv' id='file' name='file' required>
                     </div>
                 </div>
                 <div class='modal-footer'>

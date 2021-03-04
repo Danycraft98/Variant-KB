@@ -35,8 +35,17 @@ def search(request):
             except Gene.DoesNotExist:
                 pass
         else:
-            search_query = {key: value for key, value in search_query.items() if value != ''}
-            search_query.pop('csrfmiddlewaretoken')
+            protein = search_query.get('protein', '')
+            protein_dict = {
+                'A': 'Ala', 'R': 'Arg', 'N': 'Asn', 'D': 'Asp', 'C': 'Cys', 'Q': 'Gln', 'E': 'Glu',
+                'G': 'Gly', 'H': 'His', 'I': 'Ile', 'L': 'Leu', 'K': 'Lys', 'M': 'Met', 'F': 'Phe',
+                'P': 'Pro', 'S': 'Ser', 'T': 'Thr', 'W': 'Trp', 'Y': 'Tyr', 'V': 'Val', 'B': 'Asx',
+                'Z': 'Glx', 'J': 'Xle', 'U': 'Sec', 'O': 'Pyl', 'X':  'Unk', 'fs': 'Ter'
+            }
+            search_query['protein'] = protein_dict[protein] if protein in protein_dict else protein
+            search_query = {
+                key: value for key, value in search_query.items() if value != '' and key != 'csrfmiddlewaretoken'
+            }
             return redirect('/variants?' + parse.urlencode(search_query))
         return render(request, 'general/search.html', {'title': 'List of Genes'})
     return render(request, 'general/search.html', {'title': 'List of Genes'})
@@ -54,99 +63,6 @@ def account_request(request):
         )
         return render(request, 'general/request.html', {'title': 'List of Genes'})
     return render(request, 'general/request.html', {'title': 'List of Genes'})
-
-
-@login_required
-def genes(request):
-    gene_list = GeneTable(Gene.objects.all())
-    return render(request, 'variants/index.html', {'table': gene_list, 'title': 'List of Genes'})
-
-
-@login_required
-def variants(request):
-    if request.GET:
-        variant_list = VariantTable(Variant.objects.filter(chr__contains=request.GET.get('chromosome', ''), protein__contains=request.GET.get('protein', ''), cdna__contains=request.GET.get('cdna', ''), ref__contains=request.GET.get('ref', ''), alt__contains=request.GET.get('alt', '')))
-    else:
-        variant_list = VariantTable(Variant.objects.all())
-    # variant_list.order_by = ('-history',)
-    return render(request, 'variants/index.html', {'table': variant_list, 'title': 'List of Variants'})
-
-
-@login_required
-def gene(request, gene_name):
-    try:
-        item = Gene.objects.get(name=gene_name)
-    except Gene.DoesNotExist:
-        raise Http404('Gene does not exist')
-    variant_list = VariantTable(item.variants.all())
-    return render(request, 'variants/index.html', {'item': item, 'table': variant_list, 'title': 'List of Variants'})
-
-
-@login_required
-def variant(request, gene_name, protein):
-    branches = ['no', 'so', 'gp']
-    reports = ['Gene-Descriptive', 'Variant-Descriptive', 'Gene-Disease', 'Variant-Disease', 'Gene-Germline Implications', 'Variant-Germline Implications']
-
-    if not request.user.is_staff:
-        messages.warning(request, 'You are not authorized to edit variants.')
-        return HttpResponseRedirect(reverse('gene', args=[gene_name]))
-
-    try:
-        item = Variant.objects.get(gene__name=gene_name, protein=protein)
-        score_items = PathItem.objects.all()
-    except Variant.DoesNotExist:
-        raise Http404('Variant does not exist')
-
-    diseases = item.diseases.all()
-    functionals, scores = Functional.objects.filter(id=0), Score.objects.filter(id=0)
-    for disease in diseases:
-        functionals = functionals | Functional.objects.filter(disease=disease)
-        scores = scores | Score.objects.filter(disease=disease)
-
-    forms = [
-        DiseaseFormSet(request.POST or None, request.FILES or None),
-
-        FunctionalFormSet(request.POST or None, request.FILES or None, initial=functionals.values()),
-        ScoreFormSet(request.POST or None, request.FILES or None, initial=scores.values()),
-
-        EvidenceFormSet(request.POST or None, request.FILES or None),
-        PathItemFormSet(request.POST or None, request.FILES or None, initial=PathItem.objects.all().values()),
-
-        ReportFormSet(request.POST or None, request.FILES or None),
-    ]
-
-    if request.method == 'POST':
-        all_not_valid = True
-        for main_form in forms[0]:
-            dx = None
-            if main_form.is_valid():
-                all_not_valid = False
-                dx = create_disease(request, item, main_form.cleaned_data)
-
-            if dx:
-                if dx.branch == 'so':
-                    if forms[0].is_valid():
-                        create_functional(dx, dict(forms[0].cleaned_data))
-
-                    #if subchild_form[0].is_valid():
-                    #    create_evidence(request, dx, dict(subchild_form[0].cleaned_data))
-
-                elif dx.branch == 'gp':
-                    if forms[1].is_valid():
-                        create_score(dx, forms[1].cleaned_data)
-
-                pass
-
-        if all_not_valid:
-            return HttpResponseRedirect(reverse('variant', args=(gene_name, protein)))
-
-        return HttpResponseRedirect(reverse('variant_text', args=(gene_name, protein)))
-
-    return render(request, 'variants/form.html', {
-        'item': item, 'title': 'Edit - ' + item.protein,
-        'items': score_items, 'form': forms[0], 'child_forms': forms[1:3], 'subchild_forms': forms[3:5],
-        'report_form': forms[5], 'branches': branches, 'reports': reports
-    })
 
 
 @login_required
@@ -224,12 +140,115 @@ def upload(request):
 
 
 @login_required
+def genes(request):
+    gene_list = GeneTable(Gene.objects.all())
+    return render(request, 'variants/index.html', {'table': gene_list, 'title': 'List of Genes'})
+
+
+@login_required
+def variants(request):
+    if request.GET:
+        variant_list = VariantTable(Variant.objects.filter(chr__contains=request.GET.get('chromosome', ''), protein__contains=request.GET.get('protein', ''), cdna__contains=request.GET.get('cdna', ''), ref__contains=request.GET.get('ref', ''), alt__contains=request.GET.get('alt', '')))
+    else:
+        variant_list = VariantTable(Variant.objects.all())
+    # variant_list.order_by = ('-history',)
+    return render(request, 'variants/index.html', {'table': variant_list, 'title': 'List of Variants'})
+
+
+@login_required
+def gene(request, gene_name):
+    try:
+        item = Gene.objects.get(name=gene_name)
+    except Gene.DoesNotExist:
+        raise Http404('Gene does not exist')
+    variant_list = VariantTable(item.variants.all())
+    return render(request, 'variants/index.html', {'item': item, 'table': variant_list, 'title': 'List of Variants'})
+
+
+@login_required
+def variant(request, gene_name, protein):
+    reports = ['Gene-Descriptive', 'Variant-Descriptive', 'Gene-Disease', 'Variant-Disease', 'Gene-Germline Implications', 'Variant-Germline Implications']
+
+    if not request.user.is_staff:
+        messages.warning(request, 'You are not authorized to edit variants.')
+        return HttpResponseRedirect(reverse('variant_text', args=[gene_name, protein]))
+
+    try:
+        item = Variant.objects.get(gene__name=gene_name, protein=protein)
+        score_items = PathItem.objects.all()
+    except Variant.DoesNotExist:
+        raise Http404('Variant does not exist')
+
+    diseases = item.diseases.all()
+    if len(diseases) < 1:
+        queryset = Disease.objects.none()
+    else:
+        queryset = diseases
+
+    functionals, scores = Functional.objects.filter(id=0), Score.objects.filter(id=0)
+    for disease in diseases:
+        functionals = functionals | Functional.objects.filter(disease=disease)
+        scores = scores | Score.objects.filter(disease=disease)
+    gp_count = item.diseases.filter(branch='gp').count() if item.diseases.filter(branch='gp').count() else 1
+
+    forms = [
+        DiseaseFormSet(request.POST or None, request.FILES or None, queryset=queryset, prefix='dx'),
+
+        FunctionalFormSet(request.POST or None, request.FILES or None, initial=functionals.values(), prefix='func'),
+        ScoreFormSet(request.POST or None, request.FILES or None, initial=scores.values(), prefix='score'),
+
+        PathItemFormSet(request.POST or None, request.FILES or None, initial=PathItem.objects.all().values(), prefix='item'),
+        ReportFormSet(request.POST or None, request.FILES or None, 'report'),
+    ]
+
+    switch_dict, i = {'so': [1, Functional, None, 0], 'gp': [2, Score, 3, 0]}, 0
+    if request.method == 'POST':
+        all_not_valid = True
+        for main_form in forms[0]:
+            if main_form.is_valid() and main_form.cleaned_data.get('branch', 'no') != 'no':
+                all_not_valid = False
+                dx = create_disease(request, item, dict(main_form.cleaned_data))
+                child_info = switch_dict.get(dx.branch)
+                if not child_info:
+                    continue
+
+                for child_form in forms[child_info[0]]:
+                    print(child_form.errors)
+                    if child_form.is_valid():
+                        child = create_child(child_info[1], dx, dict(child_form.cleaned_data))
+                        sub_child = create_evidence(request, dx, child, 'dx-' + str(i) + '-', child_info[3])
+                        child_info[3] += 1
+
+        if all_not_valid:
+            return HttpResponseRedirect(reverse('variant', args=(gene_name, protein)))
+
+        return HttpResponseRedirect(reverse('variant_text', args=(gene_name, protein)))
+
+    return render(request, 'variants/form.html', {
+        'item': item, 'title': 'Edit - ' + item.protein, 'items': score_items, 'form': forms[0],
+        'child_forms': forms[1:3], 'subchild_forms': forms[3], 'report_form': forms[4], 'reports': reports,
+        'empty_forms': [{'branch': 'no', 'empty': True, 'prefix': 'dx'}, {'branch': 'so', 'empty': True, 'prefix': 'dx'}, {'branch': 'gp', 'empty': True, 'prefix': 'dx'}],
+        'gp_count': gp_count, 'evids': [evid for dx in diseases for evid in dx.evidences.all()], 'dx_num': len(diseases)
+    })
+
+
+@login_required
 def variant_text(request, gene_name, protein):
     try:
         item = Variant.objects.get(protein=protein, gene__name=gene_name)
     except Variant.DoesNotExist:
         raise Http404('Variant does not exist')
-    return render(request, 'variants/detail.html', {'item': item, 'title': 'Detail - ' + item.protein})
+    return render(request, 'variants/detail.html', {'item': item, 'title': 'Detail - ' + item.protein, })
+
+
+@login_required
+def history(request, gene_name, protein):
+    try:
+        item = Variant.objects.get(gene__name=gene_name, protein=protein)
+        histories = HistoryTable([h for h in item.history.all()])
+    except Variant.DoesNotExist:
+        raise Http404('Variant does not exist')
+    return render(request, 'variants/index.html', {'item': item, 'table': histories, 'title': 'History - ' + item.protein})
 
 
 @login_required
@@ -258,12 +277,3 @@ def exported(request, gene_name, protein):
         response = HttpResponse(pdf, content_type='application/pdf')
         response['Content-Disposition'] = "attachment; filename=report.pdf"
         return response
-
-
-def history(request, gene_name, protein):
-    try:
-        item = Variant.objects.get(gene__name=gene_name, protein=protein)
-        histories = HistoryTable([h for h in item.history.all()])
-    except Variant.DoesNotExist:
-        raise Http404('Variant does not exist')
-    return render(request, 'variants/index.html', {'item': item, 'table': histories, 'title': 'History - ' + item.protein})
