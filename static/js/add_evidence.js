@@ -8,7 +8,9 @@ $(document).ready(function () {
     });
     // scroll body to 0px on click
     $('#back-to-top').click(function () {
-        $('body,html').animate({scrollTop: 0}, 400);
+        const body = $('body,html');
+        if ($('anchor')) body.animate({scrollTop: 400}, 400);
+        else body.animate({scrollTop: 0}, 400);
         return false;
     });
 
@@ -114,10 +116,10 @@ function change_disease(main_elem) {
 
 function add_disease(main_elem) {
     let tab_div = $(main_elem).parent().prev();
-    tab_div.find('[hidden]')
+    tab_div.find("[id!='empty_link'][hidden]")
         .first().removeAttr('hidden')
         .tab('show').val('New Interpretation');
-
+    console.log(tab_div)
     tab_div.children().first()
         .removeClass('active')
         .attr('hidden', '');
@@ -146,35 +148,22 @@ function add_evid(element) {
 }
 
 
-function select_evidence(element, prefix) {
-    document.getElementById(element.id + '_evid').disabled = element.checked !== true;
-    document.querySelectorAll("[id^='" + element.id + "_']").forEach(function (item, index) {
-        if (index > 7) {
-            calculate_score(element, prefix);
-        }
-    });
-    calculate_score(element, prefix);
-}
-
-
 /* PVS = 10; PS = 7; PM = 2; PP = 1
  * P:  12-14, 17; LP: 6, 9, 11, 12
  * ==================================
  * BA = 16; BS = 8; BP = 1
  * B:  16; LB: 2, 9
  */
-function calculate_score(element, prefix) {
-    let forScore, againstScore, score_label, checkboxes;
-    checkboxes = document.getElementsByName(element.name);
+function calculate_score(element) {
+    let forScore, againstScore, score_label;
     forScore = againstScore = 0;
-    Object.values(checkboxes).forEach(function (elem) {
-        if (elem.checked) {
-            score_label = elem.getAttribute('aria-label')
-            // console.log(score_label, elem.getAttribute('aria-label'));
-            if (score_label === 'P') forScore += parseInt(elem.value);
-            else againstScore += parseInt(elem.value);
+    $('.' +  element.className.split(' ')[1]).each(function () {
+        if (this.checked) {
+            score_label = this.getAttribute('aria-label')
+            if (score_label === 'P') forScore += parseInt(this.value);
+            else againstScore += parseInt(this.value);
         }
-    });
+    })
 
     if (forScore > 11) forScore = 'Pathogenic';
     else if (forScore > 5) forScore = 'Likely Pathogenic';
@@ -184,6 +173,7 @@ function calculate_score(element, prefix) {
     else if (againstScore > 1) againstScore = 'Likely Benign';
     else againstScore = 'Uncertain';
 
+    const prefix = 'score-' + element.id.split('-')[1];
     $('#id_' + prefix + '-for_score').val(forScore);
     $('#id_' + prefix + '-against_score').val(againstScore);
 
@@ -216,37 +206,38 @@ function copyReport(item) {
 
 
 function tierChange(element, options, result) {
-    let selected = element.options[element.selectedIndex].value,
-        select_id = element.id.split('_').slice(0, 1).join('_') + '_others',
-        selectElement = document.getElementById(select_id),
-        tier = document.getElementById(element.id.split('_').slice(0, 1).join('_') + '_tier_collapse'),
+    let temp = $(element).parent().parent().parent().parent().parent().prev()[0],
+        selected = element.options[element.selectedIndex].value,
+        selectElement = $(temp.id.split('_').slice(0, 2).join('_').slice(0,-3) + 'others'),
+        //tier = $(temp.id.split('_').slice(0, 1).join('_') + '_tier_collapse'),
         selectedTrue = (selected === options[0] || selected === options[1]);
 
+    console.log(temp.id.split('_').slice(0, 1).join('_') + '_tier_collapse');
     if (selectedTrue) {
-        selectElement.value = result;
-        selectElement.setAttribute('readonly', '');
-        tier.innerText = tier.innerText.split('- ')[0] + '- ' + result;
-    } else selectElement.removeAttribute('readonly');
+        selectElement.val(result);
+        selectElement.attr('readonly', '');
+        //tier.text(tier.text().split('- ')[0] + '- ' + result);
+    } else selectElement.removeAttr('readonly');
 
-    let evid_id = element.id.split('_').slice(0, 1).join('_') + '_etype2',
+    let evid_id = temp.id.split('_').slice(0, 1).join('_') + '_etype2',
         index = 1, div = 'Test',
-        btn = document.getElementById(evid_id);
+        btn = $(evid_id);
     while (div) {
-        div = document.getElementById(evid_id + '_' + index.toString());
+        div = $(evid_id + '_' + index.toString());
         if (result === 'Tier IV' && selectedTrue) {
-            btn.setAttribute('disabled', '');
+            btn.attr('disabled', '');
             if (div) {
-                div.querySelectorAll("[id^='" + evid_id + "']").forEach(function (element) {
+                div.find("[id^='" + evid_id + "']").each(function (element) {
                     if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') element.value = '';
                 })
-                div.setAttribute('hidden', '');
-                div.setAttribute('disabled', '');
+                div.attr('hidden', '');
+                div.attr('disabled', '');
             }
         } else {
-            btn.removeAttribute('disabled');
+            btn.removeAttr('disabled');
             if (div) {
-                div.removeAttribute('hidden');
-                div.removeAttribute('disabled');
+                div.removeAttr('hidden');
+                div.removeAttr('disabled');
             }
         }
         index++;

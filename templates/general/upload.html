@@ -2,37 +2,23 @@
 {% load render_table from django_tables2 %}
 {% load custom_tags %}
 
+
+{% block button %}
+    <button class='btn btn-primary' type='submit' onclick="$('#upload').submit()">Commit</button>
+{% endblock %}
+
+
 {% block content %}
-    <style>
-        table {
-            display: block;
-            overflow-x: auto;
-        }
-
-        td {
-            overflow: hidden;
-            height: 14px;
-            white-space: nowrap;
-        }
-    </style>
-
-    <div class='card shadow my-5'>
+    <div class='card shadow my-5 container'>
         <!-- Page Heading -->
-        <form method='post' action='{% url 'upload' %}' onsubmit='return naCheck();'>
+        <form id='upload' method='post' action='{% url 'upload' %}' onsubmit='return naCheck();'>
             {% csrf_token %}
             <label>
                 <input name='dict' value='{{ dict }}' hidden>
             </label>
 
-            <div class='card-header d-flex flex-row align-items-center justify-content-between'>
-                <h5 class='text-primary'>{{ title }}</h5>
-                <div class='align-items-right'>
-                    <button class='btn btn-primary' type='submit'>Commit</button>
-                </div>
-            </div>
-
             <!-- Page Body -->
-            <div class='card-body'>
+            <div class='card-body scrollmenu'>
                 {% if not is_empty.0 %}
                     <h5>New Variants</h5>
                     {{ tables.0 | safe }}

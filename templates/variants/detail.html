@@ -1,32 +1,31 @@
 {% extends 'base.html' %}
-{% load custom_tags %}
-{% load static %}
+{% load custom_tags static %}
 
-{% block content %}
-    <div class='page-header mt-4 d-flex flex-row align-items-center justify-content-between border-bottom'>
-        <h3>{{ title }}</h3>
 
-        <div class='dropdown no-arrow my-2'>
-            <a class='text-black-50' href='#' role='button' id='dropdownMenuLink' data-bs-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
-                <i class='fa fa-ellipsis-v fa-sm fa-fw text-gray-400'></i>
-            </a>
-            <div class='dropdown-menu dropdown-menu-right shadow animated--fade-in' aria-labelledby='dropdownMenuLink'>
-                <div class='dropdown-header'>Options:</div>
-                <a class='dropdown-item' href='{% url 'variant' item.gene.name item.protein %}'>Edit</a>
-                <a class='dropdown-item' href='#' onclick='window.print();return false;'>Print</a>
-                <a class='dropdown-item' href='{% url 'history' item.gene.name item.protein %}'>History</a>
-                <a class='dropdown-item' href='{% url 'export' item.gene.name item.protein %}'>Export</a>
-            </div>
+{% block button %}
+    <div class='btn dropdown no-arrow'>
+        <a class='text-black-50' href='#' role='button' id='dropdownMenuLink' data-bs-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+            <i class='btn btn-primary fa fa-bars pe-7s-menu text-gray-400'></i>
+        </a>
+        <div class='dropdown-menu dropdown-menu-right shadow animated--fade-in' aria-labelledby='dropdownMenuLink'>
+            <div class='dropdown-header'>Options:</div>
+            <a class='dropdown-item' href='{% url 'variant' item.gene.name item.protein %}'>Edit</a>
+            <a class='dropdown-item' href='#' onclick='window.print();return false;'>Print</a>
+            <a class='dropdown-item' href='{% url 'history' item.gene.name item.protein %}'>History</a>
+            <a class='dropdown-item' href='{% url 'export' item.gene.name item.protein %}'>Export</a>
         </div>
     </div>
+{% endblock %}
 
-    <div class='card my-5 card-body p-0'>
+
+{% block content %}
+    <div class='card my-5 card-body p-0 shadow-none'>
         {% include 'partials/_detail.html' %}
     </div>
 
-    <div class='card my-5'>
+    <div class='card my-5 shadow-none'>
         <div class='container-fluid m-0 p-0 row'>
-            <div class='nav nav-tabs col-12 d-flex justify-content-start' id='nav-tab' role='tablist'>
+            <div class='nav nav-tabs col-12 d-flex justify-content-start mb-0' id='nav-tab' role='tablist'>
                 {% for disease in item.diseases.all %}
                     <a class='nav-link {% if forloop.counter0 == 0 %}active{% endif %}' href='#div{{ forloop.counter0 }}' data-bs-toggle='tab' role='tab' aria-controls='nav' aria-selected='false'>
                         {{ disease.branch | upper }} Disease: {{ disease.name }}
@@ -36,10 +35,9 @@
 
             <div class='p-0 tab-content' id='tab-content'>
                 {% for disease in item.diseases.all %}
-
                     <div id='div{{ forloop.counter0 }}' class='tab-pane fade {% if forloop.counter0 == 0 %}active show{% endif %}' role='tabpanel' aria-labelledby='nav-tab'>
                         <div id='label' class='card-header container-fluid'>
-                            <div class='row'>
+                            <div class='w-100 row'>
                                 <div class='h6 col-8 d-flex justify-content-start my-2'>
                                     {{ disease.name }} / {{ disease.get_reviewed_display }}
                                     {% if disease.reviewed != 'n' %}[: {% endif %}
@@ -52,7 +50,7 @@
                                     {% endif %}{% if disease.reviewed != 'n' %}]{% endif %}
                                 </div>
 
-                                <div class='col-4 d-flex justify-content-end form-check-inline h6 my-auto' style='margin-right: 0'>
+                                <div class='col-4 d-flex justify-content-end h6 my-auto' style='margin-right: 0'>
                                     Branch: {{ disease.get_branch_display }}
                                 </div>
                             </div>

@@ -9,11 +9,6 @@ a {
     display: none;
 }
 
-div.scrollmenu {
-    overflow: auto;
-    white-space: nowrap;
-}
-
 .hidden {
     position: absolute;
     visibility: hidden;

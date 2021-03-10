@@ -3,19 +3,15 @@
 
 
 {% block content %}
-    <div class='page-header mt-4 d-flex flex-row align-items-center justify-content-between border-bottom'>
-        <h3>{{ title }}</h3>
-    </div>
-
-    <div class='card my-5 card-body p-0'>
+    <div class='card my-5 shadow-none card-body p-0'>
         {% include 'partials/_detail.html' %}
     </div>
 
-    <div class='card my-5'>
+    <div class='card my-5 shadow-none'>
         <form id='save_form' action='{% url 'variant' item.gene.name item.protein %}' method='POST' class='container-fluid m-0 p-0 row'>
             {% csrf_token %}
 
-            <div class='nav nav-tabs col-9 d-flex justify-content-start' id='nav-tab' role='tablist' onclick='change_required()'>
+            <div class='nav nav-tabs col-8 d-flex justify-content-start mb-0' id='nav-tab' role='tablist' onclick='change_required()'>
                 {% with subform=form.empty_form %}
                     <a class='empty-form nav-item nav-link py-auto active' id='empty_link' type='button' href='#prefix' data-bs-toggle='tab' role='tab' aria-controls='nav-new' aria-selected='true' {% if dx_num %}hidden{% endif %}>New Interpretation</a>
                 {% endwith %}
@@ -25,9 +21,10 @@
                 {% endfor %}
             </div>
 
-            <div class='nav nav-tabs col-3 d-flex justify-content-end p-0 form-inline' id='nav-tab' role='tablist'>
-                <input class='nav-item nav-link py-auto' type='button' value='Add Interpretation' role='tab' onclick='add_disease(this)'>
-                <input class='nav-item nav-link py-auto' type='submit' value='Save' role='tab'>
+            <div class='nav nav-tabs col-4 d-flex justify-content-end p-0 form-inline mb-0' id='nav-tab' role='tablist'>
+                <a class='nav-item nav-link py-auto' type='button' role='tab' onclick='add_disease(this)'>Add Interpretation</a>
+                <a class='nav-item nav-link py-auto' type='button' role='tab' onclick='history.back()'>Cancel</a>
+                <input id='anchor' class='nav-item nav-link py-auto' type='submit' value='Save' role='tab'>
             </div>
 
             <div class='p-0 tab-content' id='tab-content'>

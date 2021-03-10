@@ -24,7 +24,7 @@
             {% with index=forloop.counter|sub:gp_count %}
                 {% with func=child_forms.0.forms|get_index:index %}
                     {{ func.id }}
-                    <div id='{{ subform.prefix }}-div' class='card-body container {% if elem.empty %}empty-form{% endif %}'>
+                    <div id='id_{{ subform.prefix }}-div' class='card-body container {% if elem.empty %}empty-form{% endif %}'>
                         {{ subform.id }}
                         <div class='row my-2'>
                             <div class='col-4'>{{ subform.name.label }}</div>
@@ -214,7 +214,7 @@
                     <label>{{ subform.reviewed.label }}</label>
 
                     {% for review in subform.reviewed %}
-                        <div {% if forloop.counter0 == 0 %}hidden{% endif %}>
+                        <div class='ml-4' {% if forloop.counter0 == 0 %}hidden{% endif %}>
                             {{ review }}
                         </div>
                     {% endfor %}

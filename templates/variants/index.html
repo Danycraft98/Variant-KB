@@ -2,34 +2,29 @@
 {% load render_table from django_tables2 %}
 {% load custom_tags %}
 
+
+{% block button %}
+    {% if title and 'Export' in title.1 %}
+        <a class='btn btn-outline-primary' type='button' href='{% url 'variant_text' item.gene.name item.protein %}'>Cancel</a>
+        <a class='btn btn-primary text-white' onclick="$('#export').submit()">Export</a>
+    {% endif %}
+{% endblock %}
+
+
 {% block content %}
-    <div class='page-header mt-4 d-flex flex-row align-items-center justify-content-between border-bottom'>
-        <h3>{{ title }}</h3>
-        {% if 'Export' in title %}
-            <div class='align-items-right my-2'>
-                <a class='btn btn-outline-primary' type='button' href='{% url 'variant_text' item.gene.name item.protein %}'>Cancel</a>
-                <button class='btn btn-primary' type='submit'>Export</button>
-            </div>
-        {% endif %}
-    </div>
-
-    <div class='card my-5'>
-        {% if 'Export' in title %}
-            <form method='post' action='{% url 'exported' item.gene.name item.protein %}'>
+    <div class='card my-5 container'>
+        <form id='export' method='post' action='{% if title and 'Export' in title.1 %}{% url 'exported' item.gene.name item.protein %}{% endif %}'>
             {% csrf_token %}
-        {% endif %}
-
-
-        <!-- Page Body -->
-        <div class='card-body'>
-            {% if item.class_type == 'Gene' %}
-                <p><strong>Gene Name:</strong> {{ item }}</p>
-                {% if item.content %}<p><strong>Gene-Descriptive:</strong> {{ item.content }}</p>{% endif %}
-                {% if item.germline_content %}<p><strong>Gene Germline Report:</strong> {{ item.germline_content }}</p>{% endif %}
-                <hr/>
-            {% endif %}
-            {% render_table table %}
-        </div>
+            <!-- Page Body -->
+            <div class='card-body'>
+                {% if item.class_type == 'Gene' %}
+                    <p><strong>Gene Name:</strong> {{ item }}</p>
+                    {% if item.content %}<p><strong>Gene-Descriptive:</strong> {{ item.content }}</p>{% endif %}
+                    {% if item.germline_content %}<p><strong>Gene Germline Report:</strong> {{ item.germline_content }}</p>{% endif %}
+                    <hr/>
+                {% endif %}
+                {% render_table table %}
+            </div>
         </form>
     </div>
 

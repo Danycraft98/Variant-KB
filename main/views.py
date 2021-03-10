@@ -20,7 +20,7 @@ from .tables import *
 def index(request):
     counts = [Gene.objects.count(), Variant.objects.count(), Disease.objects.count()]
     mini_tables = [GeneCardTable(Gene.objects.all()), VariantCardTable(Variant.objects.all()), DiseaseCardTable(Disease.objects.all())]
-    return render(request, 'general/index.html', {'counts': counts, 'mini_tables': mini_tables})
+    return render(request, 'general/index.html', {'counts': counts, 'mini_tables': mini_tables, 'title': ('pe-7s-rocket', 'Variant-KB Dashboard', 'Bootstrap is the most popular HTML, CSS, and JS framework for developing responsive, mobile-first projects on the web.')})
 
 
 @login_required
@@ -47,8 +47,7 @@ def search(request):
                 key: value for key, value in search_query.items() if value != '' and key != 'csrfmiddlewaretoken'
             }
             return redirect('/variants?' + parse.urlencode(search_query))
-        return render(request, 'general/search.html', {'title': 'List of Genes'})
-    return render(request, 'general/search.html', {'title': 'List of Genes'})
+    return render(request, 'general/search.html', {'title': ('pe-7s-display2', 'List of Genes', '')})
 
 
 @login_required
@@ -136,33 +135,30 @@ def upload(request):
 
         exist_html = exist.to_html(classes='exist table table-bordered table-hover', justify='left')
         new_html = new.to_html(classes='new table table-bordered table-hover', justify='left')
-        return render(request, 'general/uploaded.html', {'tables': (new_html, exist_html), 'is_empty': (new.empty, exist.empty), 'dict': raw_data.to_json(), 'title': 'Uploads'})
+        return render(request, 'general/upload.html', {'tables': (new_html, exist_html), 'is_empty': (new.empty, exist.empty), 'dict': raw_data.to_json(), 'title': ('pe-7s-upload', 'Uploads', 'Review the uploaded data.')})
 
 
 @login_required
 def genes(request):
     gene_list = GeneTable(Gene.objects.all())
-    return render(request, 'variants/index.html', {'table': gene_list, 'title': 'List of Genes'})
+    return render(request, 'variants/index.html', {'table': gene_list, 'title': ('pe-7s-display2', 'List of Genes', '')})
 
 
 @login_required
-def variants(request):
-    if request.GET:
-        variant_list = VariantTable(Variant.objects.filter(chr__contains=request.GET.get('chromosome', ''), protein__contains=request.GET.get('protein', ''), cdna__contains=request.GET.get('cdna', ''), ref__contains=request.GET.get('ref', ''), alt__contains=request.GET.get('alt', '')))
-    else:
-        variant_list = VariantTable(Variant.objects.all())
-    # variant_list.order_by = ('-history',)
-    return render(request, 'variants/index.html', {'table': variant_list, 'title': 'List of Variants'})
+def gene(request, gene_name=None):
+    if not gene_name:
+        if request.GET:
+            variant_list = VariantTable(Variant.objects.filter(chr__contains=request.GET.get('chromosome', ''), protein__contains=request.GET.get('protein', ''), cdna__contains=request.GET.get('cdna', ''), ref__contains=request.GET.get('ref', ''), alt__contains=request.GET.get('alt', '')))
+        else:
+            variant_list = VariantTable(Variant.objects.all())
+        return render(request, 'variants/index.html', {'table': variant_list, 'title': ('pe-7s-display2', 'List of Variants', '')})
 
-
-@login_required
-def gene(request, gene_name):
     try:
         item = Gene.objects.get(name=gene_name)
     except Gene.DoesNotExist:
         raise Http404('Gene does not exist')
     variant_list = VariantTable(item.variants.all())
-    return render(request, 'variants/index.html', {'item': item, 'table': variant_list, 'title': 'List of Variants'})
+    return render(request, 'variants/index.html', {'item': item, 'table': variant_list, 'title': ('pe-7s-display2', 'List of Variants', '')})
 
 
 @login_required
@@ -225,7 +221,7 @@ def variant(request, gene_name, protein):
         return HttpResponseRedirect(reverse('variant_text', args=(gene_name, protein)))
 
     return render(request, 'variants/form.html', {
-        'item': item, 'title': 'Edit - ' + item.protein, 'items': score_items, 'form': forms[0],
+        'item': item, 'title': ('pe-7s-note', 'Edit - ' + item.protein, ''), 'items': score_items, 'form': forms[0],
         'child_forms': forms[1:3], 'subchild_forms': forms[3], 'report_form': forms[4], 'reports': reports,
         'empty_forms': [{'branch': 'no', 'empty': True, 'prefix': 'dx'}, {'branch': 'so', 'empty': True, 'prefix': 'dx'}, {'branch': 'gp', 'empty': True, 'prefix': 'dx'}],
         'gp_count': gp_count, 'evids': [evid for dx in diseases for evid in dx.evidences.all()], 'dx_num': len(diseases)
@@ -238,11 +234,12 @@ def variant_text(request, gene_name, protein):
         item = Variant.objects.get(protein=protein, gene__name=gene_name)
     except Variant.DoesNotExist:
         raise Http404('Variant does not exist')
-    return render(request, 'variants/detail.html', {'item': item, 'title': 'Detail - ' + item.protein, })
+    return render(request, 'variants/detail.html', {'item': item, 'title': ('pe-7s-rocket', 'Detail - ' + item.protein, '')})
 
 
 @login_required
 def history(request, gene_name, protein):
+    print(gene_name, protein)
     try:
         item = Variant.objects.get(gene__name=gene_name, protein=protein)
         histories = HistoryTable([h for h in item.history.all()])
@@ -258,7 +255,7 @@ def export(request, gene_name, protein):
         disease_list = DiseaseTable(item.diseases.all())
     except Variant.DoesNotExist:
         raise Http404('Variant does not exist')
-    return render(request, 'variants/index.html', {'title': 'Export for Variant', 'item': item, 'table': disease_list})
+    return render(request, 'variants/index.html', {'title': ('pe-7s-rocket', 'Export for Variant', 'Export the necessary information.'), 'item': item, 'table': disease_list})
 
 
 def exported(request, gene_name, protein):
