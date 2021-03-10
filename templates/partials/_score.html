@@ -1,0 +1,24 @@
+<div id='score' class='sticky card'>
+    <div class='card-header justify-content-between'>
+        <div class='h6 mr-auto my-2'>2015 ACMG Score</div>
+    </div>
+
+    {{ score.id }}
+    <div id='id{{ score.name.id_for_label }}_score' class='card-body container {% if 'prefix' in form.name.id_for_label %}empty-form{% endif %}'>
+        {{ form.child_id }}
+        <div class='row form-group my-2'>
+            <div class='col-4'>{{ score.content.label }}</div>
+            <div class='col-4'>{{ score.content }}</div>
+        </div>
+
+        <div class='row form-group my-2'>
+            <div class='col-4'>{{ score.for_score.label }}</div>
+            <div class='col-4'>{{ score.for_score }}</div>
+        </div>
+
+        <div class='row form-group my-2'>
+            <div class='col-4'>{{ score.against_score.label }}</div>
+            <div class='col-4'>{{ score.against_score }}</div>
+        </div>
+    </div>
+</div>

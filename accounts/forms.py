@@ -1,12 +1,69 @@
 from django import forms
-from django.contrib.auth.forms import ReadOnlyPasswordHashField
+from django.contrib.auth.forms import ReadOnlyPasswordHashField, AuthenticationForm
 
 from .models import User
 
+__all__ = ['RegisterForm', 'LoginForm', 'UserAdminChangeForm', 'UserAdminCreationForm']
+
 
 class RegisterForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput)
-    password2 = forms.CharField(label='Confirm password', widget=forms.PasswordInput)
+    username = forms.CharField(widget=forms.TextInput(attrs={
+        'class': 'form-control',
+        'name': 'username',
+        'id': 'username',
+        'placeholder': 'Username'
+    }))
+    email = forms.EmailField(widget=forms.TextInput(attrs={
+        'class': 'form-control',
+        'name': 'email',
+        'id': 'email',
+        'placeholder': 'Email'
+    }))
+    password = forms.CharField(widget=forms.PasswordInput({
+        'class': 'form-control',
+        'name': 'password',
+        'id': 'password',
+        'placeholder': 'Password'
+    }))
+    password2 = forms.CharField(label='Confirm password', widget=forms.PasswordInput({
+        'class': 'form-control',
+        'name': 'password',
+        'id': 'password',
+        'placeholder': 'Password'
+    }))
+
+    class Meta:
+        model = User
+        fields = ('username', 'email',)
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        qs = User.objects.filter(email=email)
+        if qs.exists():
+            raise forms.ValidationError("email is taken")
+        return email
+
+    def clean_password2(self):
+        # Check that the two password entries match
+        password1 = self.cleaned_data.get("password1")
+        password2 = self.cleaned_data.get("password2")
+        if password1 and password2 and password1 != password2:
+            raise forms.ValidationError("Passwords don't match")
+
+
+class LoginForm(AuthenticationForm):
+    username = forms.CharField(widget=forms.TextInput(attrs={
+        'class': 'form-control',
+        'name': 'username',
+        'id': 'username',
+        'placeholder': 'Username'
+    }))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={
+        'class': 'form-control',
+        'name': 'password',
+        'id': 'password',
+        'placeholder': 'Password'
+    }))
 
     class Meta:
         model = User

@@ -1,52 +1,141 @@
 from django import forms
-from nested_formset import (
-    nestedformset_factory, BaseNestedModelForm, inlineformset_factory, BaseInlineFormSet
-)
+from django.core.exceptions import ValidationError
+from django.forms import inlineformset_factory, modelformset_factory
 
+from api.constants import REVIEWED_CHOICES, FUNC_SIG_CHOICES
 from api.models import *
-from api.constants import *
 
-__all__ = ['GPDiseaseFormSet', 'SODiseaseFormSet']
+__all__ = [
+    'DiseaseFormSet', 'ScoreFormSet', 'FunctionalFormSet',
+    'PathItemFormSet', 'ReportFormSet'
+]
 
-# Germline ------------------------------------------------------------------------------------------
+
+# Base Forms------------------------------------------------------------------------------------------------------
+class BaseForm(forms.ModelForm):
+
+    def _clean_fields(self):
+        for name, field in self.fields.items():
+            if field.disabled:
+                value = self.get_initial_for_field(field, name)
+            else:
+                value = field.widget.value_from_datadict(self.data, self.files, self.add_prefix(name))
+
+            try:
+                if isinstance(field, forms.FileField):
+                    initial = self.get_initial_for_field(field, name)
+                    value = field.clean(value, initial)
+                else:
+                    value = field.clean(value)
+
+                self.cleaned_data[name] = value
+                if hasattr(self, 'clean_%s' % name):
+                    value = getattr(self, 'clean_%s' % name)()
+                    self.cleaned_data[name] = value
+
+            except ValidationError as e:
+                self.add_error(name, e)
+
+    def clean(self):
+        super(BaseForm, self).clean()
+        return self.cleaned_data
 
 
-class GPDiseaseBaseForm(BaseNestedModelForm):
-    id = forms.CharField(required=False, widget=forms.HiddenInput())
-    branch = forms.ChoiceField(initial='gp', choices=BRANCH_CHOICES, widget=forms.RadioSelect(attrs={
-        'class': 'form-inline'
-    }))
-    name = forms.CharField(label='Disease Name', widget=forms.TextInput(attrs={
-        'class': 'form-control',
-        'list': 'datalistOptions',
-        'placeholder': 'Enter Name...',
-        'oninput': 'get_report(this);update_header(this)'
-    }))
-    report = forms.CharField(label='Germline Clinical Report', widget=forms.Textarea(attrs={
-        'class': 'form-control',
-        'rows': '2'
-    }))
-    others = forms.ChoiceField(label='Tier', choices=TIER_CHOICES, required=False, widget=forms.Select(attrs={
-        'class': 'form-control',
-    }))
+class DiseaseForm(BaseForm):
+    prefix = 'dx'
+    reviewed = forms.MultipleChoiceField(label='Reviewed Status', initial='n', choices=REVIEWED_CHOICES, widget=forms.CheckboxSelectMultiple(
+        attrs={'class': 'form-check-inline'}
+    ))
 
     class Meta:
         model = Disease
-        fields = ['id', 'branch', 'name', 'report', 'others']  # 'reviewed', ]
+        fields = '__all__'
+        exclude = ['variant']
+
+    def clean(self):
+        clean_data = self.cleaned_data
+        if clean_data.get('reviewed'):
+            clean_data['reviewed'] = clean_data.get('reviewed')[-1]
+
+        if clean_data.get('name', '') != '' and clean_data.get('branch', 'no') != 'no':
+            super(DiseaseForm, self).clean()
+        return clean_data
 
 
-class ScoreForm(forms.ModelForm):
+class ReportForm(BaseForm):
+    prefix = 'report'
     id = forms.CharField(required=False, widget=forms.HiddenInput())
-    for_score = forms.CharField(widget=forms.TextInput(attrs={
-        'class': 'form-control',
-        'readonly': ''
-    }))
-    against_score = forms.CharField(widget=forms.TextInput(attrs={
-        'class': 'form-control',
-        'readonly': ''
 
+    class Meta:
+        model = Report
+        fields = '__all__'
+        exclude = ['DELETE', 'evidence', 'key']
+
+    def clean(self):
+        super(ReportForm, self).clean()
+        return self.cleaned_data
+
+
+class DiseaseFormSet(modelformset_factory(
+    Disease,
+    form=DiseaseForm,
+    fields='__all__',
+    min_num=0,
+    extra=10
+)):
+
+    def get_queryset(self):
+        return super(DiseaseFormSet, self).get_queryset().order_by('branch')
+
+
+ReportFormSet = modelformset_factory(
+    Report,
+    form=ReportForm,
+    fields='__all__',
+    min_num=1,
+    extra=6,
+)
+
+
+# Somatic Oncogenicity ------------------------------------------------------------------------------------------
+class FunctionalForm(BaseForm):
+    prefix = 'func'
+    id = forms.CharField(required=False, widget=forms.HiddenInput())
+    value = forms.ChoiceField(choices=FUNC_SIG_CHOICES, widget=forms.Select(attrs={
+        'class': 'form-select',
+        'onchange': "tierChange(this, ['Benign', 'None'], 'Tier IV')"
     }))
-    content = forms.CharField(widget=forms.TextInput(attrs={
+
+    class Meta:
+        model = Functional
+        fields = '__all__'
+
+    def clean(self):
+        super(FunctionalForm, self).clean()
+        return self.cleaned_data
+
+
+FunctionalFormSet = inlineformset_factory(
+    Disease,
+    Functional,
+    form=FunctionalForm,
+    min_num=1,
+    extra=1
+)
+
+
+# Germline Pathogenicity------------------------------------------------------------------------------------------
+class ScoreForm(BaseForm):
+    prefix = 'score'
+    for_score = forms.CharField(required=False, label='For Pathogenicity', widget=forms.TextInput(attrs={
+        'class': 'form-control',
+        'readonly': ''
+    }))
+    against_score = forms.CharField(required=False, label='Against Pathogenicity', widget=forms.TextInput(attrs={
+        'class': 'form-control',
+        'readonly': ''
+    }))
+    content = forms.CharField(required=False, label='ACMG Classification', widget=forms.TextInput(attrs={
         'class': 'form-control',
         'readonly': ''
     }))
@@ -56,113 +145,34 @@ class ScoreForm(forms.ModelForm):
         fields = '__all__'
 
 
-class EvidenceForm(forms.ModelForm):
+class PathItemForm(BaseForm):
+    prefix = 'item'
     key = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={
         'class': 'form-check-input',
-        'onclick': 'select_evidence(this)'
+        'value': 'False'
     }))
-    id = forms.CharField(required=False, widget=forms.HiddenInput())
-    source_type = forms.ChoiceField(required=False, choices=TYPE_CHOICES, widget=forms.Select(attrs={
-        'class': 'form-control'
-    }))
-    source_id = forms.CharField(required=False, widget=forms.TextInput(attrs={
+    value = forms.CharField(required=False, widget=forms.HiddenInput())
+    content = forms.CharField(required=False, widget=forms.TextInput(attrs={
         'class': 'form-control',
-        'placeholder': 'Source ID'
-    }))
-    statement = forms.CharField(required=False, widget=forms.Textarea(attrs={
-        'class': 'form-control',
-        'rows': '2'
     }))
 
     class Meta:
-        model = Evidence
+        model = PathItem
         fields = '__all__'
 
+    def clean(self):
+        super(PathItemForm, self).clean()
+        return self.cleaned_data
 
-GPDiseaseFormSet = inlineformset_factory(
-    Disease,
-    Evidence,
-    extra=1,
-    form=GPDiseaseBaseForm,
+
+ScoreFormSet = inlineformset_factory(
+    Disease, Score,
+    form=ScoreForm,
+    min_num=1,
 )
-# Somatic ------------------------------------------------------------------------------------------
-
-
-class SODiseaseBaseForm(BaseNestedModelForm):
-    id = forms.CharField(required=False, widget=forms.HiddenInput())
-    branch = forms.ChoiceField(initial='so', choices=BRANCH_CHOICES, widget=forms.RadioSelect(attrs={
-        'class': 'form-inline'
-    }))
-    name = forms.CharField(label='Disease Name', widget=forms.TextInput(attrs={
-        'class': 'form-control',
-        'list': 'datalistOptions',
-        'placeholder': 'Enter Name...',
-        'oninput': 'get_report(this);update_header(this)'
-    }))
-    report = forms.CharField(label='Germline Clinical Report', widget=forms.Textarea(attrs={
-        'class': 'form-control',
-        'rows': '2'
-    }))
-    others = forms.ChoiceField(label='Tier', choices=TIER_CHOICES, required=False, widget=forms.Select(attrs={
-        'class': 'form-control',
-    }))
-
-    class Meta:
-        model = Disease
-        fields = ['id', 'branch', 'name', 'report', 'others']  # 'reviewed', ]
-
-
-class FunctionalBaseFormSet(BaseInlineFormSet):
-    id = forms.CharField(required=False, widget=forms.HiddenInput())
-    key = forms.ChoiceField(label='Functional Significance', choices=FUNC_SIG_CHOICES, required=False, widget=forms.Select(attrs={
-        'class': 'form-control',
-    }))
-    value = forms.ChoiceField(label='Functional Category', choices=FUNC_CAT_CHOICES, required=False, widget=forms.Select(attrs={
-        'class': 'form-control',
-    }))
-
-    class Meta:
-        model = Functional
-        fields = '__all__'
-
-
-class SubEvidenceFormSet(BaseInlineFormSet):
-    id = forms.CharField(required=False, widget=forms.HiddenInput())
-    evid_sig = forms.ChoiceField(required=False, choices=EVID_SIG_CHOICES, widget=forms.Select(attrs={
-        'class': 'form-control',
-        'onchange': "selectChange(this, '_clin_sig')"
-    }))
-    level = forms.ChoiceField(required=False, choices=EVID_LEVEL_CHOICES, widget=forms.Select(attrs={
-        'class': 'form-control',
-        'onchange': "tierChange(this, ['A', 'B'], 'Tier I')"
-    }))
-    evid_dir = forms.ChoiceField(required=False, choices=EVID_DIR_CHOICES, widget=forms.Select(attrs={
-        'class': 'form-control'
-    }))
-    clin_sig = forms.ChoiceField(required=False, choices=CLIN_SIG_CHOICES, widget=forms.Select(attrs={
-        'class': 'form-control'
-    }))
-    drug_class = forms.CharField(required=False, widget=forms.TextInput(attrs={
-        'class': 'form-control'
-    }))
-    evid_rating = forms.ChoiceField(required=False, choices=CLIN_SIG_CHOICES, widget=forms.Select(attrs={
-        'class': 'form-control'
-    }))
-
-    class Meta:
-        model = SubEvidence
-        fields = '__all__'
-
-
-SODiseaseFormSet = nestedformset_factory(
-    Disease,
-    Functional,
-    form=SODiseaseBaseForm,
-    extra=1,
-    #formset=FunctionalBaseFormSet,
-    nested_formset=inlineformset_factory(
-        Evidence, SubEvidence, form=EvidenceForm,
-        formset=SubEvidenceFormSet,
-        extra=1, fields='__all__'
-    ),
+PathItemFormSet = modelformset_factory(
+    PathItem,
+    form=PathItemForm,
+    fields='__all__',
+    min_num=29
 )

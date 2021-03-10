@@ -1,34 +1,23 @@
+a {
+    text-decoration: none !important
+}
+
+.back-to-top {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    display: none;
+}
+
+div.scrollmenu {
+    overflow: auto;
+    white-space: nowrap;
+}
+
 .hidden {
     position: absolute;
     visibility: hidden;
     opacity: 0;
-}
-
-input[type=checkbox] + label {
-    font-style: italic;
-}
-
-input[type=checkbox]:checked + label {
-    background-color: #6c757d;
-    color: white;
-    font-style: normal;
-    font-weight: bold;
-}
-
-select, input[type='text'], textarea {
-    display: block;
-    width: 100%;
-    height: calc(1.5em + .75rem + 2px);
-    padding: .375rem .75rem;
-    font-size: 1rem;
-    font-weight: 400;
-    line-height: 1.5;
-    color: #495057;
-    background-color: #fff;
-    background-clip: padding-box;
-    border: 1px solid #ced4da;
-    border-radius: .25rem;
-    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out
 }
 
 .collapser {
@@ -39,7 +28,7 @@ select, input[type='text'], textarea {
     border-top: 3px double #545b62 !important
 }
 
-div[data-toggle='collapse'].card-header:hover {
+div[data-bs-toggle='collapse'].card-header:hover {
     background-color: rgba(0, 0, 0, 0.3);
 }
 
@@ -109,6 +98,18 @@ legend {
     width: auto;
     padding: 0 10px;
     border-bottom: none;
+    float: none;
+}
+
+.sticky {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.table > :not(caption) > tr > td {
+    border-bottom: grey 1px !important;
 }
 
 textarea:read-only {

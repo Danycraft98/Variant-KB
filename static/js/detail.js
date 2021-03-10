@@ -16,7 +16,7 @@ $(document).ready(function () {
     autosize(document.querySelectorAll('textarea'));
 
     let min_height = 0;
-    let tabs = jQuery('.tab-content .tab-pane');
+    let tabs = jQuery('#detail-content .tab-pane');
     jQuery.each(tabs, function () {
         this.classList.add('active'); /* make all visible */
         min_height = (this.clientHeight > min_height ? this.clientHeight : min_height);
@@ -24,6 +24,7 @@ $(document).ready(function () {
             this.classList.remove('active'); /* hide again */
         }
     });
+
     jQuery.each(tabs, function () {
         jQuery(this).css('min-height', min_height);
     });
@@ -44,8 +45,7 @@ function copy() {
         const copyText = document.getElementById(element.id.replace('_', '-'));
         if (element.checked === true) {
             /* Copy the text inside the text field to another field */
-            console.log(element.value);
-            report_str += '\n' + copyText.value + '\n\n';
+            report_str += copyText.value + '\n\n';
         }
     });
     selected_reports.value = report_str.substring(0, report_str.length - 2);

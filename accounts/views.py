@@ -1,16 +1,18 @@
 from django.contrib.auth.decorators import login_required
 
 from .models import User
+from .forms import *
 from django.shortcuts import render, redirect
 
 
 def signup(request):
-    if request.method == 'POST':
+    form = RegisterForm(request.POST or None, request.FILES or None)
+    if form.is_valid():
         User.objects.create_user(request.POST.get('username', ''),
                                  password=request.POST.get('password1', ''),
                                  email=request.POST.get('email', ''))
         return redirect('/accounts/login')
-    return render(request, 'registration/signup.html')
+    return render(request, 'registration/signup.html', {'form': form})
 
 
 @login_required

@@ -1,13 +1,14 @@
 {% load static custom_tags %}
 
-<div class='nav nav-tabs' id='myTab' role='tablist'><a class='nav-item nav-link  active' data-toggle='tab' href='#main' role='tab' aria-controls='main' aria-selected='true'>Variant Description</a>
-    <a class='nav-item nav-link ' data-toggle='tab' href='#detail' role='tab' aria-controls='detail' aria-selected='false'>Outside Databases</a>
-    <a class='nav-item nav-link ' data-toggle='tab' href='#score' role='tab' aria-controls='score' aria-selected='false'>Outside Cancer Knowledge-bases</a>
-    <a class='nav-item nav-link ' data-toggle='tab' href='#report' role='tab' aria-controls='report' aria-selected='false'>Reports</a>
-    <a class='nav-item nav-link ' data-toggle='tab' href='#link' role='tab' aria-controls='link' aria-selected='false'>Links</a>
+<div class='nav nav-tabs' id='detail-tab' role='tablist'>
+    <a class='nav-link  active' id='nav-main-tab'  data-bs-toggle='tab' href='#main' role='tab' aria-controls='nav-main' aria-selected='true'>Variant Description</a>
+    <a class='nav-link' id='nav-detail-tab'  data-bs-toggle='tab' href='#detail' role='tab' aria-controls='nav-detail' aria-selected='false'>Outside Databases</a>
+    <a class='nav-link' id='nav-score-tab'  data-bs-toggle='tab' href='#score' role='tab' aria-controls='nav-score' aria-selected='false'>Outside Cancer Knowledge-bases</a>
+    <a class='nav-link' id='nav-report-tab'  data-bs-toggle='tab' href='#report' role='tab' aria-controls='nav-report' aria-selected='false'>Reports</a>
+    <a class='nav-link' id='nav-link-tab'  data-bs-toggle='tab' href='#link' role='tab' aria-controls='nav-link' aria-selected='false'>Links</a>
 </div>
 
-<div class='tab-content border-bottom border-left border-right py-4' id='tab-content'>
+<div class='tab-content p-0 pt-4' id='detail-content'>
     <div class='tab-pane fade show active' id='main' role='tabpanel' aria-labelledby='main-tab'>
         <div class='d-flex justify-content-center pt-2 text'>
             <div class='col-3 text-right'>
@@ -485,7 +486,7 @@
                 </div>
 
                 <div class='col-2 pl-5 btn-group' style='height:35px'>
-                    <button type='button' class='btn btn-outline-secondary btn-sm' onclick="expand('gene-desc',this)">Expand</button>
+                    <button type='button' class='btn btn-outline-secondary btn-sm' onclick='expand('gene-desc',this)'>Expand</button>
 
                     <input type='checkbox' class='hidden' name='report' id='gene_desc' value='Gene-Descriptive' checked>
                     <label class='btn btn-outline-secondary btn-sm h-100' for='gene_desc' onclick='checked(this)'>
@@ -508,7 +509,7 @@
                 </div>
 
                 <div class='col-2 pl-5 btn-group' style='height:35px'>
-                    <button type='button' class='btn btn-outline-secondary btn-sm' onclick="expand('variant-desc',this)">Expand</button>
+                    <button type='button' class='btn btn-outline-secondary btn-sm' onclick='expand('variant-desc',this)'>Expand</button>
 
                     <input type='checkbox' class='hidden' name='report' id='variant_desc' value='Variant-Descriptive' checked>
                     <label class='btn btn-outline-secondary btn-sm h-100' for='variant_desc' onclick='checked(this)'>
@@ -531,7 +532,7 @@
                 </div>
 
                 <div class='col-2 pl-5 btn-group' style='height:35px'>
-                    <button type='button' class='btn btn-outline-secondary btn-sm' onclick="expand('gene-germline',this)">Expand</button>
+                    <button type='button' class='btn btn-outline-secondary btn-sm' onclick='expand('gene-germline',this)'>Expand</button>
 
                     <input type='checkbox' class='hidden' name='report' id='gene_germline' value='Gene-Germline Implication' checked>
                     <label class='btn btn-outline-secondary btn-sm h-100' for='gene_germline' onclick='checked(this)'>
@@ -554,7 +555,7 @@
                 </div>
 
                 <div class='col-2 pl-5 btn-group' style='height:35px'>
-                    <button type='button' class='btn btn-outline-secondary btn-sm' onclick="expand('variant-germline',this)">Expand</button>
+                    <button type='button' class='btn btn-outline-secondary btn-sm' onclick='expand('variant-germline',this)'>Expand</button>
 
                     <input type='checkbox' class='hidden' name='report' id='variant_germline' value='Variant-Germline Implication' checked>
                     <label class='btn btn-outline-secondary btn-sm h-100' for='variant_germline' onclick='checked(this)'>
