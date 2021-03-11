@@ -138,6 +138,27 @@
                 </fieldset>
             </div>
 
+            <div id='report'>
+                <div class='card-header border-top justify-content-between d-flex'>
+                    <div class='h6 mr-auto my-auto'>Reports</div>
+                </div>
+
+                <fieldset id='?' class='card-body container-fluid'>
+                {% comment %}
+                    {% for form_item in report_form %}
+                        <div class='row mt-2'>
+                            <div class='col-4'>
+                                <label for='{{ form_item.1.content.id_for_label }}'>{{ form_item.0 }}</label>
+                            </div>
+                            <div class='col-5'>
+                                {{ form_item.1.content }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                    {% endcomment %}
+                </fieldset>
+            </div>
+
         {% elif subform.branch.value == 'gp' or elem.branch == 'gp' %}
 
             {% with index=forloop.counter0 %}
@@ -152,7 +173,7 @@
 
                     <div class='row form-group my-2'>
                         <div class='col-4'>{{ subform.report.label }}</div>
-                        <div class='col-4'>{{ subform.report }}</div>
+                        <div class='col-5'>{{ subform.report }}</div>
                     </div>
                 </div>
 
@@ -208,7 +229,7 @@
             <div class='row my-2 mx-0 h6'>Review</div>
         </div>
 
-        <div id='{{ report_form.0.prefix }}-div' class='card-body container {% if 'prefix' in subform.name.id_for_label %}empty-form{% endif %}'>
+        <div id='{{ subform.prefix }}-div' class='card-body container {% if 'prefix' in subform.name.id_for_label %}empty-form{% endif %}'>
             <div class='form-group'>
                 <div class='form-check form-check-inline'>
                     <label>{{ subform.reviewed.label }}</label>
@@ -223,113 +244,16 @@
 
             <hr class='double-hr'/>
 
-            <!--{% with curation=report_form.6 %}
-                <div class='row my-2'>
-                    <div class='col-4'>
-                        <label for='{{ curation.id_for_label }}'>Curation Notes</label>
-                    </div>
-                    <div class='col-5'>{{ curation.content }}</div>
-                    <div class='col-3'>
-                        <input type='hidden' id='{{ curation.id_for_label }}' name='{{ curation.prefix }}-name' value='Curation Notes'/>
-                    </div>
+            <div class='row my-2'>
+                <div class='col-4'>
+                    <label for='{{ subform.curation_notes.id_for_label }}'>{{ subform.curation_notes.label }}</label>
                 </div>
-            {% endwith %}
-            {{ report_form.content }}-->
+                <div class='col-5'>
+                    {{ subform.curation_notes }}
+                </div>
+            </div>
+            {{ report_form.content }}
         </div>
 
     {% endif %}
 </fieldset>
-
-
-{% comment %}
-
-    <!--{% if form.errors %}
-            {% for field in form %}
-                {% for error in field.errors %}
-                    <div class="alert alert-danger">
-                        <strong>{{ error|escape }}</strong>
-                    </div>
-                {% endfor %}
-            {% endfor %}
-            {% for error in form.non_field_errors %}
-                <div class="alert alert-danger">
-                    <strong>{{ error|escape }}</strong>
-                </div>
-            {% endfor %}
-        {% endif %}-->
-
-    {% if subform.branch.value != 'no' or branch != 'no' %}
-
-        <div id='{{ form.prefix }}div' class='card-body container {% if 'prefix' in subform.name.id_for_label %}empty-form{% endif %}'>
-            {{ subform.id }}
-
-
-
-            {% if subform.branch.value == 'so' or branch == 'so' %}
-                {% with index=forloop.counter0|sub:gp_count %}
-                    {% with func=child_forms.0.forms|get_index:index %}
-                        {{ func.id }}
-                        {% if forloop.counter0 == 0 %}
-                            <div class='row form-group my-2'>
-                                <div class='col-4'>{{ func.key.label }}</div>
-                                <div class='col-4'>{{ func.key }}</div>
-                                <div class='offset-md-1 col-3 pr-3'>
-                                    <button type='button' id='{{ func.prefix }}_cat{{ index }}' class='btn btn-primary pull-right' onclick='add_func_cat(this)'>Add Functional Category</button>
-                                </div>
-                            </div>
-                            </div>
-                        {% endif %}
-
-
-                        </div>
-                    {% endwith %}
-                {% endwith %}
-                </div>
-
-
-                <!--
-                <div id='reports'>
-                    <div class='card-header border-top justify-content-between d-flex'>
-                        <div class='h6 my-auto'>Reports</div>
-                    </div>
-
-                    <div id='{{ report_form.0.prefix }}-div' class='card-body container {% if 'prefix' in subform.name.id_for_label %}empty-form{% endif %}'>
-                        {% for subform, name in report_form|zip_list:reports %}
-                            {% if forloop.counter0 != 6 %}
-                                <div class='row my-2'>
-                                    <div class='col-4'>{{ name }}</div>
-                                    <div class='col-5'>{{ subform.content }}</div>
-                                    <div class='col-3'>
-                                        <input type='hidden' id='{{ subform.id_for_label }}' name='{{ subform.prefix }}-name' value='{{ name }}'/>
-                                    </div>
-                                </div>
-                            {% endif %}
-                        {% endfor %}
-                    </div>
-                </div>
-                -->
-
-            {% else %}
-
-
-                </div>
-
-
-
-
-
-            {% endif %}
-
-        <div id='d{{ subform.name.id_for_label }}_label' class='card-header container-fluid'>
-            <div class='row my-2'>
-                <div class='h6 col-9 d-flex justify-content-start'>
-                    Review
-                </div>
-            </div>
-        </div>
-
-
-
-    {% endif %}
-</div>
-{% endcomment %}

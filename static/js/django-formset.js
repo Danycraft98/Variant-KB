@@ -75,7 +75,6 @@ const __hasProp = {}.hasOwnProperty, __extends = function (a, b) {
                 f = this.forms.length > 0 ? this.forms[this.forms.length - 1].tab.elem : this.tabTemplate,
                 e.insertAfter(f)), c = this.template.clone().removeClass(this.opts.formTemplateClass),
                 b = new this.opts.formClass(c, this, parseInt(this.totalForms.val()), d),
-                /*TODO: change number of add*/
                 c.insertAfter(this.insertAnchor),
                 this.insertAnchor = c,
                 this.forms.push(b),
@@ -130,7 +129,6 @@ const __hasProp = {}.hasOwnProperty, __extends = function (a, b) {
         },
 
         b.prototype.field = function (a) {
-            /* TODO: FIX*/
             return this.elem.find("[name='" + this.formset.prefix + "-" + this.index + "-" + a + "']")
         },
 

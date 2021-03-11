@@ -46,6 +46,12 @@ class DiseaseForm(BaseForm):
     reviewed = forms.MultipleChoiceField(label='Reviewed Status', initial='n', choices=REVIEWED_CHOICES, widget=forms.CheckboxSelectMultiple(
         attrs={'class': 'form-check-inline'}
     ))
+    report = forms.CharField(widget=forms.Textarea(attrs={
+        'class': 'form-control', 'rows': 2
+    }))
+    curation_notes = forms.CharField(required=False, widget=forms.Textarea(attrs={
+        'class': 'form-control', 'rows': 2
+    }))
 
     class Meta:
         model = Disease
@@ -65,6 +71,10 @@ class DiseaseForm(BaseForm):
 class ReportForm(BaseForm):
     prefix = 'report'
     id = forms.CharField(required=False, widget=forms.HiddenInput())
+    content = forms.CharField(widget=forms.Textarea(attrs={
+        'class': 'form-control',
+        'rows': 2
+    }))
 
     class Meta:
         model = Report

@@ -156,7 +156,7 @@ class Disease(models.Model):
     name = models.CharField(max_length=20)
     branch = models.CharField(choices=BRANCH_CHOICES, max_length=2, default='no')
     others = models.CharField(choices=TIER_CHOICES, max_length=20, null=True, blank=True)
-    report = models.CharField(verbose_name='Germline Report', max_length=20, null=True, blank=True)
+    report = models.TextField(verbose_name='Germline Report', max_length=255, null=True, blank=True)
     variant = models.ForeignKey(Variant, related_name='diseases', on_delete=models.CASCADE)
     reviewed = models.CharField(choices=REVIEWED_CHOICES, max_length=1, default='n')
     reviewed_date = models.DateTimeField('reviewed date', null=True, blank=True)
@@ -165,6 +165,7 @@ class Disease(models.Model):
     meta_review_user = models.ForeignKey(User, related_name='meta_reviewed_variants', on_delete=models.CASCADE, null=True, blank=True)
     approved_date = models.DateTimeField('approved date', null=True, blank=True)
     approve_user = models.ForeignKey(User, related_name='approved_variants', on_delete=models.CASCADE, null=True, blank=True)
+    curation_notes = models.TextField(verbose_name='Curation Notes', max_length=255, null=True, blank=True)
 
     def __str__(self):
         """

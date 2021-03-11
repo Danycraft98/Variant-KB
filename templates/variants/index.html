@@ -4,9 +4,13 @@
 
 
 {% block button %}
-    {% if title and 'Export' in title.1 %}
-        <a class='btn btn-outline-primary' type='button' href='{% url 'variant_text' item.gene.name item.protein %}'>Cancel</a>
-        <a class='btn btn-primary text-white' onclick="$('#export').submit()">Export</a>
+    {% if title %}
+        {% if 'Export' in title.1 %}
+            <a class='btn btn-outline-primary' type='button' onclick='window.history.back()'>Cancel</a>
+            <a class='btn btn-primary text-white' onclick="$('#export').submit()">Export</a>
+        {% elif 'History' in title.1  %}
+            <button class='btn btn-primary' type='button' onclick='window.history.back()'>Back</button>
+        {% endif %}
     {% endif %}
 {% endblock %}
 

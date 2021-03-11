@@ -34,7 +34,7 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=20)),
                 ('branch', models.CharField(choices=[('no', 'No Disease'), ('gp', 'Germline Pathogenicity'), ('so', 'Somatic Oncogenicity')], default='no', max_length=2)),
                 ('others', models.CharField(blank=True, choices=[(None, 'Select'), ('Tier I', 'Tier I'), ('Tier II', 'Tier II'), ('Tier III', 'Tier III'), ('Tier IV', 'Tier IV')], max_length=20, null=True)),
-                ('report', models.CharField(blank=True, max_length=20, null=True, verbose_name='Germline Report')),
+                ('report', models.TextField(blank=True, max_length=255, null=True, verbose_name='Germline Report')),
                 ('reviewed', models.CharField(choices=[('n', 'Not Reviewed'), ('r', 'Reviewed'), ('m', 'Secondly Reviewed'), ('a', 'Approved')], default='n', max_length=1)),
                 ('reviewed_date', models.DateTimeField(blank=True, null=True, verbose_name='reviewed date')),
                 ('meta_reviewed_date', models.DateTimeField(blank=True, null=True, verbose_name='meta-reviewed date')),
@@ -42,6 +42,7 @@ class Migration(migrations.Migration):
                 ('approve_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='approved_variants', to=settings.AUTH_USER_MODEL)),
                 ('meta_review_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='meta_reviewed_variants', to=settings.AUTH_USER_MODEL)),
                 ('review_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='reviewed_variants', to=settings.AUTH_USER_MODEL)),
+                ('curation_notes', models.TextField(blank=True, max_length=255, null=True, verbose_name='Curation Notes')),
             ],
         ),
         migrations.CreateModel(

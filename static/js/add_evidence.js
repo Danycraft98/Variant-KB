@@ -119,7 +119,6 @@ function add_disease(main_elem) {
     tab_div.find("[id!='empty_link'][hidden]")
         .first().removeAttr('hidden')
         .tab('show').val('New Interpretation');
-    console.log(tab_div)
     tab_div.children().first()
         .removeClass('active')
         .attr('hidden', '');
@@ -208,21 +207,18 @@ function copyReport(item) {
 function tierChange(element, options, result) {
     let temp = $(element).parent().parent().parent().parent().parent().prev()[0],
         selected = element.options[element.selectedIndex].value,
-        selectElement = $(temp.id.split('_').slice(0, 2).join('_').slice(0,-3) + 'others'),
+        selectElement = $('#' + temp.id.split('_').slice(0, 2).join('_').slice(0,-3) + 'others'),
         //tier = $(temp.id.split('_').slice(0, 1).join('_') + '_tier_collapse'),
         selectedTrue = (selected === options[0] || selected === options[1]);
 
-    console.log(temp.id.split('_').slice(0, 1).join('_') + '_tier_collapse');
     if (selectedTrue) {
         selectElement.val(result);
         selectElement.attr('readonly', '');
         //tier.text(tier.text().split('- ')[0] + '- ' + result);
     } else selectElement.removeAttr('readonly');
 
-    let evid_id = temp.id.split('_').slice(0, 1).join('_') + '_etype2',
-        index = 1, div = 'Test',
-        btn = $(evid_id);
-    while (div) {
+    let evid_id = temp.id.split('_').slice(0, 1).join('_') + '_etype2', div = $('div'), btn = $(evid_id);
+    $("div[id^='inner_form']").each(function(index) {
         div = $(evid_id + '_' + index.toString());
         if (result === 'Tier IV' && selectedTrue) {
             btn.attr('disabled', '');
@@ -240,8 +236,7 @@ function tierChange(element, options, result) {
                 div.removeAttr('disabled');
             }
         }
-        index++;
-    }
+    });
 }
 
 

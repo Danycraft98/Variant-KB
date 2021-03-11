@@ -194,13 +194,15 @@ def variant(request, gene_name, protein):
         ScoreFormSet(request.POST or None, request.FILES or None, initial=scores.values(), prefix='score'),
 
         PathItemFormSet(request.POST or None, request.FILES or None, initial=PathItem.objects.all().values(), prefix='item'),
-        ReportFormSet(request.POST or None, request.FILES or None, 'report'),
+        ReportFormSet(request.POST or None, request.FILES or None, prefix='report'),
     ]
 
+    report_header = ['Gene-Descriptive', 'Variant-Descriptive','Gene-Disease', 'Variant-Disease', 'Gene-Germline Implications', 'Variant-Germline Implications']
     switch_dict, i = {'so': [1, Functional, None, 0], 'gp': [2, Score, 3, 0]}, 0
     if request.method == 'POST':
         all_not_valid = True
         for main_form in forms[0]:
+            print(main_form.errors)
             if main_form.is_valid() and main_form.cleaned_data.get('branch', 'no') != 'no':
                 all_not_valid = False
                 dx = create_disease(request, item, dict(main_form.cleaned_data))
@@ -208,12 +210,24 @@ def variant(request, gene_name, protein):
                 if not child_info:
                     continue
 
-                for child_form in forms[child_info[0]]:
+                key = child_info[0]
+                for child_form in forms[key]:
                     print(child_form.errors)
                     if child_form.is_valid():
                         child = create_child(child_info[1], dx, dict(child_form.cleaned_data))
                         sub_child = create_evidence(request, dx, child, 'dx-' + str(i) + '-', child_info[3])
                         child_info[3] += 1
+
+                if key == 'so':
+                    for report_form in forms[4]:
+                        if report_form.is_valid():
+                            print(report_form.cleaned_data)
+                        print(report_form.errors)
+
+                for form in forms[4]:
+                    if form.is_valid():
+                        pass
+                        #Report.objects.create(report_name='', content=request.POST.get('dx-' + str(j) + '-content', ''))
 
         if all_not_valid:
             return HttpResponseRedirect(reverse('variant', args=(gene_name, protein)))
@@ -222,7 +236,7 @@ def variant(request, gene_name, protein):
 
     return render(request, 'variants/form.html', {
         'item': item, 'title': ('pe-7s-note', 'Edit - ' + item.protein, ''), 'items': score_items, 'form': forms[0],
-        'child_forms': forms[1:3], 'subchild_forms': forms[3], 'report_form': forms[4], 'reports': reports,
+        'child_forms': forms[1:3], 'subchild_forms': forms[3], 'report_form': zip(report_header, forms[4]), 'reports': reports,
         'empty_forms': [{'branch': 'no', 'empty': True, 'prefix': 'dx'}, {'branch': 'so', 'empty': True, 'prefix': 'dx'}, {'branch': 'gp', 'empty': True, 'prefix': 'dx'}],
         'gp_count': gp_count, 'evids': [evid for dx in diseases for evid in dx.evidences.all()], 'dx_num': len(diseases)
     })
@@ -245,7 +259,7 @@ def history(request, gene_name, protein):
         histories = HistoryTable([h for h in item.history.all()])
     except Variant.DoesNotExist:
         raise Http404('Variant does not exist')
-    return render(request, 'variants/index.html', {'item': item, 'table': histories, 'title': 'History - ' + item.protein})
+    return render(request, 'variants/index.html', {'item': item, 'table': histories, 'title': ('pe-7s-time', 'History - {protein}'.format(protein=item.protein), 'View the history of variant, {protein}.'.format(protein=item.protein))})
 
 
 @login_required

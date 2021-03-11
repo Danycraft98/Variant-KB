@@ -193,6 +193,19 @@
                             </div>
 
                         {% endif %}
+
+                        <div id='label' class='card-header container-fluid'>
+                            <div class='w-100 row'>
+                                <div class='h6 my-2'>Review</div>
+                            </div>
+                        </div>
+
+                        <div class='card-body container pb-0'>
+                            <dl class='row'>
+                                <dt class='col-4'>Curation Notes</dt>
+                                <dd class='col-8'>{{ disease.curation_notes }}</dd>
+                            </dl>
+                        </div>
                     </div>
 
                 {% endfor %}
