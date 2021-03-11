@@ -9,7 +9,6 @@ dj-database-url
 dj-email-url
 django-cors-headers
 django-mathfilters
-django-nested-formset
 django-tables2
 djangorestframework
 
