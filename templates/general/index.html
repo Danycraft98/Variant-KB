@@ -9,8 +9,38 @@
 
 {% block content %}
     <div class='row'>
+        <div class='col-8 container-fluid'>
+            <div class='mb-3 card card-shadow-success border-success card-btm-border'>
+                <div class='tabs-lg-alternate card-header'>
+                    <div class='nav nav-justified' onclick='change_color(this)'>
+                        {% for model in models %}
+                            <a id='id_tab-{{ forloop.counter }}' href='#tab-{{ forloop.counter }}' data-bs-toggle='tab' class='nav-item nav-link minimal-tab-btn-1 {% if not forloop.counter0 %}active{% endif %}'>
+                                <div class='widget-number'>{{ model.class_type }}</div>
+                                <div class='tab-subheading'>
+                                    <span class='pr-2 opactiy-6'>
+                                        Total:
+                                    </span>
+                                    {{ model.count }}
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class='tab-content'>
+                    {% for mini_table in mini_tables %}
+                        <div class='tab-pane fade {% if not forloop.counter0 %}show active{% endif %}' id='tab-{{ forloop.counter }}'>
+                            <div class='card-body'>
+                                {% render_table mini_table %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!--div class='row'>
         <div class='col-4'>
-            <div class='card card-shadow-success border-success'>
+            <div class='card card-shadow-success border-success card-btm-border'>
                 <div class='card-header border-success d-flex flex-row align-items-center justify-content-between'>
                     <h5 class='my-2'>Genes</h5>
                     <div class='align-items-right my-2'>
@@ -25,7 +55,7 @@
         </div>
 
         <div class='col-4'>
-            <div class='card card-shadow-primary border-primary'>
+            <div class='card card-shadow-primary border-primary card-btm-border'>
                 <div class='card-header border-primary d-flex flex-row align-items-center justify-content-between'>
                     <h5 class='my-2'>Variants</h5>
                     <div class='align-items-right my-2'>
@@ -40,7 +70,7 @@
         </div>
 
         <div class='col-4'>
-            <div class='card card-shadow-warning border-warning'>
+            <div class='card card-shadow-warning border-warning card-btm-border'>
                 <div class='card-header border-warning d-flex flex-row align-items-center justify-content-between'>
                     <h5 class='my-2'>Diseases</h5>
                     <div class='align-items-right my-2'>
@@ -53,12 +83,67 @@
                 </div>
             </div>
         </div>
+    </div-->
+        <div class='col-4 container-fluid'>
+            <div class='mb-3 card card-shadow-secondary border-secondary card-btm-border'>
+                <div class='card-header'>Search</div>
+                <div class='card-body'>
+                    <form method='post' action="{% url 'search' %}">
+                        {% csrf_token %}
+                        <div class='form-row mb-2'>
+                            <input type='text' class='col mr-1 form-control' id='name' name='name' placeholder='Gene Name' aria-label='Gene Name'>
+                            <input type='text' class='col form-control' id='chromosome' name='chromosome' placeholder='Chromosome' aria-label='Chromosome'>
+                        </div>
+
+                        <div class='form-row mb-2'>
+                            <input type='text' class='col mr-1 form-control' id='cdna' name='cdna' placeholder='C.' aria-label='C.'>
+                            <input type='text' class='col form-control' id='protein' name='protein' placeholder='P.' aria-label='P.'>
+                        </div>
+
+                        <div class='form-row mb-2'>
+                            <input type='text' class='col mr-1 form-control' id='ref' name='ref' placeholder='Ref' aria-label='Ref'>
+                            <input type='text' class='col form-control' id='alt' name='alt' placeholder='Alt' aria-label='Alt'>
+                        </div>
+
+                        <div class='form-group row mt-4'>
+                            <div class='col-3'></div>
+                            <div class='col-6'>
+                                <button type='submit' class='btn btn-primary col-12 py-2'>Search</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class='mb-3 card card-shadow-secondary border-secondary card-btm-border'>
+                <div class='card-header'>Activities</div>
+                <div class='card-body'>
+                    {% render_table history_table %}
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}
+
 
 {% block script %}
     <script src='//cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js'></script>
     <script>
+        function change_color() {
+            const div = $('.card').first(), tab_id = $('.nav-item.active').attr('id');
+            console.log(tab_id)
+            if (tab_id === 'id_tab-1') {
+                div.removeClass('card-shadow-primary border-primary card-shadow-warning border-warning');
+                div.addClass('card-shadow-success border-success');
+            } else if (tab_id === 'id_tab-2') {
+                div.removeClass('card-shadow-success border-success card-shadow-warning border-warning');
+                div.addClass('card-shadow-primary border-primary');
+            } else {
+                div.removeClass('card-shadow-success border-success card-shadow-primary border-primary');
+                div.addClass('card-shadow-warning border-warning');
+            }
+        }
+
         $(document).ready(function () {
             $('.dataTable').DataTable(
                 {% if table.class_type == 'Variant' %}

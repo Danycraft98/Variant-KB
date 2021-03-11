@@ -9,20 +9,47 @@ __all__ = [
 ]
 
 
-class Gene(models.Model):
-    """
-    A class used to represent a Gene object
+class BaseModel(models.Model):
+    class Meta:
+        abstract = True
+        ordering = []
 
-    Attributes:
-        name (models.CharField): Gene name
-        pub_date (models.DateTimeField): Date published
-        content (models.TextField): Gene-Descriptive report
-        germline_content (models.TextField): Gene-Germline report
-    """
+    def __str__(self):
+        """
+        The string return method
+
+        Returns: str
+        """
+        return ''
+
+    @staticmethod
+    def count():
+        """
+        The string return method
+
+        Returns: int
+        """
+        return 0
+
+    @staticmethod
+    def class_type():
+        """
+        The class type return method
+
+        Returns: str
+        """
+        return BaseModel.__class__.__name__
+
+
+class Gene(BaseModel):
+    """ A class used to represent a Gene object """
     name = models.CharField(max_length=20)
     pub_date = models.DateTimeField('date published')
     content = models.TextField(null=True, blank=True)
     germline_content = models.TextField(null=True, blank=True)
+
+    class Meta:
+        ordering = ['name']
 
     def __str__(self):
         """
@@ -31,6 +58,15 @@ class Gene(models.Model):
         Returns: str
         """
         return self.name
+
+    @staticmethod
+    def count():
+        """
+        The string return method
+
+        Returns: int
+        """
+        return Gene.objects.count()
 
     @staticmethod
     def class_type():
@@ -42,7 +78,7 @@ class Gene(models.Model):
         return 'Gene'
 
 
-class Variant(models.Model):
+class Variant(BaseModel):
     """ A class used to represent a Variant object """
     genome_build = models.CharField(verbose_name='genome build', max_length=10, null=True, blank=True)
     chr = models.CharField(verbose_name='Chromosome', max_length=6, null=True, blank=True)
@@ -120,6 +156,9 @@ class Variant(models.Model):
     alamut = models.CharField(max_length=70, null=True, blank=True)
     gene = models.ForeignKey(Gene, related_name='variants', on_delete=models.CASCADE)
 
+    class Meta:
+        ordering = ['protein']
+
     def __str__(self):
         """
         The string return method
@@ -128,15 +167,33 @@ class Variant(models.Model):
         """
         return self.protein
 
+    @staticmethod
+    def count():
+        """
+        The string return method
 
-class CancerHotspot(models.Model):
+        Returns: int
+        """
+        return Variant.objects.count()
+
+    @staticmethod
+    def class_type():
+        """
+        The class type return method
+
+        Returns: str
+        """
+        return 'Variant'
+
+
+class CancerHotspot(BaseModel):
     """ A class used to represent a Cancer hotspot object """
     hotspot = models.CharField(max_length=70, null=True, blank=True)
     count = models.IntegerField(default=1, null=True, blank=True)
     variant = models.ForeignKey(Variant, related_name='hotspots', on_delete=models.CASCADE)
 
 
-class PathItem(models.Model):
+class PathItem(BaseModel):
     """ A class used to represent a Path item object """
     key = models.CharField(max_length=5, null=True, blank=True)
     content = models.CharField(max_length=75, null=True, blank=True)
@@ -151,7 +208,7 @@ class PathItem(models.Model):
         return self.key
 
 
-class Disease(models.Model):
+class Disease(BaseModel):
     """ A class used to represent a Disease object """
     name = models.CharField(max_length=20)
     branch = models.CharField(choices=BRANCH_CHOICES, max_length=2, default='no')
@@ -175,8 +232,26 @@ class Disease(models.Model):
         """
         return self.name
 
+    @staticmethod
+    def count():
+        """
+        The string return method
 
-class Score(models.Model):
+        Returns: int
+        """
+        return Disease.objects.count()
+
+    @staticmethod
+    def class_type():
+        """
+        The class type return method
+
+        Returns: str
+        """
+        return 'Disease'
+
+
+class Score(BaseModel):
     """ A class used to represent a Score object """
     for_score = models.CharField(verbose_name='For Pathogenicity', max_length=20)
     against_score = models.CharField(verbose_name='Against Pathogenicity', max_length=20)
@@ -192,7 +267,7 @@ class Score(models.Model):
         return self.for_score + ' ' + self.against_score + '\n' + self.content
 
 
-class Functional(models.Model):
+class Functional(BaseModel):
     """ A class used to represent a Functional object """
     key = models.CharField(verbose_name='Functional Significance', choices=FUNC_SIG_CHOICES, max_length=20, blank=True, null=True)
     value = models.CharField(verbose_name='Functional Class', choices=FUNC_CAT_CHOICES, max_length=20, blank=True, null=True)
@@ -207,7 +282,7 @@ class Functional(models.Model):
         return self.key
 
 
-class Evidence(models.Model):
+class Evidence(BaseModel):
     """ A class used to represent a Evidence object """
     item = models.ForeignKey(PathItem, on_delete=models.CASCADE, null=True, blank=True)
     functional = models.ForeignKey(Functional, related_name='evidences', on_delete=models.CASCADE, null=True, blank=True)
@@ -236,7 +311,7 @@ class Evidence(models.Model):
             return self.statement
 
 
-class SubEvidence(models.Model):
+class SubEvidence(BaseModel):
     """ A class used to represent a SubEvidence object """
     evid_sig = models.CharField(
         verbose_name='Evidence Significance',
@@ -290,7 +365,7 @@ class SubEvidence(models.Model):
         return self.evidence
 
 
-class Report(models.Model):
+class Report(BaseModel):
     report_name = models.CharField(max_length=40)
     content = models.TextField(null=True)
     gene = models.ForeignKey(Gene, related_name='reports', on_delete=models.CASCADE, null=True, blank=True)
@@ -306,7 +381,7 @@ class Report(models.Model):
         return self.content
 
 
-class History(models.Model):
+class History(BaseModel):
     """ A class used to represent a History object """
     content = models.TextField(null=True, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)

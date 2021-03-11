@@ -18,36 +18,42 @@ from .tables import *
 
 @login_required
 def index(request):
-    counts = [Gene.objects.count(), Variant.objects.count(), Disease.objects.count()]
-    mini_tables = [GeneCardTable(Gene.objects.all()), VariantCardTable(Variant.objects.all()), DiseaseCardTable(Disease.objects.all())]
-    return render(request, 'general/index.html', {'counts': counts, 'mini_tables': mini_tables, 'title': ('pe-7s-rocket', 'Variant-KB Dashboard', 'Bootstrap is the most popular HTML, CSS, and JS framework for developing responsive, mobile-first projects on the web.')})
+    models = [Gene, Variant, Disease]
+    mini_tables = [
+        GeneCardTable(Gene.objects.order_by('-pub_date')[:10]),  # .filter(id__gte=max(counts[0] - 10, 0))
+        VariantCardTable(Variant.objects.order_by('-gene__pub_date')[:10]),
+        DiseaseCardTable(Disease.objects.order_by('-reports__gene__pub_date')[:10])
+    ]
+    history_table = HistoryTable(History.objects.order_by('-timestamp')[:5])
+    return render(request, 'general/index.html', {
+        'models': models, 'mini_tables': mini_tables, 'history_table': history_table,
+        'title': ('pe-7s-rocket', 'Variant-KB Dashboard', 'Bootstrap is the most popular HTML, CSS, and JS framework for developing responsive, mobile-first projects on the web.')
+    })
 
 
 @login_required
 def search(request):
-    if request.POST:
-        search_query = request.POST.dict()
-        name = request.POST.get('name')
-        if name:
-            try:
-                item = Gene.objects.get(name=name)
-                return redirect('gene', gene_name=item.name)
-            except Gene.DoesNotExist:
-                pass
-        else:
-            protein = search_query.get('protein', '')
-            protein_dict = {
-                'A': 'Ala', 'R': 'Arg', 'N': 'Asn', 'D': 'Asp', 'C': 'Cys', 'Q': 'Gln', 'E': 'Glu',
-                'G': 'Gly', 'H': 'His', 'I': 'Ile', 'L': 'Leu', 'K': 'Lys', 'M': 'Met', 'F': 'Phe',
-                'P': 'Pro', 'S': 'Ser', 'T': 'Thr', 'W': 'Trp', 'Y': 'Tyr', 'V': 'Val', 'B': 'Asx',
-                'Z': 'Glx', 'J': 'Xle', 'U': 'Sec', 'O': 'Pyl', 'X':  'Unk', 'fs': 'Ter'
-            }
-            search_query['protein'] = protein_dict[protein] if protein in protein_dict else protein
-            search_query = {
-                key: value for key, value in search_query.items() if value != '' and key != 'csrfmiddlewaretoken'
-            }
-            return redirect('/variants?' + parse.urlencode(search_query))
-    return render(request, 'general/search.html', {'title': ('pe-7s-display2', 'List of Genes', '')})
+    search_query = request.POST.dict()
+    name = request.POST.get('name')
+    if name:
+        try:
+            item = Gene.objects.get(name=name)
+            return redirect('gene', gene_name=item.name)
+        except Gene.DoesNotExist:
+            pass
+    else:
+        protein = search_query.get('protein', '')
+        protein_dict = {
+            'A': 'Ala', 'R': 'Arg', 'N': 'Asn', 'D': 'Asp', 'C': 'Cys', 'Q': 'Gln', 'E': 'Glu',
+            'G': 'Gly', 'H': 'His', 'I': 'Ile', 'L': 'Leu', 'K': 'Lys', 'M': 'Met', 'F': 'Phe',
+            'P': 'Pro', 'S': 'Ser', 'T': 'Thr', 'W': 'Trp', 'Y': 'Tyr', 'V': 'Val', 'B': 'Asx',
+            'Z': 'Glx', 'J': 'Xle', 'U': 'Sec', 'O': 'Pyl', 'X': 'Unk', 'fs': 'Ter'
+        }
+        search_query['protein'] = protein_dict[protein] if protein in protein_dict else protein
+        search_query = {
+            key: value for key, value in search_query.items() if value != '' and key != 'csrfmiddlewaretoken'
+        }
+    return redirect('/variants?' + parse.urlencode(search_query))
 
 
 @login_required
@@ -197,7 +203,7 @@ def variant(request, gene_name, protein):
         ReportFormSet(request.POST or None, request.FILES or None, prefix='report'),
     ]
 
-    report_header = ['Gene-Descriptive', 'Variant-Descriptive','Gene-Disease', 'Variant-Disease', 'Gene-Germline Implications', 'Variant-Germline Implications']
+    report_header = ['Gene-Descriptive', 'Variant-Descriptive', 'Gene-Disease', 'Variant-Disease', 'Gene-Germline Implications', 'Variant-Germline Implications']
     switch_dict, i = {'so': [1, Functional, None, 0], 'gp': [2, Score, 3, 0]}, 0
     if request.method == 'POST':
         all_not_valid = True
@@ -227,7 +233,7 @@ def variant(request, gene_name, protein):
                 for form in forms[4]:
                     if form.is_valid():
                         pass
-                        #Report.objects.create(report_name='', content=request.POST.get('dx-' + str(j) + '-content', ''))
+                        # Report.objects.create(report_name='', content=request.POST.get('dx-' + str(j) + '-content', ''))
 
         if all_not_valid:
             return HttpResponseRedirect(reverse('variant', args=(gene_name, protein)))
@@ -269,7 +275,7 @@ def export(request, gene_name, protein):
         disease_list = DiseaseTable(item.diseases.all())
     except Variant.DoesNotExist:
         raise Http404('Variant does not exist')
-    return render(request, 'variants/index.html', {'title': ('pe-7s-rocket', 'Export for Variant', 'Export the necessary information.'), 'item': item, 'table': disease_list})
+    return render(request, 'variants/index.html', {'title': ('pe-7s-export', 'Export for Variant', 'Export the necessary information.'), 'item': item, 'table': disease_list})
 
 
 def exported(request, gene_name, protein):

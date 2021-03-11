@@ -31,8 +31,8 @@ class VariantCardTable(tables.Table):
         model = Variant
         orderable = False
         # order_by = ('-history',)
-        sequence = ('protein', 'diseases')
-        exclude = ('id', 'gene', 'chr', 'cdna', 'transcript', 'genome_build', 'consequence',
+        sequence = ('protein', 'gene', 'diseases')
+        exclude = ('id', 'chr', 'cdna', 'transcript', 'genome_build', 'consequence',
                    'start', 'end', 'alt', 'ref', 'exonic_function', 'content', 'germline_content', 'af',
                    'af_popmax', 'cosmic70', 'clinvar', 'insilicodamaging', 'insilicobenign', 'polyphen2_hdiv_pred',
                    'polyphen2_hvar_pred', 'sift_pred', 'mutationtaster_pred', 'mutationassessor_pred', 'provean_pred',
